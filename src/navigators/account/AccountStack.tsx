@@ -7,7 +7,6 @@ import PublicProfile from '../../screens/account/profile/PublicProfile';
 import MessagesStack from './MessagesStack';
 import ProfileStack from './ProfileStack';
 import NewHangoutStack from './NewHangoutStack';
-import ShareModal from '../../screens/account/modals/ShareModal';
 import Details from '../../screens/account/Details';
 import EditHangout from '../../screens/account/EditHangout';
 import EditChooseLocation from '../../screens/account/EditChooseLocation';
@@ -60,9 +59,11 @@ const AccountStack = ({
           headerShown: false,
         }}
         initialRouteName="HomeStack">
-        <Stack.Screen name="HomeStack">
-          {() => <TabNavigator navigation={navigation} sessionId={sessionId} />}
-        </Stack.Screen>
+        <Stack.Screen
+          name="HomeStack"
+          component={TabNavigator}
+          initialParams={{ sessionId: sessionId  }}
+        />
 
         <Stack.Screen
           name="MessagesStack"
@@ -89,12 +90,6 @@ const AccountStack = ({
           component={NewHangoutStack}
           initialParams={{ sessionId: sessionId }}
           options={{ presentation: 'modal' }}
-        />
-
-        <Stack.Screen
-          name="ShareModal"
-          component={ShareModal}
-          initialParams={{ sessionId: sessionId }}
         />
 
         <Stack.Screen

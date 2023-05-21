@@ -7,4 +7,5 @@ export type AccountStackParamList = {
 export type NavigationProps = {
   navigation: any;
   sessionId?: string;
+  
 };

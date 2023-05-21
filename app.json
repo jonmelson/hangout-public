@@ -36,7 +36,8 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         }
-      }
+      },
+      "bundleIdentifier": "com.hangout.hangout"
     },
     "android": {
       "adaptiveIcon": {
@@ -53,7 +54,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "419a0199-7d1f-4b1a-be70-490f70b3bb9d"
+        "projectId": "923f99c1-2ff2-432e-878b-09046e0f534b"
       }
     }
   }

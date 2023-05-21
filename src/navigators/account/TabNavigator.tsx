@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AccountStackParamList, NavigationProps } from '../../utils/navigation';
 
 import Home from '../../screens/account/main/Home';
 import Going from '../../screens/account/main/Going';
@@ -12,13 +11,19 @@ import {
   TabBarGoingIcon,
 } from '../../components/Icons';
 
-const Stack = createBottomTabNavigator<AccountStackParamList>();
+const Stack = createBottomTabNavigator();
 const EmptyScreen = () => {
   return null;
 };
 
-const TabNavigator = (props: NavigationProps) => {
-  const { navigation, sessionId } = props;
+const TabNavigator = ({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route?: { params?: { sessionId?: string } };
+}) => {
+  const { sessionId } = route?.params ?? {};
   return (
     <>
       <Stack.Navigator
@@ -30,6 +35,10 @@ const TabNavigator = (props: NavigationProps) => {
         }}>
         <Stack.Screen
           name="Home"
+          component={Home}
+          initialParams={{
+            sessionId: sessionId,
+          }}
           options={{
             tabBarLabel: 'Home',
             tabBarIcon: ({ focused }) => {
@@ -37,9 +46,8 @@ const TabNavigator = (props: NavigationProps) => {
               return <TabBarHomeIcon name={iconName} />;
             },
             headerShown: false,
-          }}>
-          {() => <Home navigation={navigation} sessionId={sessionId} />}
-        </Stack.Screen>
+          }}
+        />
 
         <Stack.Screen
           name="NewHangoutStack"
@@ -58,6 +66,8 @@ const TabNavigator = (props: NavigationProps) => {
 
         <Stack.Screen
           name="Going"
+          component={Going}
+          initialParams={{ sessionId: sessionId }}
           options={{
             tabBarLabel: 'Going',
             tabBarIcon: ({ focused }) => {
@@ -65,9 +75,8 @@ const TabNavigator = (props: NavigationProps) => {
               let iconColor = focused ? '#333' : 'gray';
               return <TabBarGoingIcon name={iconName} color={iconColor} />;
             },
-          }}>
-          {() => <Going navigation={navigation} sessionId={sessionId} />}
-        </Stack.Screen>
+          }}
+        />
       </Stack.Navigator>
     </>
   );

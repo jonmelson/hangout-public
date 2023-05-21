@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, SectionList, ActivityIndicator } from 'react-native';
+import {
+  Text,
+  View,
+  SectionList,
+  ActivityIndicator,
+  Modal,
+} from 'react-native';
 import RoquefortText from '../../../components/RoquefortText';
 
 import Header from '../../../components/Header';
 import Event from '../../../components/Event';
 import GradientButton from '../../../components/GradientButton';
+import ShareModal from '../modals/ShareModal';
 
 import { supabase } from '../../../lib/supabase';
 
@@ -14,10 +21,14 @@ import { Hangout, Section } from '../../../utils/other';
 
 import { getFriendsMetaData } from '../../../utils/queries';
 
-import { NavigationProps } from '../../../utils/navigation';
-
-const Home = (props: NavigationProps) => {
-  const { navigation, sessionId } = props;
+const Home = ({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route?: { params?: { sessionId?: string } };
+}) => {
+  const { sessionId } = route?.params ?? {};
 
   const [loading, setLoading] = useState(false);
   const [friends, setFriends] = useState<any>([]);
@@ -26,6 +37,11 @@ const Home = (props: NavigationProps) => {
   const [newIsGoing, setNewIsGoing] = useState<any>([]);
   const [mergedData, setMergedData] = useState<any>(null);
   const [sections, setSections] = useState<Section[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
 
   // Fetch initial data for friends
   useEffect(() => {
@@ -159,7 +175,7 @@ const Home = (props: NavigationProps) => {
         payload => {
           if (payload.eventType == 'INSERT') {
             // Get the ids from the inserted table
-            console.log('The user has INSERTED HANGOUT');
+            // console.log('The user has INSERTED HANGOUT');
             const newHangout = payload.new;
             // console.log('Friends');
             // console.log(friends);
@@ -177,6 +193,9 @@ const Home = (props: NavigationProps) => {
 
             if (isFriend || isCurrentUser) {
               setHangouts((prevState: any) => [...prevState, newHangout]);
+            }
+            if (isCurrentUser) {
+              setModalVisible(true);
             }
           } else if (payload.eventType == 'DELETE') {
             // Gets the old data, checks if the ids
@@ -219,7 +238,7 @@ const Home = (props: NavigationProps) => {
         },
         payload => {
           if (payload.eventType == 'INSERT') {
-            console.log('The user has INSERTED1');
+            // console.log('The user has INSERTED1');
             const temp = payload.new;
             setNewIsGoing((prevState: any) => [...prevState, temp]);
           } else if (payload.eventType == 'DELETE') {
@@ -246,9 +265,6 @@ const Home = (props: NavigationProps) => {
     //   isGoingSubscription.unsubscribe();
     // };
   }, [friends, hangouts, isGoing]);
-
-  // console.log('hereere');
-  // console.log(isGoing);
 
   // Merge the fetch data and whenever hangouts or isGoing is updated
   useEffect(() => {
@@ -351,7 +367,7 @@ const Home = (props: NavigationProps) => {
                     }
 
                     return (
-                      <View className="bg-white pt-4 pb-2">
+                      <View className="bg-white pb-2 pt-4">
                         <View className="ml-4 border-b border-gray-300">
                           <Text className="mb-1 text-gray-500">
                             {section.title}
@@ -447,9 +463,21 @@ const Home = (props: NavigationProps) => {
               />
             </View>
           </View>
+
           <BottomCreateIndicator />
         </View>
       )}
+      <Modal
+        visible={modalVisible} // Set the visibility based on the state
+        animationType="slide"
+        transparent={true}
+        onRequestClose={toggleModal}>
+        <ShareModal
+          navigation={navigation}
+          sessionId={sessionId}
+          onClose={toggleModal}
+        />
+      </Modal>
     </>
   );
 };

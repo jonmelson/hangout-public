@@ -16,8 +16,14 @@ import { Hangout, Section } from '../../../utils/other';
 
 import { getFriendsMetaData } from '../../../utils/queries';
 
-const Going = (props: NavigationProps) => {
-  const { navigation, sessionId } = props;
+const Going = ({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route?: { params?: { sessionId?: string } };
+}) => {
+  const { sessionId } = route?.params ?? {};
   const [friends, setFriends] = useState<any>([]);
   const [hangouts, setHangouts] = useState<any>([]);
   const [isGoing, setIsGoing] = useState<any>([]);
@@ -285,9 +291,20 @@ const Going = (props: NavigationProps) => {
     if (mergedData) {
       const today = new Date().getTime();
 
-      const upcomingHangouts = mergedData.filter(
-        (item: Hangout) => new Date(item.starts).getTime() > today,
-      );
+      // const upcomingHangouts = mergedData.filter(
+      //   (item: Hangout) => new Date(item.starts).getTime() > today,
+      // );
+
+      const upcomingHangouts = mergedData
+        .filter((item: Hangout) => {
+          // Assuming `username` is the property of the `item` object
+          return item.going.some(
+            (goingItem: any) => goingItem.id === sessionId,
+          );
+        })
+        .filter((item: Hangout) => new Date(item.starts).getTime() > today);
+
+      // console.log(upcomingHangouts[1].going[0].id);
 
       const hostingHangouts = mergedData.filter(
         (item: Hangout) =>
@@ -313,8 +330,6 @@ const Going = (props: NavigationProps) => {
     }
   }, [mergedData]);
 
-  
-  
   useEffect(() => {
     const uniqueIsGoingIds = new Set();
 

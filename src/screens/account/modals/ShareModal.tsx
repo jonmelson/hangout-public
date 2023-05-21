@@ -18,13 +18,13 @@ import { LocationMetaData } from '../../../utils/other';
 
 const ShareModal = ({
   navigation,
-  route,
+  sessionId,
+  onClose,
 }: {
   navigation: any;
-  route?: { params?: { sessionId?: string } };
+  sessionId: any;
+  onClose?: () => void;
 }) => {
-  const { sessionId } = route?.params ?? {};
-
   const [hangoutId, setHangoutId] = useState('');
   const [userId, setUserId] = useState('');
   const [title, setTitle] = useState('');
@@ -164,10 +164,16 @@ const ShareModal = ({
   }, [starts, ends]);
 
   return (
-    <View className="flex-1 items-center justify-center bg-gray-300">
-      <View className="h-62 flex w-5/6 flex-col space-y-3 rounded-2xl bg-white p-4">
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+      }}>
+      <View className="h-62 flex w-5/6 flex-col space-y-3 rounded-2xl  bg-white p-4">
         <View className="flex flex-row justify-end">
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity onPress={onClose}>
             <View style={{ alignSelf: 'flex-end' }}>
               <CloseIcon />
             </View>

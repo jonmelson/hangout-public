@@ -119,7 +119,12 @@ const NewHangout = ({
       if (error) {
         console.error(error);
       } else {
-        navigation.getParent()?.replace('ShareModal', { sessionId: sessionId });
+        navigation.navigate('HomeStack', {
+          screen: 'Home',
+          params: {
+            sessionId: sessionId,
+          },
+        });
       }
 
       // console.log(sessionId, title, details, location, startDate, endDate);
