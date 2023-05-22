@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "Hangout",
+    "name": "hngt",
     "slug": "hangout",
     "scheme": "hangout",
     "version": "0.1.0",
     "plugins": [
-      "@config-plugins/detox",
       [
         "expo-image-picker",
         {
@@ -24,20 +23,16 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "associatedDomains": [
-        "applinks:hangout.social"
-      ],
+      "associatedDomains": ["applinks:hangout.social"],
       "supportsTablet": true,
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         }
       },
-      "bundleIdentifier": "com.hangout.hangout"
+      "bundleIdentifier": "com.hangoutapp.hangout"
     },
     "android": {
       "adaptiveIcon": {

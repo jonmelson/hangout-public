@@ -11,7 +11,7 @@ import AddPhotoIcon from '../../../../components/icons/AddPhotoIcon';
 
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
-import * as ImagePicker from 'expo-image-picker';
+// import * as ImagePicker from 'expo-image-picker';
 
 import Avatar from '../../../../components/Avatar';
 
@@ -33,32 +33,32 @@ const EditProfilePhoto = ({
 
   const { showActionSheetWithOptions } = useActionSheet();
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  // const pickImage = async () => {
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     allowsEditing: true,
+  //     aspect: [4, 3],
+  //     quality: 1,
+  //   });
 
-    if (!result.canceled) {
-      const input = result.assets[0];
-      uploadImage(input);
-    }
-  };
+  //   if (!result.canceled) {
+  //     const input = result.assets[0];
+  //     uploadImage(input);
+  //   }
+  // };
 
-  const takePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission to access camera is required!');
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync();
-    if (!result.canceled) {
-      const input = result.assets[0];
-      uploadImage(input);
-    }
-  };
+  // const takePhoto = async () => {
+  //   const { status } = await ImagePicker.requestCameraPermissionsAsync();
+  //   if (status !== 'granted') {
+  //     Alert.alert('Permission to access camera is required!');
+  //     return;
+  //   }
+  //   const result = await ImagePicker.launchCameraAsync();
+  //   if (!result.canceled) {
+  //     const input = result.assets[0];
+  //     uploadImage(input);
+  //   }
+  // };
 
   const uploadImage = async (result: any) => {
     try {
@@ -168,13 +168,13 @@ const EditProfilePhoto = ({
           case 0:
             // Take new photo
 
-            takePhoto();
+            // takePhoto();
 
             break;
           case 1:
             // Select photo
 
-            pickImage();
+            // pickImage();
             break;
 
           case cancelButtonIndex:

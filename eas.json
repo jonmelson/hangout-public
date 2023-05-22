@@ -17,6 +17,17 @@
       }
     },
     "production": {
+      "env": {
+        "API_URL": "https://api.production.com",
+        "SUPABASE_URL": "https://cqdgsblpbzgmpbucvpmf.supabase.co",
+        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxZGdzYmxwYnpnbXBidWN2cG1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjgxNDE0MTAsImV4cCI6MTk4MzcxNzQxMH0.UJs8GeZHYB7vyvXCq4nByKXkoqe07ce533xF1TClAnA",
+        "GOOGLE_MAPS_API_KEY": "AIzaSyD8pusAWJ948TRwesecwf6Tdr65p3Ds5OQ",
+        "EMAIL": "hello@hangout.social",
+        "TERMS_OF_USE": "https://app.termly.io/document/terms-and-conditions/283d82b1-a5ba-4f61-bd4b-c692b582c206",
+        "PRIVACY_POLICY": "https://app.termly.io/document/privacy-policy/360d59b3-04af-4571-b58c-c4eba78f05aa",
+        "STREAM_API_KEY": "qh8bgwb288yw",
+        "STREAM_API_SECRET": "hwcq92ep2h5c5bwcqxkdh8f9t2fpj44xj2n8cumk7fbrqkv2jc2aeasw25727agz"
+      },
       "ios": {
         "resourceClass": "m-medium"
       }

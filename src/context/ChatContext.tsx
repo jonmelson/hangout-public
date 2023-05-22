@@ -127,11 +127,13 @@ const ChatContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <OverlayProvider value={{ style: myMessageTheme }}>
-      <Chat client={chatClient}>
-        <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
-      </Chat>
-    </OverlayProvider>
+ 
+      <OverlayProvider value={{ style: myMessageTheme }}>
+        <Chat client={chatClient}>
+          <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
+        </Chat>
+      </OverlayProvider>
+   
   );
 };
 

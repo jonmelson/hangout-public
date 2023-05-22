@@ -9,7 +9,7 @@ import { AddPhotoIcon, ChevronBackIcon } from '../../components/Icons';
 
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
-import * as ImagePicker from 'expo-image-picker';
+// import * as ImagePicker from 'expo-image-picker';
 
 import { supabase } from '../../lib/supabase';
 

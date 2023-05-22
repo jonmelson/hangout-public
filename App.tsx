@@ -40,8 +40,6 @@ export default function App() {
     },
   };
 
-
-
   useEffect(() => {
     async function checkIfUserExists(id: string | undefined) {
       const { data: users } = await supabase
