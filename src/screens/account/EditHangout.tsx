@@ -213,7 +213,7 @@ const EditHangout = ({
       headerShadowVisible: false,
       headerTitle: () => (
         <View className="mt-4">
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#141416' }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
             Edit hangout
           </Text>
         </View>
@@ -221,7 +221,9 @@ const EditHangout = ({
       headerLeft: () => (
         <View className="mt-4">
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text>Cancel</Text>
+            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
+              Cancel
+            </Text>
           </TouchableOpacity>
         </View>
       ),
@@ -269,7 +271,7 @@ const EditHangout = ({
         <View className="flex flex-col space-y-3 rounded-xl bg-white p-4">
           <Text className="text-lg">Details</Text>
           <TextInput
-            placeholder="Add details..."
+            placeholder="Add optional details..."
             onChangeText={input => {
               handleDetailsChange(input);
             }}

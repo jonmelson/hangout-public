@@ -82,9 +82,7 @@ const NewHangout = ({
   const handleStartDateChange = (
     event: DateTimePickerEvent,
     selectedDate?: Date,
-  ) => {
-    setShowStartPicker(false);
-
+  ) => { 
     if (selectedDate) {
       setStartDate(selectedDate);
       // set end date to one hour after start date
@@ -190,19 +188,18 @@ const NewHangout = ({
 
     setFormattedEndTime(fEndTime);
 
-    navigation.setOptions({
-      title: 'New hangout',
-      headerShadowVisible: false,
+    navigation.setOptions({ 
+      headerShadowVisible: false, 
       headerTitle: () => (
         <View className="mt-4">
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#141416' }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
             New hangout
           </Text>
         </View>
       ),
       headerLeft: () => (
         <View className="mt-4">
-          <TouchableOpacity onPress={handleBackPress}>
+          <TouchableOpacity onPress={handleBackPress} className='py-2 pr-4'>
             <ChevronBackIcon />
           </TouchableOpacity>
         </View>
@@ -252,7 +249,7 @@ const NewHangout = ({
         <View className="flex flex-col space-y-3 rounded-xl bg-white p-4">
           <Text className="text-lg">Details</Text>
           <TextInput
-            placeholder="Add details..."
+            placeholder="Add optional details..."
             onChangeText={input => {
               handleDetailsChange(input);
             }}
@@ -310,8 +307,8 @@ const NewHangout = ({
                   display="spinner"
                   onChange={handleStartDateChange}
                   themeVariant="light"
-                  // minimumDate={new Date()}
-                  // maximumDate={undefined}
+                  minimumDate={new Date()}
+                  maximumDate={undefined}
                 />
               </View>
             )}
@@ -347,8 +344,8 @@ const NewHangout = ({
                   display="spinner"
                   onChange={handleEndDateChange}
                   themeVariant="light"
-                  // minimumDate={new Date()}
-                  // maximumDate={undefined}
+                  minimumDate={new Date()}
+                  maximumDate={undefined}
                 />
               </View>
             )}

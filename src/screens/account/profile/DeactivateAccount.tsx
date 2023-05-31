@@ -9,10 +9,16 @@ const DeactivateAccount = (props: NavigationProps) => {
   const { navigation, sessionId } = props;
 
   useEffect(() => {
-    navigation.setOptions({
-      title: 'Deactivate account',
+    navigation.setOptions({ 
       headerShown: true,
       headerShadowVisible: false,
+      headerTitle: () => (
+        <View>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
+            Deactivate account
+          </Text>
+        </View>
+      ),
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ChevronBackIcon />

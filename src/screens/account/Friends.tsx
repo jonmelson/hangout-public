@@ -16,7 +16,6 @@ import { Feather, EvilIcons, ChevronBackIcon } from '../../components/Icons';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
- 
 
 import { message } from '../../utils/utils';
 
@@ -466,12 +465,18 @@ const Friends = ({
 
   useEffect(() => {
     navigation.setOptions({
-      title: 'Friends',
       headerShown: true,
       headerShadowVisible: false,
+      headerTitle: () => (
+        <View>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
+            Friends
+          </Text>
+        </View>
+      ),
       headerLeft: () => (
         <TouchableOpacity
-          className="flex flex-row items-center space-x-2"
+          className="py-2 pr-4"
           onPress={() => navigation.goBack()}>
           <ChevronBackIcon />
         </TouchableOpacity>
@@ -479,7 +484,9 @@ const Friends = ({
       headerRight: () => (
         <TouchableOpacity onPress={handleInvite}>
           <View className="items-center">
-            <Text>Invite</Text>
+            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
+              Invite
+            </Text>
           </View>
         </TouchableOpacity>
       ),
@@ -487,8 +494,8 @@ const Friends = ({
   }, [navigation, sessionId]);
 
   return (
-    <View className="flex-1 bg-white">
-      <View className="mx-2 mt-4">
+    <View className="flex-1 items-center bg-white px-4">
+      <View className="absolute z-10 w-full pt-2">
         <SearchBar
           placeholder="Search friends"
           searchTerm={searchText}
@@ -496,10 +503,10 @@ const Friends = ({
         />
       </View>
 
-      <View className="mx-4 flex-1">
+      <View className="flex-1 items-center justify-center px-4">
         {/* Before Searching */}
         {searchText === '' && (
-          <View className="mt-4">
+          <View>
             {receivedFriendRequests.length !== 0 && (
               <View className="mb-6">
                 <FlatList
@@ -525,8 +532,8 @@ const Friends = ({
             )}
 
             {receivedFriendRequests.length === 0 && friends.length === 0 && (
-              <View className="mt-36">
-                <Text className="items-center justify-center px-12 text-center text-gray-500">
+              <View className="">
+                <Text className="items-center justify-center bg-pink-100  text-center text-gray-500">
                   You haven't added any friends yet. Use the search bar to find
                   your friends.
                 </Text>

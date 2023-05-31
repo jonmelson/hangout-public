@@ -6,6 +6,7 @@ import {
   Linking,
   Share,
   Alert,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -74,11 +75,26 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
     setIsGoing(false);
   };
 
-  const handleMapsPress = () => {
+  const handleMapsPress = async () => {
     const location = encodeURIComponent(address);
-    Linking.openURL(
-      `https://www.google.com/maps/search/?api=1&query=${location}`,
+    const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${location}`;
+    const appleMapsLink = googleMapsLink.replace(
+      'https://www.google.com/maps/search/?api=1&query=',
+      `http://maps.apple.com/?q=`,
     );
+
+    try {
+      const supported = await Linking.canOpenURL(appleMapsLink);
+
+      if (supported) {
+        await Linking.openURL(appleMapsLink);
+      } else {
+        Linking.openURL(googleMapsLink);
+        console.log('Apple Maps is not supported on this device.');
+      }
+    } catch (error) {
+      console.error('An error occurred while opening Apple Maps:', error);
+    }
   };
 
   const showAlert = () => {
@@ -243,9 +259,11 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
             </View>
           )}
 
-          <View>
-            <Text className="text-sm text-gray-500">{details}</Text>
-          </View>
+          {details != '' && (
+            <View>
+              <Text className="text-sm text-gray-500">{details}</Text>
+            </View>
+          )}
 
           {sessionId !== user_id ? (
             <View>
@@ -276,7 +294,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
                     padding: 1,
                   }}
                   className="w-full rounded-full">
-                  <View className="flex flex-row items-center justify-center space-x-2 rounded-full bg-white py-4">
+                  <View className="flex h-12 flex-row items-center justify-center space-x-2 rounded-full bg-white">
                     <MaskedView
                       maskElement={
                         <Text
@@ -311,8 +329,8 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
                   colors={['#7000FF', '#B174FF']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  className="w-full rounded-full py-4">
-                  <View className="flex flex-row items-center justify-center space-x-2">
+                  className="w-full rounded-full">
+                  <View className="flex h-12 flex-row items-center justify-center space-x-2">
                     <ExportSquareIcon color="#FFF" />
                     <Text
                       style={{
@@ -330,24 +348,27 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
         </View>
       </View>
 
-      <View className="h-36 items-center justify-center">
-        <MapView
-          className="h-full w-full"
-          initialRegion={{
-            latitude: location[0].geometry.lat,
-            longitude: location[0].geometry.lng,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-          mapType="mutedStandard"
-          scrollEnabled={false}>
-          <Marker
-            coordinate={{
+      <View className="h-[175px] items-center justify-center">
+        <TouchableWithoutFeedback onPress={handleMapsPress}>
+          <MapView
+            className="h-full w-full"
+            initialRegion={{
               latitude: location[0].geometry.lat,
               longitude: location[0].geometry.lng,
+              latitudeDelta: 0.00922,
+              longitudeDelta: 0.00421,
             }}
-          />
-        </MapView>
+            mapType="mutedStandard"
+            scrollEnabled={false}
+            zoomEnabled={false}>
+            <Marker
+              coordinate={{
+                latitude: location[0].geometry.lat,
+                longitude: location[0].geometry.lng,
+              }}
+            />
+          </MapView>
+        </TouchableWithoutFeedback>
       </View>
 
       <View className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white px-4">

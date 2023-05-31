@@ -160,18 +160,23 @@ const EditProfile = ({
 
   useEffect(() => {
     navigation.setOptions({
-      title: 'Edit Profile',
       headerShadowVisible: false,
+      headerTitle: () => (
+        <View>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
+            Edit Profile
+          </Text>
+        </View>
+      ),
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
-          <Text>Cancel</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ProfileScreen')}
+          className="py-2 pr-4">
+          <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
+            Cancel
+          </Text>
         </TouchableOpacity>
       ),
-      // headerRight: () => (
-      //   <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
-      //     <Text className="text-blue-500">Save</Text>
-      //   </TouchableOpacity>
-      // ),
     });
   }, [navigation, sessionId]);
 

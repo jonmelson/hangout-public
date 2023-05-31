@@ -13,7 +13,7 @@ const AvatarGroup = (props: AvatarIconGroupProps) => {
   if (users.length > 2) {
     badge = (
       <View style={styles.badge}>
-        <Text className="text-xs font-bold text-black">
+        <Text className="text-xs text-black">
           {'+'}
           {users.length - 2}
         </Text>
@@ -34,18 +34,16 @@ const AvatarGroup = (props: AvatarIconGroupProps) => {
   const maxAvatars = sortedUsers.length > 1 ? 2 : 1;
 
   return (
-    <View className="flex flex-row items-center justify-center">
+    <View
+      className={`relative flex w-20 flex-1 justify-center ${
+        sortedUsers.length > 1 ? 'items-start' : 'items-center'
+      }`}>
       {sortedUsers.slice(0, maxAvatars).map((user, index) => (
         <Avatar
           key={index}
           name={user.first_name + ' ' + user.last_name}
           style={[
-            styles.avatar,
-            {
-              zIndex: maxAvatars - index,
-              marginLeft: -48 * index,
-              marginTop: -32 * index,
-            },
+            index === 0 ? styles.foregroundStyle : styles.backgroundStyle,
           ]}
           source={user.avatar}
           size={70}
@@ -57,24 +55,32 @@ const AvatarGroup = (props: AvatarIconGroupProps) => {
 };
 
 const styles = StyleSheet.create({
-  avatar: {
-    borderWidth: 4,
-    borderColor: '#fff',
-    position: 'relative',
-  },
   badge: {
     position: 'absolute',
-    bottom: 5,
-    right: 18,
+    bottom: 40,
+    right: -6,
     backgroundColor: 'white',
     borderRadius: 14,
-    width: 32,
+    width: 28,
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'purple',
     zIndex: 10,
+  },
+  foregroundStyle: { 
+    zIndex: 2,
+    borderWidth: 4,
+    borderColor: '#fff',
+  },
+  backgroundStyle: {
+    position: 'absolute',
+    top: 10,
+    left: 20,
+    zIndex: 1,
+    borderWidth: 4,
+    borderColor: '#fff',
   },
 });
 

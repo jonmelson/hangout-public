@@ -50,10 +50,16 @@ const EditTwitter = ({
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({
-      title: 'Add twitter',
+    navigation.setOptions({ 
       headerShown: true,
       headerShadowVisible: false,
+      headerTitle: () => (
+        <View>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
+            Add twitter
+          </Text>
+        </View>
+      ),
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ChevronBackIcon />

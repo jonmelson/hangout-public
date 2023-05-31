@@ -5,7 +5,7 @@ import { TabBarPlus14Icon, ChevronDownIcon } from './Icons';
 
 const BottomCreateIndicator = () => {
   return (
-    <View className="mt-12 flex flex-col items-center justify-center bg-gray-200 pb-2 pt-4">
+    <View className="flex flex-col items-center justify-center bg-gray-200 pb-2 pt-4">
       <View className="flex flex-row items-center justify-center space-x-1">
         <Text
           style={{

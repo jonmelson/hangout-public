@@ -154,14 +154,18 @@ const Profile = ({
       headerShadowVisible: false,
       headerLeft: () => (
         <TouchableOpacity
-          className="flex flex-row items-center space-x-2"
+          className="flex flex-row items-center space-x-2 py-2 pr-4"
           onPress={() => navigation.goBack()}>
           <ChevronBackIcon />
-          <Text className="font-semibold">{username}</Text>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
+            {username}
+          </Text>
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Settings')}
+          className="py-1 pl-2">
           <View className="items-center">
             <Feather name="menu" color="black" size={25} />
           </View>

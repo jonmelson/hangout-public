@@ -84,12 +84,20 @@ const EditUsername = ({
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({
-      title: 'Username',
+    navigation.setOptions({ 
       headerShown: true,
       headerShadowVisible: false,
+      headerTitle: () => (
+        <View>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
+            Username
+          </Text>
+        </View>
+      ),
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="py-2 pr-4">
           <ChevronBackIcon />
         </TouchableOpacity>
       ),

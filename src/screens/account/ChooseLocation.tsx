@@ -39,7 +39,7 @@ const ChooseLocation = ({
       )
         .then(response => response.json())
         .then(data => {
-          // console.log(data);
+          console.log(data);
           setPredictions(data.predictions);
         })
         .catch(error => console.log(error));
@@ -137,11 +137,10 @@ const ChooseLocation = ({
   useEffect(() => {
     navigation.setOptions({
       presentation: 'modal',
-      title: 'Choose location',
       headerShadowVisible: false,
       headerTitle: () => (
         <View className="mt-4">
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#141416' }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
             Choose location
           </Text>
         </View>
@@ -149,7 +148,9 @@ const ChooseLocation = ({
       headerLeft: () => (
         <View className="mt-4">
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text>Cancel</Text>
+            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
+              Cancel
+            </Text>
           </TouchableOpacity>
         </View>
       ),

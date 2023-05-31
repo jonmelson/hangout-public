@@ -142,17 +142,23 @@ const Header = (props: NavigationProps) => {
       <View className="mx-4 mt-16 flex flex-row justify-between ">
         <HangoutBlackLogo />
 
-        <View className="flex flex-row items-center space-x-4">
-          <TouchableOpacity onPress={handleMessagesPress}>
+        <View className="flex flex-row items-center space-x-2 pl-2">
+          <TouchableOpacity
+            onPress={handleMessagesPress}
+            className="px-1">
             <MessagesOutlineIcon color="#333" />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={handleFriendsPress}>
+          <TouchableOpacity
+            onPress={handleFriendsPress}
+            className="px-1">
             {pendingFriendRequests > 0 && badge}
             <UserSquareIcon />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={handleAvatarPress}>
+          <TouchableOpacity
+            onPress={handleAvatarPress}
+            className="px-1">
             <Avatar source={avatarUrl} name={fullName} size={24} />
           </TouchableOpacity>
         </View>

@@ -33,7 +33,7 @@ export const userNameSchema = yup.object().shape({
 
 export const shareSchema = yup.object().shape({
   title: yup.string().required(),
-  details: yup.string().required(),
+  details: yup.string(),
   address: yup.string().required(),
   startDate: yup.string().required(),
   endDate: yup.string().required(),

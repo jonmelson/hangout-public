@@ -302,11 +302,13 @@ const PublicProfile = ({
           className="flex flex-row items-center space-x-2"
           onPress={() => navigation.goBack()}>
           <ChevronBackIcon />
-          <Text className="font-semibold">{username}</Text>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
+            {username}
+          </Text>
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={onPress} className='py-2 pl-4'>
           <MoreIcon />
         </TouchableOpacity>
       ),

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 
 import GoingButton from './GoingButton';
+import Avatar from './Avatar';
 import AvatarIconGroup from './AvatarGroup';
 import { ClockIcon, CalendarIcon } from './Icons';
 
@@ -146,14 +147,17 @@ const Event = (props: EventProps) => {
             sessionId: sessionId,
           })
         }>
-        <View className="mx-4 flex flex-row items-center  justify-between">
+        <View
+          className={`mx-4 flex flex-row ${
+            sessionId !== user_id || going.length > 1 ? 'items-center' : ''
+          }`}>
           {/* Icon */}
-          <View style={{ width: '30%' }}>
+          <View className="justify-center items-center">
             <AvatarIconGroup userId={user_id} users={going} />
           </View>
 
           {/* Info */}
-          <View style={{ width: '70%' }} className="flex  flex-col">
+          <View className="ml-5 flex flex-1 flex-col justify-center ">
             <View>
               <Text className="text-lg ">{title}</Text>
             </View>
@@ -168,14 +172,14 @@ const Event = (props: EventProps) => {
             </View>
 
             <View className="mt-1 flex flex-row items-center space-x-2">
-              <View className="flex flex-row items-center space-x-1">
+              <View className="flex flex-row items-center space-x-2">
                 <CalendarIcon />
-                <Text>{newDate}</Text>
+                <Text style={{ fontSize: 14 }}>{newDate}</Text>
               </View>
 
-              <View className="flex flex-row items-center space-x-1">
+              <View className="flex flex-row items-center space-x-2">
                 <ClockIcon />
-                <Text>{newTime}</Text>
+                <Text style={{ fontSize: 14 }}>{newTime}</Text>
               </View>
             </View>
 

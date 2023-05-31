@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, ActivityIndicator } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 
 import { AvatarProps } from '../utils/other';
@@ -13,6 +13,7 @@ const Avatar = (props: AvatarProps) => {
     .map(word => word.charAt(0))
     .join('')
     .toUpperCase();
+
   const fontSize = size * 0.4;
 
   const handleImageLoadStart = () => {
@@ -23,18 +24,15 @@ const Avatar = (props: AvatarProps) => {
     setIsLoading(false);
   };
 
-  // console.log('Avatar');
-  // console.log(source);
-
   return (
     <>
       {source !== '' ? (
         <View
           style={[{ width: size, height: size }, style]}
-          className="items-center justify-center rounded-full ">
+          className="items-center justify-center rounded-full">
           <Image
             source={{ uri: source }}
-            style={[{ width: size, height: size }, style]}
+            style={[styles.avatar, { width: size, height: size }]}
             onLoadStart={handleImageLoadStart}
             onLoad={handleImageLoadEnd}
             className="items-center justify-center rounded-full"
@@ -67,5 +65,13 @@ const Avatar = (props: AvatarProps) => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  avatar: {
+    borderWidth: 4,
+    borderColor: '#fff',
+    position: 'relative',
+  },
+});
 
 export default Avatar;

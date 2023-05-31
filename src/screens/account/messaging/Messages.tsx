@@ -33,12 +33,18 @@ const Messages = ({
 
   useEffect(() => {
     navigation.setOptions({
-      title: 'Messages',
       headerShown: true,
       headerShadowVisible: false,
+      headerTitle: () => (
+        <View>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
+            Messages
+          </Text>
+        </View>
+      ),
       headerLeft: () => (
         <TouchableOpacity
-          className="flex flex-row items-center space-x-2"
+          className="py-2 pr-4"
           onPress={() => navigation.goBack()}>
           <ChevronBackIcon />
         </TouchableOpacity>

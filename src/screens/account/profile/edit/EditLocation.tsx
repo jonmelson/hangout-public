@@ -145,12 +145,11 @@ const EditLocation = ({
 
   useEffect(() => {
     navigation.setOptions({
-      title: 'Choose location',
       presentation: 'modal',
       headerShadowVisible: false,
       headerTitle: () => (
         <View className="mt-4">
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#141416' }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
             Choose location
           </Text>
         </View>
@@ -158,7 +157,9 @@ const EditLocation = ({
       headerLeft: () => (
         <View className="mt-4">
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text>Cancel</Text>
+            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
+              Cancel
+            </Text>
           </TouchableOpacity>
         </View>
       ),

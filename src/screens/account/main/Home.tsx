@@ -5,6 +5,9 @@ import {
   SectionList,
   ActivityIndicator,
   Modal,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import RoquefortText from '../../../components/RoquefortText';
 
@@ -38,52 +41,63 @@ const Home = ({
   const [mergedData, setMergedData] = useState<any>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
+  const handleRefresh = () => {
+    setRefreshing(true);
+
+    // Perform the necessary data fetching or operations here
+    fetchFriends();
+    fetchHangouts();
+    // Once the data fetching or operations are complete, set refreshing to false
+    setRefreshing(false);
+  };
+
+  const fetchFriends = async () => {
+    try {
+      const { data: friendsData, error: friendError } = await supabase
+        .from('friends')
+        .select('friends_id, user_id_1, user_id_2')
+        .or(`user_id_1.eq.${sessionId},user_id_2.eq.${sessionId}`);
+
+      if (!friendError) {
+        const friendsIds = getFriendsMetaData(friendsData, sessionId);
+        setFriends(friendsIds);
+        // console.log(friendsIds);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchHangouts = async () => {
+    try {
+      const friendIds = friends.map((friend: any) => friend.friendId);
+      const userIds = [sessionId, ...friendIds];
+      const { data: hangoutsData, error: hangoutsError } = await supabase
+        .from('hangouts')
+        .select('*')
+        .in('user_id', userIds);
+
+      if (!hangoutsError) {
+        setHangouts(hangoutsData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // Fetch initial data for friends
   useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const { data: friendsData, error: friendError } = await supabase
-          .from('friends')
-          .select('friends_id, user_id_1, user_id_2')
-          .or(`user_id_1.eq.${sessionId},user_id_2.eq.${sessionId}`);
-
-        if (!friendError) {
-          const friendsIds = getFriendsMetaData(friendsData, sessionId);
-          setFriends(friendsIds);
-          // console.log(friendsIds);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     fetchFriends();
   }, []);
 
   // Fetch initial data for hangouts
   useEffect(() => {
-    const fetchHangouts = async () => {
-      try {
-        const friendIds = friends.map((friend: any) => friend.friendId);
-        const userIds = [sessionId, ...friendIds];
-        const { data: hangoutsData, error: hangoutsError } = await supabase
-          .from('hangouts')
-          .select('*')
-          .in('user_id', userIds);
-
-        if (!hangoutsError) {
-          setHangouts(hangoutsData);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     fetchHangouts();
   }, [friends]);
 
@@ -350,47 +364,59 @@ const Home = ({
   return (
     <>
       <Header navigation={navigation} sessionId={sessionId} />
-      {friends && friends.length > 0 ? (
-        <View className="flex-1 bg-white">
-          {sections[0].data.length > 0 || sections[1].data.length > 0 ? (
-            <>
-              {loading ? (
-                <View className="items-center justify-center">
-                  <ActivityIndicator size="large" color="#0000ff" />
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+        className="bg-white">
+        {sections.length > 0 &&
+          friends.length === 0 &&
+          sections[0]?.data?.length === 0 &&
+          sections[1]?.data?.length === 0 && (
+            <View className="flex-1 bg-white">
+              <View className="flex-1 justify-center">
+                <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
+                  <Text
+                    style={{
+                      fontSize: 48,
+                    }}
+                    className="text-center">
+                    🧑🏼👩🏽‍🦱👨🏼‍🦱🧔🏻
+                  </Text>
+                  <RoquefortText
+                    style={{
+                      fontSize: 24,
+                      fontWeight: '500',
+                    }}
+                    className="text-center">
+                    Life's better together!
+                  </RoquefortText>
+                  <Text
+                    style={{ fontSize: 16 }}
+                    className="text-center text-gray-500">
+                    Add your friends to get started
+                  </Text>
                 </View>
-              ) : (
-                <SectionList
-                  sections={sections}
-                  renderSectionHeader={({ section }) => {
-                    if (section.data.length === 0) {
-                      return null;
-                    }
+                <View className="mt-4 px-12">
+                  <GradientButton
+                    onPress={() => navigation.navigate('Friends')}
+                    title="Add friends"
+                    disabled={false}
+                    size={20}
+                    padding={12}
+                  />
+                </View>
+              </View>
 
-                    return (
-                      <View className="bg-white pb-2 pt-4">
-                        <View className="ml-4 border-b border-gray-300">
-                          <Text className="mb-1 text-gray-500">
-                            {section.title}
-                          </Text>
-                        </View>
-                      </View>
-                    );
-                  }}
-                  renderItem={({ item }) => (
-                    <View className="py-2">
-                      <Event
-                        {...item}
-                        sessionId={sessionId}
-                        navigation={navigation}
-                      />
-                    </View>
-                  )}
-                  keyExtractor={(item, index) => index.toString()}
-                />
-              )}
-            </>
-          ) : (
-            <>
+              <BottomCreateIndicator />
+            </View>
+          )}
+
+        {sections.length > 0 &&
+          friends.length > 0 &&
+          sections[0]?.data?.length === 0 &&
+          sections[1]?.data?.length === 0 && (
+            <View className="flex-1 bg-white">
               <View className="flex-1 pt-40">
                 <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
                   <Text
@@ -425,48 +451,51 @@ const Home = ({
                 </View>
               </View>
               <BottomCreateIndicator />
-            </>
+            </View>
           )}
-        </View>
-      ) : (
-        <View className="flex-1 bg-white">
-          <View className="flex-1 pt-40">
-            <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
-              <Text
-                style={{
-                  fontSize: 48,
-                }}
-                className="text-center">
-                🧑🏼👩🏽‍🦱👨🏼‍🦱🧔🏻
-              </Text>
-              <RoquefortText
-                style={{
-                  fontSize: 24,
-                  fontWeight: '500',
-                }}
-                className="text-center">
-                Life's better together!
-              </RoquefortText>
-              <Text
-                style={{ fontSize: 16 }}
-                className="text-center text-gray-500">
-                Add your friends to get started
-              </Text>
-            </View>
-            <View className="mt-4 px-12">
-              <GradientButton
-                onPress={() => navigation.navigate('Friends')}
-                title="Add friends"
-                disabled={false}
-                size={20}
-                padding={12}
-              />
-            </View>
-          </View>
 
-          <BottomCreateIndicator />
-        </View>
-      )}
+        {sections.length > 0 &&
+          friends.length >= 0 &&
+          (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) && (
+            <View className="flex-1 bg-white">
+              {loading ? (
+                <View className="items-center justify-center">
+                  <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+              ) : (
+                <SectionList
+                  sections={sections}
+                  renderSectionHeader={({ section }) => {
+                    if (section.data.length === 0) {
+                      return null;
+                    }
+
+                    return (
+                      <View className="bg-white pt-4">
+                        <View className="ml-4 border-b border-gray-300">
+                          <Text className="mb-1 text-gray-500">
+                            {section.title}
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  }}
+                  renderItem={({ item }) => (
+                    <View className="py-2">
+                      <Event
+                        {...item}
+                        sessionId={sessionId}
+                        navigation={navigation}
+                      />
+                    </View>
+                  )}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              )}
+            </View>
+          )}
+      </ScrollView>
+
       <Modal
         visible={modalVisible} // Set the visibility based on the state
         animationType="slide"
