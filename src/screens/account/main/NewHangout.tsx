@@ -22,17 +22,18 @@ import {
 
 import { shareSchema } from '../../../utils/schemas';
 
-interface LocationMetaData {
+type Location = {
+  latitude?: number;
+  longitude?: number;
+};
+
+type LocationMetaData = {
+  title?: string;
   address?: string;
   geometry?: {
     location?: Location;
   };
-}
-
-interface Location {
-  latitude?: number;
-  longitude?: number;
-}
+};
 
 const NewHangout = ({
   navigation,
@@ -40,7 +41,10 @@ const NewHangout = ({
 }: {
   navigation: any;
   route?: {
-    params?: { sessionId?: string; locationMetaData?: LocationMetaData[] };
+    params?: {
+      locationMetaData?: LocationMetaData[];
+      sessionId?: string;
+    };
   };
 }) => {
   const { locationMetaData, sessionId } = route?.params ?? {};
@@ -82,7 +86,7 @@ const NewHangout = ({
   const handleStartDateChange = (
     event: DateTimePickerEvent,
     selectedDate?: Date,
-  ) => { 
+  ) => {
     if (selectedDate) {
       setStartDate(selectedDate);
       // set end date to one hour after start date
@@ -188,8 +192,8 @@ const NewHangout = ({
 
     setFormattedEndTime(fEndTime);
 
-    navigation.setOptions({ 
-      headerShadowVisible: false, 
+    navigation.setOptions({
+      headerShadowVisible: false,
       headerTitle: () => (
         <View className="mt-4">
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
@@ -199,7 +203,7 @@ const NewHangout = ({
       ),
       headerLeft: () => (
         <View className="mt-4">
-          <TouchableOpacity onPress={handleBackPress} className='py-2 pr-4'>
+          <TouchableOpacity onPress={handleBackPress} className="py-2 pr-4">
             <ChevronBackIcon />
           </TouchableOpacity>
         </View>

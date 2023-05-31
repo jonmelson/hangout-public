@@ -17,7 +17,7 @@ const GoingButton = (props: GoingButtonProps) => {
           colors={['#7000FF', '#B174FF']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="w-full rounded-full py-3">
+          className="h-12 w-full items-center justify-center rounded-full">
           <View className="flex flex-row items-center justify-center space-x-2">
             <TabBarGoingIcon name="going-outline" color="white" />
             <Text style={{ fontSize: 20, color: 'white', fontWeight: '500' }}>
@@ -37,7 +37,7 @@ const GoingButton = (props: GoingButtonProps) => {
           }}
           className="w-full rounded-full">
           <View
-            className="flex flex-row items-center justify-center space-x-2 py-3"
+            className="flex h-12 flex-row items-center justify-center space-x-2"
             style={{
               borderRadius: 100,
               backgroundColor: 'white',

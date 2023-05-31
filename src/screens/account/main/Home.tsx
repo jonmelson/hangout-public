@@ -364,137 +364,138 @@ const Home = ({
   return (
     <>
       <Header navigation={navigation} sessionId={sessionId} />
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-        className="bg-white">
-        {sections.length > 0 &&
-          friends.length === 0 &&
-          sections[0]?.data?.length === 0 &&
-          sections[1]?.data?.length === 0 && (
-            <View className="flex-1 bg-white">
-              <View className="flex-1 justify-center">
-                <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
-                  <Text
-                    style={{
-                      fontSize: 48,
-                    }}
-                    className="text-center">
-                    🧑🏼👩🏽‍🦱👨🏼‍🦱🧔🏻
-                  </Text>
-                  <RoquefortText
-                    style={{
-                      fontSize: 24,
-                      fontWeight: '500',
-                    }}
-                    className="text-center">
-                    Life's better together!
-                  </RoquefortText>
-                  <Text
-                    style={{ fontSize: 16 }}
-                    className="text-center text-gray-500">
-                    Add your friends to get started
-                  </Text>
-                </View>
-                <View className="mt-4 px-12">
-                  <GradientButton
-                    onPress={() => navigation.navigate('Friends')}
-                    title="Add friends"
-                    disabled={false}
-                    size={20}
-                    padding={12}
-                  />
-                </View>
-              </View>
 
-              <BottomCreateIndicator />
-            </View>
-          )}
-
-        {sections.length > 0 &&
-          friends.length > 0 &&
-          sections[0]?.data?.length === 0 &&
-          sections[1]?.data?.length === 0 && (
-            <View className="flex-1 bg-white">
-              <View className="flex-1 pt-40">
-                <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
-                  <Text
-                    style={{
-                      fontSize: 48,
-                    }}
-                    className="text-center">
-                    🏄‍♂️️
-                  </Text>
-                  <RoquefortText
-                    style={{
-                      fontSize: 24,
-                      fontWeight: '500',
-                    }}
-                    className="text-center">
-                    Let's do something!
-                  </RoquefortText>
-                  <Text
-                    style={{ fontSize: 16 }}
-                    className="text-center text-gray-500">
-                    Nothing upcoming... Create a new hangout to get started
-                  </Text>
-                </View>
-                <View className="mt-4 px-12">
-                  <GradientButton
-                    onPress={() => navigation.navigate('NewHangoutStackTemp')}
-                    disabled={false}
-                    title="New hangout"
-                    size={20}
-                    padding={12}
-                  />
-                </View>
-              </View>
-              <BottomCreateIndicator />
-            </View>
-          )}
-
-        {sections.length > 0 &&
-          friends.length >= 0 &&
-          (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) && (
-            <View className="flex-1 bg-white">
-              {loading ? (
-                <View className="items-center justify-center">
-                  <ActivityIndicator size="large" color="#0000ff" />
-                </View>
-              ) : (
-                <SectionList
-                  sections={sections}
-                  renderSectionHeader={({ section }) => {
-                    if (section.data.length === 0) {
-                      return null;
-                    }
-
-                    return (
-                      <View className="bg-white pt-4">
-                        <View className="ml-4 border-b border-gray-300">
-                          <Text className="mb-1 text-gray-500">
-                            {section.title}
-                          </Text>
-                        </View>
-                      </View>
-                    );
+      {sections.length > 0 &&
+        friends.length === 0 &&
+        sections[0]?.data?.length === 0 &&
+        sections[1]?.data?.length === 0 && (
+          <View className="flex-1 bg-white">
+            <View className="flex-1 justify-center">
+              <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
+                <Text
+                  style={{
+                    fontSize: 48,
                   }}
-                  renderItem={({ item }) => (
-                    <View className="py-2">
-                      <Event
-                        {...item}
-                        sessionId={sessionId}
-                        navigation={navigation}
-                      />
-                    </View>
-                  )}
-                  keyExtractor={(item, index) => index.toString()}
+                  className="text-center">
+                  🧑🏼👩🏽‍🦱👨🏼‍🦱🧔🏻
+                </Text>
+                <RoquefortText
+                  style={{
+                    fontSize: 24,
+                    fontWeight: '500',
+                  }}
+                  className="text-center">
+                  Life's better together!
+                </RoquefortText>
+                <Text
+                  style={{ fontSize: 16 }}
+                  className="text-center text-gray-500">
+                  Add your friends to get started
+                </Text>
+              </View>
+              <View className="mt-4 px-12">
+                <GradientButton
+                  onPress={() => navigation.navigate('Friends')}
+                  title="Add friends"
+                  disabled={false}
+                  size={20}
+                  padding={12}
                 />
-              )}
+              </View>
             </View>
-          )}
-      </ScrollView>
+
+            <BottomCreateIndicator />
+          </View>
+        )}
+
+      {sections.length > 0 &&
+        friends.length > 0 &&
+        sections[0]?.data?.length === 0 &&
+        sections[1]?.data?.length === 0 && (
+          <View className="flex-1 bg-white">
+            <View className="flex-1 pt-40">
+              <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
+                <Text
+                  style={{
+                    fontSize: 48,
+                  }}
+                  className="text-center">
+                  🏄‍♂️️
+                </Text>
+                <RoquefortText
+                  style={{
+                    fontSize: 24,
+                    fontWeight: '500',
+                  }}
+                  className="text-center">
+                  Let's do something!
+                </RoquefortText>
+                <Text
+                  style={{ fontSize: 16 }}
+                  className="text-center text-gray-500">
+                  Nothing upcoming... Create a new hangout to get started
+                </Text>
+              </View>
+              <View className="mt-4 px-12">
+                <GradientButton
+                  onPress={() => navigation.navigate('NewHangoutStackTemp')}
+                  disabled={false}
+                  title="New hangout"
+                  size={20}
+                  padding={12}
+                />
+              </View>
+            </View>
+            <BottomCreateIndicator />
+          </View>
+        )}
+
+      {sections.length > 0 &&
+        friends.length >= 0 &&
+        (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) && (
+          <View className="flex-1 bg-white">
+            {loading ? (
+              <View className="items-center justify-center">
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            ) : (
+              <SectionList
+                sections={sections}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
+                renderSectionHeader={({ section }) => {
+                  if (section.data.length === 0) {
+                    return null;
+                  }
+
+                  return (
+                    <View className="bg-white pt-4">
+                      <View className="ml-4 border-b border-gray-300">
+                        <Text className="mb-1 text-gray-500">
+                          {section.title}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                }}
+                renderItem={({ item }) => (
+                  <View className="py-2">
+                    <Event
+                      {...item}
+                      sessionId={sessionId}
+                      navigation={navigation}
+                    />
+                  </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            )}
+          </View>
+        )}
 
       <Modal
         visible={modalVisible} // Set the visibility based on the state

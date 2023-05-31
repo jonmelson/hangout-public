@@ -221,22 +221,30 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
               <View className="flex flex-col space-y-1">
                 <View className="flex flex-row space-x-2">
                   <CalendarIcon />
-                  <Text>{newDate[0].date}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '500' }}>
+                    {newDate[0].date}
+                  </Text>
                 </View>
                 <View className="flex flex-row space-x-2">
                   <ClockIcon />
-                  <Text>{newTime[0].time}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '500' }}>
+                    {newTime[0].time}
+                  </Text>
                 </View>
               </View>
               <ArrowRightIcon />
               <View className="flex flex-col space-y-1">
                 <View className="flex flex-row space-x-2">
                   <CalendarIcon />
-                  <Text>{newDate[1].date}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '500' }}>
+                    {newDate[1].date}
+                  </Text>
                 </View>
                 <View className="flex flex-row space-x-2">
                   <ClockIcon />
-                  <Text>{newTime[1].time}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '500' }}>
+                    {newTime[1].time}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -246,14 +254,20 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
             <View className="flex flex-col space-y-1">
               <View className="flex flex-row space-x-2">
                 <CalendarIcon />
-                <Text>{newDate[0].date}</Text>
+                <Text style={{ fontSize: 16, fontWeight: '500' }}>
+                  {newDate[0].date}
+                </Text>
               </View>
               <View className="flex flex-row items-center space-x-2">
                 <ClockIcon />
                 <View className="flex flex-row items-center space-x-1">
-                  <Text>{newTime[0].time}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '500' }}>
+                    {newTime[0].time}
+                  </Text>
                   <ArrowRightIcon />
-                  <Text>{newTime[1].time}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '500' }}>
+                    {newTime[1].time}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -261,7 +275,10 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
 
           {details != '' && (
             <View>
-              <Text className="text-sm text-gray-500">{details}</Text>
+              <Text
+                style={{ fontSize: 14, fontWeight: '400', color: '#808080' }}>
+                {details}
+              </Text>
             </View>
           )}
 
@@ -355,8 +372,8 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
             initialRegion={{
               latitude: location[0].geometry.lat,
               longitude: location[0].geometry.lng,
-              latitudeDelta: 0.00922,
-              longitudeDelta: 0.00421,
+              latitudeDelta: 0.003,
+              longitudeDelta: 0.003,
             }}
             mapType="mutedStandard"
             scrollEnabled={false}
@@ -371,17 +388,37 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
         </TouchableWithoutFeedback>
       </View>
 
-      <View className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white px-4">
+      <View className="flex flex-row items-center justify-between rounded-2xl bg-white p-4">
         <View className="w-3/5">
-          <Text>{location[0].address}</Text>
+          {location[0].address.includes(location[0].title) ? (
+            <>
+              <Text
+                style={{ fontSize: 16, fontWeight: '600' }}
+                className="mb-1">
+                {location[0].address}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text
+                style={{ fontSize: 16, fontWeight: '600' }}
+                className="mb-1">
+                {location[0].title}
+              </Text>
+              <Text
+                style={{ fontSize: 14, fontWeight: '400', color: '#808080' }}>
+                {location[0].address}
+              </Text>
+            </>
+          )}
         </View>
 
-        <TouchableOpacity className="w-2/5" onPress={handleMapsPress}>
+        <TouchableOpacity className="w-36" onPress={handleMapsPress}>
           <LinearGradient
             colors={['#7000FF', '#B174FF']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            className="w-full rounded-full py-3">
+            className="h-12 w-full items-center justify-center rounded-full">
             <View className="flex flex-row items-center justify-center space-x-2">
               <DirectionsIcon />
               <Text style={{ fontSize: 14, color: 'white', fontWeight: '400' }}>

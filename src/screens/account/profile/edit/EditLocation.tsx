@@ -7,6 +7,7 @@ import SearchBar from '../../../../components/SearchBar';
 import { Location24Icon } from '../../../../components/Icons';
 
 import { GOOGLE_MAPS_API_KEY } from '@env';
+import GoogleIcon from '../../../../components/icons/google/GoogleIcon';
 
 import * as Location from 'expo-location';
 
@@ -122,9 +123,7 @@ const EditLocation = ({
       return (
         <View className="mr-1 mt-3 flex flex-row items-center justify-end">
           <Text>powered by </Text>
-          <Image
-            source={require('../../../../../assets/images/google/google_on_white.png')}
-          />
+          <GoogleIcon />
         </View>
       );
     } else {
