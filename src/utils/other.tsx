@@ -17,7 +17,6 @@ export type GradientButtonProps = {
   onPress: () => void;
   title?: string;
   size: number;
-  padding: number;
   disabled?: boolean;
   iconName?: string;
   iconSize?: number;
@@ -28,7 +27,6 @@ export type ButtonProps = {
   onPress: () => void;
   title?: string;
   size: number;
-  padding: number;
 };
 
 export interface User {

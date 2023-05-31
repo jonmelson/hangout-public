@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Alert, TouchableOpacity } from 'react-native';
+import {
+  Text,
+  View,
+  Alert,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+  ActivityIndicator,
+} from 'react-native';
 
-import Button from '../../components/Button';
 import Avatar from '../../components/Avatar';
 import GradientButton from '../../components/GradientButton';
 
@@ -9,11 +16,13 @@ import { AddPhotoIcon, ChevronBackIcon } from '../../components/Icons';
 
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
-// import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 import { supabase } from '../../lib/supabase';
 
 import { User2 } from '../../utils/other';
+
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ProfileImage = ({
   navigation,
@@ -23,10 +32,24 @@ const ProfileImage = ({
   route: any;
 }) => {
   const { sessionId } = route.params ?? {};
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    // Perform your refresh action here
+    // You can update the state or make an API call
+    getProfile();
+    // Once the refresh is complete, set refreshing to false
+    setRefreshing(false);
+  };
+
   const fullName = firstName + ' ' + lastName;
+
+  const insets = useSafeAreaInsets();
 
   const { showActionSheetWithOptions } = useActionSheet();
 
@@ -40,6 +63,7 @@ const ProfileImage = ({
 
     if (!result.canceled) {
       const input = result.assets[0];
+      console.log(input);
       uploadImage(input);
     }
   };
@@ -59,6 +83,7 @@ const ProfileImage = ({
 
   const uploadImage = async (result: any) => {
     try {
+      setIsLoading(true);
       const path = sessionId + '/avatar.png';
       const file = {
         uri: result.uri,
@@ -82,26 +107,33 @@ const ProfileImage = ({
       // Replace existing file
       if (fileList && fileList.length > 0) {
         const { data: updateImage, error: updateImageError } =
-          await supabase.storage.from('avatars').update(path, file, {
-            cacheControl: '3600',
-            upsert: true,
-          });
+          await supabase.storage.from('avatars').update(path, file);
 
         if (updateImageError) {
           console.log(updateImageError);
         } else {
           console.log('Image updated successfully!');
-        }
+          let imagePath = updateImage.path;
+          let imageMetadata = await supabase.storage
+            .from('avatars')
+            .getPublicUrl(imagePath, {
+              transform: {
+                width: 100,
+                height: 100,
+                resize: 'fill',
+              },
+            });
 
-        const { data: updateUser, error: updateUserError } = await supabase
-          .from('users')
-          .update({ avatar: updateImage?.path })
-          .eq('id', sessionId);
+          let updateUserAvatar = await supabase
+            .from('users')
+            .update({ avatar: imageMetadata.data.publicUrl })
+            .eq('id', sessionId);
 
-        if (updateUserError) {
-          console.log(updateUserError);
-        } else {
-          console.log('Avatar updated successfully');
+          if (updateUserAvatar.error) {
+            console.log('Error updating user avatar:', updateUserAvatar.error);
+          } else {
+            setAvatarUrl(imageMetadata.data.publicUrl);
+          }
         }
       }
 
@@ -115,43 +147,33 @@ const ProfileImage = ({
           console.log(imageError);
         } else {
           console.log('Image uploaded successfully!');
-        }
-        const { data: user, error: userError } = await supabase
-          .from('users')
-          .update({ avatar: image?.path })
-          .eq('id', sessionId);
-        if (userError) {
-          console.log(userError);
-        } else {
+          let imagePath = image?.path;
+          let imageMetadata = await supabase.storage
+            .from('avatars')
+            .getPublicUrl(imagePath, {
+              transform: {
+                width: 100,
+                height: 100,
+                resize: 'fill',
+              },
+            });
+
+          let updateUserAvatar = await supabase
+            .from('users')
+            .update({ avatar: imageMetadata.data.publicUrl })
+            .eq('id', sessionId);
+
           console.log('Avatar updated successfully');
+          setAvatarUrl(imageMetadata.data.publicUrl);
         }
       }
+
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error('Error uploading image:', error);
     }
   };
-
-  // async function downloadImage(path: string) {
-  //   try {
-  //     const { data, error } = await supabase.storage
-  //       .from('avatars')
-  //       .download(path);
-
-  //     if (error) {
-  //       throw error;
-  //     }
-
-  //     const fr = new FileReader();
-  //     fr.readAsDataURL(data);
-  //     fr.onload = () => {
-  //       setAvatarUrl(fr.result as string);
-  //     };
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       console.log('Error downloading image: ', error.message);
-  //     }
-  //   }
-  // }
 
   const onPress = () => {
     const options = ['Take new photo', 'Select photo', 'Cancel'];
@@ -167,16 +189,12 @@ const ProfileImage = ({
         switch (selectedIndex) {
           case 0:
             // Take new photo
-
             takePhoto();
-
             break;
           case 1:
             // Select photo
-
             pickImage();
             break;
-
           case cancelButtonIndex:
             // Canceled
             console.log('Cancel');
@@ -206,28 +224,22 @@ const ProfileImage = ({
       .eq('id', sessionId);
   }
 
-  // useEffect(() => {
-  //   if (avatarPath) {
-  //     downloadImage(avatarPath);
-  //   }
-  // }, [avatarPath]);
+  const getProfile = async () => {
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', sessionId);
+
+    if (userError) {
+      console.error(userError);
+    } else {
+      setFirstName(userData?.[0]?.first_name);
+      setLastName(userData?.[0]?.last_name);
+      setAvatarUrl(userData[0].avatar);
+    }
+  };
 
   useEffect(() => {
-    const getProfile = async () => {
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', sessionId);
-
-      if (userError) {
-        console.error(userError);
-      } else {
-        setFirstName(userData?.[0]?.first_name);
-        setLastName(userData?.[0]?.last_name);
-        setAvatarUrl(userData[0].avatar);
-      }
-    };
-
     getProfile();
   }, []);
 
@@ -270,52 +282,75 @@ const ProfileImage = ({
       headerTransparent: true,
       headerLeft: () => (
         <TouchableOpacity
-          className="flex flex-row items-center space-x-2"
+          className="flex flex-row items-center space-x-2 py-2 pr-4"
           onPress={() => navigation.goBack()}>
           <ChevronBackIcon />
-          <Text className="font-semibold">Back</Text>
+          <Text style={{ fontSize: 16, fontWeight: '600' }}>Back</Text>
         </TouchableOpacity>
       ),
     });
   }, [navigation]);
 
   return (
-    <View className="flex-1 justify-around bg-white">
-      <View className="mx-4 mt-4">
-        <Text className="text-center text-lg font-medium">Add a photo</Text>
-        <Text className="text-center text-gray-500">
-          Upload a photo of yourself. You can change this at anytime.
-        </Text>
-      </View>
-      <View className="mx-4 items-center">
-        {avatarUrl ? (
-          <TouchableOpacity onPress={onPress}>
-            <Avatar source={avatarUrl} name={fullName} size={200} />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+        backgroundColor: 'white',
+      }}>
+      <ScrollView
+        contentContainerStyle={{ justifyContent: 'space-between', flex: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }>
+        <View className="mx-4 mt-10">
+          <Text className="text-center text-lg font-medium">Add a photo</Text>
+          <Text className="text-center text-gray-500">
+            Upload a photo of yourself. You can change this at anytime.
+          </Text>
+        </View>
+        <View className="mx-4 items-center">
+          {isLoading ? (
+            <ActivityIndicator color="purple" size="small" />
+          ) : avatarUrl ? (
+            <TouchableOpacity onPress={onPress}>
+              <Avatar source={avatarUrl} name={fullName} size={200} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={onPress}>
+              <AddPhotoIcon />
+            </TouchableOpacity>
+          )}
+        </View>
+        <View className="mx-4 flex flex-col space-y-4">
+          <GradientButton
+            onPress={() => handleNextPress()}
+            title="Next"
+            disabled={false}
+            size={16}
+            iconName="arrow-forward"
+            iconSize={20}
+            iconColor="white"
+          />
+
+          <TouchableOpacity onPress={() => handleSkipPress()}>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '400',
+                textAlign: 'center',
+                color: 'black',
+              }}>
+              Skip
+            </Text>
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={onPress}>
-            <AddPhotoIcon />
-          </TouchableOpacity>
-        )}
-      </View>
-      <View className="mx-4">
-        <GradientButton
-          onPress={() => handleNextPress()}
-          title="Next"
-          disabled={false}
-          size={16}
-          padding={10}
-          iconName="arrow-forward"
-          iconSize={20}
-          iconColor="white"
-        />
-        <Button
-          onPress={() => handleSkipPress()}
-          title="Skip"
-          size={16}
-          padding={10}
-        />
-      </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };

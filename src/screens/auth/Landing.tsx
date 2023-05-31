@@ -1,11 +1,11 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
+
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { useFonts } from 'expo-font';
 
-import Button from '../../components/Button';
 import GradientText from '../../components/GradientText';
-import GradientButton from '../../components/GradientButton';
 
 import HangoutGradientLogo from '../../components/icons/HangoutGradientLogo';
 
@@ -18,7 +18,7 @@ const Landing = (props: NavigationProps) => {
   const insets = useSafeAreaInsets();
 
   const [fontsLoaded] = useFonts({
-    'Roquefort-Standard': require('../../../assets/fonts/Roquefort/Roquefort-Standard.otf'),
+    'Roquefort-Strong': require('../../../assets/fonts/Roquefort/Roquefort-Strong.otf'),
   });
 
   if (!fontsLoaded) {
@@ -31,41 +31,68 @@ const Landing = (props: NavigationProps) => {
         flex: 1,
         justifyContent: 'space-around',
         alignItems: 'center',
-
-        // Paddings to handle safe area
         paddingTop: insets.top,
         paddingBottom: insets.bottom,
         paddingLeft: insets.left,
         paddingRight: insets.right,
       }}>
       <View className="mx-6 flex-1 justify-between">
-        <View className="mt-4 items-center">
+        <View className="mt-8 items-center">
           <HangoutGradientLogo />
         </View>
 
-        <GradientText
-          text="Real Friends, Real Life."
-          style={{ fontFamily: 'Roquefort-Standard', fontSize: 72 }}
-        />
+        <View className="mx-4">
+          <GradientText
+            text="Real Friends, Real Life."
+            style={{
+              fontFamily: 'Roquefort-Strong',
+              fontSize: 75,
+              fontWeight: 'bold',
+            }}
+          />
+        </View>
 
-        <View className="px-12">
-          <GradientButton
+        <View className="mb-4 px-12">
+          <TouchableOpacity
             onPress={() => {
               navigation.navigate('SignUpAuth');
             }}
-            title="Sign Up"
-            size={20}
-            padding={16}
-            disabled={false}
-          />
-          <Button
+            className="mb-4">
+            <LinearGradient
+              colors={['#7000FF', '#B174FF']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              className="h-[58px] w-full items-center justify-center rounded-full">
+              <View className="flex flex-row items-center justify-center space-x-1">
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: '500',
+                      textAlign: 'center',
+                      color: 'white',
+                    }}>
+                    Sign Up
+                  </Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             onPress={() => {
               navigation.navigate('LoginAuth');
-            }}
-            title="Login"
-            size={20}
-            padding={16}
-          />
+            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '500',
+                textAlign: 'center',
+                color: 'black',
+              }}>
+              Login
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

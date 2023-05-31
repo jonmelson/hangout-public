@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import Avatar from './Avatar';
+import HeaderAvatar from './HeaderAvatar';
 import { MessagesOutlineIcon, UserSquareIcon, HangoutBlackLogo } from './Icons';
 import { User2 } from '../utils/other';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -143,23 +143,17 @@ const Header = (props: NavigationProps) => {
         <HangoutBlackLogo />
 
         <View className="flex flex-row items-center space-x-2 pl-2">
-          <TouchableOpacity
-            onPress={handleMessagesPress}
-            className="px-1">
+          <TouchableOpacity onPress={handleMessagesPress} className="px-1">
             <MessagesOutlineIcon color="#333" />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={handleFriendsPress}
-            className="px-1">
+          <TouchableOpacity onPress={handleFriendsPress} className="px-1">
             {pendingFriendRequests > 0 && badge}
             <UserSquareIcon />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={handleAvatarPress}
-            className="px-1">
-            <Avatar source={avatarUrl} name={fullName} size={24} />
+          <TouchableOpacity onPress={handleAvatarPress} className="px-1">
+            <HeaderAvatar source={avatarUrl} name={fullName} size={24} />
           </TouchableOpacity>
         </View>
       </View>

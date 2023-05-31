@@ -67,10 +67,10 @@ const VerifyAuth = ({ navigation, route }: { navigation: any; route: any }) => {
       headerTransparent: true,
       headerLeft: () => (
         <TouchableOpacity
-          className="flex flex-row items-center space-x-2"
+          className="flex flex-row items-center space-x-2 py-2 pr-4"
           onPress={() => navigation.goBack()}>
           <ChevronBackIcon />
-          <Text className="font-semibold">Back</Text>
+          <Text style={{fontSize:16, fontWeight:"600"}}>Back</Text>
         </TouchableOpacity>
       ),
     });
@@ -126,8 +126,7 @@ const VerifyAuth = ({ navigation, route }: { navigation: any; route: any }) => {
               verifyOTP();
             }}
             title="Next"
-            size={16}
-            padding={10}
+            size={16} 
             disabled={!isValid}
             iconName="arrow-forward"
             iconSize={20}

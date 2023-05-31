@@ -371,7 +371,7 @@ const Home = ({
         sections[1]?.data?.length === 0 && (
           <View className="flex-1 bg-white">
             <View className="flex-1 justify-center">
-              <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
+              <View className="mx-12 flex flex-col items-center justify-center space-y-4">
                 <Text
                   style={{
                     fontSize: 48,
@@ -398,8 +398,7 @@ const Home = ({
                   onPress={() => navigation.navigate('Friends')}
                   title="Add friends"
                   disabled={false}
-                  size={20}
-                  padding={12}
+                  size={20} 
                 />
               </View>
             </View>
@@ -413,8 +412,8 @@ const Home = ({
         sections[0]?.data?.length === 0 &&
         sections[1]?.data?.length === 0 && (
           <View className="flex-1 bg-white">
-            <View className="flex-1 pt-40">
-              <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
+            <View className="flex-1 justify-center">
+              <View className="mx-12 flex flex-col items-center justify-center space-y-4">
                 <Text
                   style={{
                     fontSize: 48,
@@ -441,8 +440,7 @@ const Home = ({
                   onPress={() => navigation.navigate('NewHangoutStackTemp')}
                   disabled={false}
                   title="New hangout"
-                  size={20}
-                  padding={12}
+                  size={20} 
                 />
               </View>
             </View>

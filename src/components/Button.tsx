@@ -4,7 +4,7 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import { ButtonProps } from '../utils/other';
 
 const Button = (props: ButtonProps) => {
-  const { onPress, title = 'Save', size = 20, padding = 16 } = props;
+  const { onPress, title = 'Save', size = 20  } = props;
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -12,8 +12,7 @@ const Button = (props: ButtonProps) => {
         style={{
           fontSize: size,
           textAlign: 'center',
-          color: 'black',
-          padding: padding,
+          color: 'black', 
         }}>
         {title}
       </Text>

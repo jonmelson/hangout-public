@@ -380,7 +380,7 @@ const Going = ({
               />
             ) : (
               <View className="flex-1 bg-white">
-                <View className="flex-1 pt-40">
+                <View className="flex-1 justify-center">
                   <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
                     <Text
                       style={{
@@ -404,8 +404,7 @@ const Going = ({
                       onPress={() => navigation.navigate('Home')}
                       title="Explore hangouts"
                       disabled={false}
-                      size={20}
-                      padding={12}
+                      size={20} 
                     />
                   </View>
                 </View>
@@ -433,7 +432,7 @@ const Going = ({
               />
             ) : (
               <View className="flex-1 bg-white">
-                <View className="flex-1 pt-40">
+                <View className="flex-1 justify-center">
                   <View className="mx-12 flex flex-col items-center justify-center space-y-4 ">
                     <Text
                       style={{
@@ -456,8 +455,7 @@ const Going = ({
                       onPress={() => navigation.navigate('NewHangoutStackTemp')}
                       title="New hangout"
                       disabled={false}
-                      size={20}
-                      padding={12}
+                      size={20} 
                     />
                   </View>
                 </View>

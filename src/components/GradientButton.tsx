@@ -11,8 +11,7 @@ const GradientButton = (props: GradientButtonProps) => {
   const {
     onPress,
     title = 'Save',
-    size = 20,
-    padding = 16,
+    size = 20, 
     disabled = true,
     iconName,
     iconSize = 25,
@@ -25,12 +24,10 @@ const GradientButton = (props: GradientButtonProps) => {
         colors={['#7000FF', '#B174FF']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{
-          paddingTop: padding,
-          paddingBottom: padding,
+        style={{ 
           opacity: disabled ? 0.2 : 1,
         }}
-        className="w-full rounded-full ">
+        className="w-full rounded-full h-12 items-center justify-center">
         <View className="flex flex-row items-center justify-center space-x-1">
           <View>
             <Text

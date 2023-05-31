@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 
 import { AvatarProps } from '../utils/other';
 
-const Avatar = (props: AvatarProps) => {
+const HeaderAvatar = (props: AvatarProps) => {
   const { source, name, size = 24, style } = props;
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,7 +32,7 @@ const Avatar = (props: AvatarProps) => {
           className="items-center justify-center rounded-full">
           <Image
             source={{ uri: source }}
-            style={[ { width: size, height: size }]}
+            style={[{ width: size, height: size }]}
             onLoadStart={handleImageLoadStart}
             onLoad={handleImageLoadEnd}
             className="items-center justify-center rounded-full"
@@ -66,12 +66,4 @@ const Avatar = (props: AvatarProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  avatar: {
-    borderWidth: 4,
-    borderColor: '#fff',
-    position: 'relative',
-  },
-});
-
-export default Avatar;
+export default HeaderAvatar;

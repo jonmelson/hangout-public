@@ -60,10 +60,10 @@ const FullName = ({ navigation, route }: { navigation: any; route: any }) => {
       headerTransparent: true,
       headerLeft: () => (
         <TouchableOpacity
-          className="flex flex-row items-center space-x-2"
+          className="flex flex-row items-center space-x-2 py-2 pr-4"
           onPress={handleBackPress}>
           <ChevronBackIcon />
-          <Text className="font-semibold">Back</Text>
+          <Text style={{fontSize:16, fontWeight:"600"}}>Back</Text>
         </TouchableOpacity>
       ),
     });
@@ -108,8 +108,7 @@ const FullName = ({ navigation, route }: { navigation: any; route: any }) => {
             onPress={() => updateUser()}
             title="Next"
             disabled={!isValid}
-            size={16}
-            padding={10}
+            size={16} 
             iconName="arrow-forward"
             iconSize={20}
             iconColor="white"
