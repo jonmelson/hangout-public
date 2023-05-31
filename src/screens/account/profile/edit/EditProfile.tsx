@@ -12,10 +12,11 @@ import {
 import {
   View,
   Text,
-  TouchableOpacity,
+  TouchableHighlight,
   Alert,
   ScrollView,
   Share,
+  TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -339,13 +340,20 @@ const EditProfile = ({
                 new number.
               </Text>
             </View>
-            <View className="flex justify-center">
-              <Text className="text-center text-gray-500 ">
+
+            <View className="flex flex-col">
+              <View className="flex flex-row">
                 <TouchableOpacity onPress={handleContactUsPress}>
                   <Text className="text-blue-600">Click here</Text>
-                </TouchableOpacity>{' '}
-                to send us a message, and we will update this for you.
-              </Text>
+                </TouchableOpacity>
+                <Text className="text-gray-500">
+                  {' '}
+                  to send us a message, and we will update this
+                </Text>
+              </View>
+              <View>
+                <Text className="text-gray-500">for you.</Text>
+              </View>
             </View>
 
             <TouchableOpacity

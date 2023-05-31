@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  Linking,
+} from 'react-native';
 import { Image } from 'expo-image';
 
 import SearchBar from '../../components/SearchBar';
@@ -78,6 +85,27 @@ const ChooseLocation = ({
 
   const handleCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status === 'denied') {
+      Alert.alert(
+        'Location Permission Required',
+        'Please grant location permissions to access your current location. Open app settings to enable location permissions.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              Linking.openSettings();
+            },
+          },
+        ],
+      );
+      return;
+    }
+
     if (status !== 'granted') {
       console.log('Please grant location permissions');
       return;
