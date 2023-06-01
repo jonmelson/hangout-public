@@ -8,6 +8,8 @@ import {
   RefreshControl,
   SafeAreaView,
   ScrollView,
+  useWindowDimensions,
+  StyleSheet,
 } from 'react-native';
 import RoquefortText from '../../../components/RoquefortText';
 
@@ -42,6 +44,7 @@ const Home = ({
   const [sections, setSections] = useState<Section[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const windowDimensions = useWindowDimensions();
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -398,7 +401,7 @@ const Home = ({
                   onPress={() => navigation.navigate('Friends')}
                   title="Add friends"
                   disabled={false}
-                  size={20} 
+                  size={20}
                 />
               </View>
             </View>
@@ -440,7 +443,7 @@ const Home = ({
                   onPress={() => navigation.navigate('NewHangoutStackTemp')}
                   disabled={false}
                   title="New hangout"
-                  size={20} 
+                  size={20}
                 />
               </View>
             </View>
@@ -451,7 +454,10 @@ const Home = ({
       {sections.length > 0 &&
         friends.length >= 0 &&
         (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) && (
-          <View className="flex-1 bg-white">
+          <View
+            className={
+              modalVisible ? 'bg-dark-overlay flex-1' : 'flex-1 bg-white'
+            }>
             {loading ? (
               <View className="items-center justify-center">
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -495,6 +501,15 @@ const Home = ({
           </View>
         )}
 
+      {modalVisible && (
+        <View
+          style={[
+            styles.overlay,
+            { width: windowDimensions.width, height: windowDimensions.height },
+          ]}
+        />
+      )}
+
       <Modal
         visible={modalVisible} // Set the visibility based on the state
         animationType="slide"
@@ -509,5 +524,17 @@ const Home = ({
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 9999,
+  },
+});
 
 export default Home;

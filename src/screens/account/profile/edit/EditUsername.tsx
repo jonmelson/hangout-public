@@ -84,7 +84,7 @@ const EditUsername = ({
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({ 
+    navigation.setOptions({
       headerShown: true,
       headerShadowVisible: false,
       headerTitle: () => (
@@ -103,7 +103,9 @@ const EditUsername = ({
       ),
       headerRight: () => (
         <TouchableOpacity onPress={handleSave} disabled={!isValid}>
-          <Text className={`text-blue-600 ${isValid ? '' : 'opacity-50'}`}>
+          <Text
+            style={{ fontSize: 16, fontWeight: '500' }}
+            className={`text-[#3478F6] ${isValid ? '' : 'opacity-50'}`}>
             Save
           </Text>
         </TouchableOpacity>

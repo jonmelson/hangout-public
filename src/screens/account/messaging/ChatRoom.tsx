@@ -85,7 +85,7 @@ const ChatRoom = ({
       headerShadowVisible: true,
       headerLeft: () => (
         <TouchableOpacity
-          className="flex flex-row items-center space-x-2"
+          className="flex flex-row items-center space-x-2 py-2 pr-4"
           onPress={() => navigation.navigate('Messages')}>
           <ChevronBackIcon />
           <Text className="font-semibold">{currentChannel?.data?.name}</Text>

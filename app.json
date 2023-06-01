@@ -3,7 +3,7 @@
     "name": "hngt",
     "slug": "hangout",
     "scheme": "hangout",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "plugins": [
       [
         "expo-image-picker",
@@ -23,9 +23,13 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "associatedDomains": ["applinks:hangout.social"],
+      "associatedDomains": [
+        "applinks:hangout.social"
+      ],
       "supportsTablet": true,
       "infoPlist": {
         "NSAppTransportSecurity": {
@@ -42,7 +46,8 @@
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.hangoutapp.hangout"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

@@ -212,7 +212,11 @@ const NewHangout = ({
       headerRight: () => (
         <View className="mt-4">
           <TouchableOpacity onPress={handleSharePress} disabled={!isValid}>
-            <Text className={isValid ? 'text-blue-700' : 'text-blue-300'}>
+            <Text
+              style={{ fontSize: 16, fontWeight: '500' }}
+              className={
+                isValid ? 'text-[#3478F6]' : 'text-[#3478F6] opacity-50'
+              }>
               Share
             </Text>
           </TouchableOpacity>

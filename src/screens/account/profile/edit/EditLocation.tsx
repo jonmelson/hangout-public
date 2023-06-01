@@ -155,7 +155,9 @@ const EditLocation = ({
       ),
       headerLeft: () => (
         <View className="mt-4">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            className="py-2 pr-4">
             <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
               Cancel
             </Text>

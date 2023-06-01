@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 
 import { Image } from 'expo-image';
 
@@ -46,9 +53,19 @@ const Profile = ({
   const [twitter, setTwitter] = useState('');
   const [createdAt, setCreatedAt] = useState('');
   const [blurredImage, setBlurredImage] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fullName = firstName + ' ' + lastName;
   const joinedDate = formatDate(createdAt);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+
+    // Perform the necessary data fetching or operations here
+    getProfile();
+    // Once the data fetching or operations are complete, set refreshing to false
+    setRefreshing(false);
+  };
 
   const handleEditPress = () => {
     navigation.navigate('EditProfile');
@@ -176,7 +193,11 @@ const Profile = ({
   }, [navigation, sessionId, username]);
 
   return (
-    <View className="flex-1">
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+      className="flex-1">
       <View className="flex flex-col">
         {avatarUrl !== '' ? (
           <>
@@ -438,7 +459,7 @@ const Profile = ({
           <Text className="text-gray-500">Joined hangout on {joinedDate}</Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

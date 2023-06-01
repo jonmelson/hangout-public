@@ -9,7 +9,7 @@ const DeactivateAccount = (props: NavigationProps) => {
   const { navigation, sessionId } = props;
 
   useEffect(() => {
-    navigation.setOptions({ 
+    navigation.setOptions({
       headerShown: true,
       headerShadowVisible: false,
       headerTitle: () => (
@@ -20,7 +20,9 @@ const DeactivateAccount = (props: NavigationProps) => {
         </View>
       ),
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="py-2 pr-4">
           <ChevronBackIcon />
         </TouchableOpacity>
       ),

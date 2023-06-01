@@ -50,7 +50,7 @@ const EditTwitter = ({
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({ 
+    navigation.setOptions({
       headerShown: true,
       headerShadowVisible: false,
       headerTitle: () => (
@@ -61,14 +61,19 @@ const EditTwitter = ({
         </View>
       ),
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="py-2 pr-4">
           <ChevronBackIcon />
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity onPress={handleSave}>
-          {/* <Text className="text-blue-600">Done</Text> */}
-          <Text className="text-blue-600">Save</Text>
+        <TouchableOpacity onPress={handleSave}> 
+          <Text
+            style={{ fontSize: 16, fontWeight: '500' }}
+            className="text-[#3478F6]">
+            Save
+          </Text>
         </TouchableOpacity>
       ),
     });

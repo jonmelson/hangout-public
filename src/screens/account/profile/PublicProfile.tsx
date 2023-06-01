@@ -4,7 +4,7 @@ import {
   Text,
   TouchableOpacity,
   Alert,
-  ActionSheetIOS,
+  ActionSheetIOS,RefreshControl
 } from 'react-native';
 
 import { Image } from 'expo-image';
@@ -61,7 +61,7 @@ const PublicProfile = ({
   const joinedDate = formatDate(createdAt);
 
   const { startDMChatRoom } = useChatContext();
- 
+
   const onPress = () =>
     ActionSheetIOS.showActionSheetWithOptions(
       {
@@ -299,7 +299,7 @@ const PublicProfile = ({
       headerShadowVisible: false,
       headerLeft: () => (
         <TouchableOpacity
-          className="flex flex-row items-center space-x-2"
+          className="flex flex-row items-center space-x-2 py-2 pr-4"
           onPress={() => navigation.goBack()}>
           <ChevronBackIcon />
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
@@ -308,7 +308,7 @@ const PublicProfile = ({
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity onPress={onPress} className='py-2 pl-4'>
+        <TouchableOpacity onPress={onPress} className="py-2 pl-4">
           <MoreIcon />
         </TouchableOpacity>
       ),
@@ -501,7 +501,7 @@ const PublicProfile = ({
         </View>
         {about !== '' ||
           instagram !== '' ||
-          twitter !== '' && (
+          (twitter !== '' && (
             <View className="flex flex-col space-y-3 rounded-2xl bg-white p-4">
               <Text className="text-xl font-semibold">About</Text>
               {about !== '' && (
@@ -529,7 +529,7 @@ const PublicProfile = ({
                 )}
               </View>
             </View>
-          )}
+          ))}
       </View>
       <View className="mt-12 flex flex-col items-center justify-center space-y-4">
         <View>

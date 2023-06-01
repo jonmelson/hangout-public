@@ -55,7 +55,7 @@ const EditAbout = ({
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({ 
+    navigation.setOptions({
       headerShown: true,
       headerShadowVisible: false,
       headerTitle: () => (
@@ -74,8 +74,11 @@ const EditAbout = ({
       ),
       headerRight: () => (
         <TouchableOpacity onPress={handlePress}>
-          {/* <Text className="text-blue-600">Done</Text> */}
-          <Text className="text-blue-600">Save</Text>
+          <Text
+            style={{ fontSize: 16, fontWeight: '500' }}
+            className="text-[#3478F6]">
+            Save
+          </Text>
         </TouchableOpacity>
       ),
     });

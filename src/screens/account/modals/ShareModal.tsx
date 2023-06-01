@@ -168,8 +168,7 @@ const ShareModal = ({
       style={{
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center', 
       }}>
       <View className="h-62 flex w-5/6 flex-col space-y-3 rounded-2xl  bg-white p-4">
         <View className="flex flex-row justify-end">

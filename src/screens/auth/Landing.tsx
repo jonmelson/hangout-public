@@ -18,7 +18,7 @@ const Landing = (props: NavigationProps) => {
   const insets = useSafeAreaInsets();
 
   const [fontsLoaded] = useFonts({
-    'Roquefort-Strong': require('../../../assets/fonts/Roquefort/Roquefort-Strong.otf'),
+    'Roquefort-Semi-Strong': require('../../../assets/fonts/Roquefort/Roquefort-Semi-Strong.otf'),
   });
 
   if (!fontsLoaded) {
@@ -41,13 +41,12 @@ const Landing = (props: NavigationProps) => {
           <HangoutGradientLogo />
         </View>
 
-        <View className="mx-4">
+        <View >
           <GradientText
             text="Real Friends, Real Life."
             style={{
-              fontFamily: 'Roquefort-Strong',
+              fontFamily: 'Roquefort-Semi-Strong',
               fontSize: 75,
-              fontWeight: 'bold',
             }}
           />
         </View>
