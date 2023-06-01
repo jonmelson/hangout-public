@@ -42,38 +42,38 @@ const ChatContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [chatClient, setChatClient] = useState<StreamChat>();
   const [currentChannel, setCurrentChannel] = useState<Channel>();
 
-  useEffect(() => {
-    const getSession = async () => {
-      try {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
+  const getSession = async () => {
+    try {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
 
-        if (error) {
-          console.log(error);
-        }
-
-        if (session?.user.id) {
-          const { data: user, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session?.user.id);
-
-          if (error) {
-            console.log(error);
-            return null;
-          }
-
-          return user[0]; // Assuming the query returns an array with a single user object
-        }
-      } catch (error) {
+      if (error) {
         console.log(error);
       }
 
-      return null;
-    };
+      if (session?.user.id) {
+        const { data: user, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', session?.user.id);
 
+        if (error) {
+          console.log(error);
+          return null;
+        }
+
+        return user[0]; // Assuming the query returns an array with a single user object
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    return null;
+  };
+
+  useEffect(() => {
     const init = async () => {
       const user = await getSession();
       const client = StreamChat.getInstance(STREAM_API_KEY);
@@ -127,13 +127,11 @@ const ChatContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
- 
-      <OverlayProvider value={{ style: myMessageTheme }}>
-        <Chat client={chatClient}>
-          <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
-        </Chat>
-      </OverlayProvider>
-   
+    <OverlayProvider value={{ style: myMessageTheme }}>
+      <Chat client={chatClient}>
+        <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
+      </Chat>
+    </OverlayProvider>
   );
 };
 

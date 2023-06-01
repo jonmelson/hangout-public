@@ -311,9 +311,14 @@ const Going = ({
           new Date(item.starts).getTime() > today && item.user_id === sessionId,
       );
 
-      const pastHangouts = mergedData.filter(
-        (item: Hangout) => new Date(item.starts).getTime() < today,
-      );
+      const pastHangouts = mergedData
+        .filter((item: Hangout) => {
+          // Assuming `username` is the property of the `item` object
+          return item.going.some(
+            (goingItem: any) => goingItem.id === sessionId,
+          );
+        })
+        .filter((item: Hangout) => new Date(item.starts).getTime() < today);
 
       // Set upcoming
       setUpcomingSections([{ title: 'Upcoming', data: upcomingHangouts }]);
@@ -404,7 +409,7 @@ const Going = ({
                       onPress={() => navigation.navigate('Home')}
                       title="Explore hangouts"
                       disabled={false}
-                      size={20} 
+                      size={20}
                     />
                   </View>
                 </View>
@@ -455,7 +460,7 @@ const Going = ({
                       onPress={() => navigation.navigate('NewHangoutStackTemp')}
                       title="New hangout"
                       disabled={false}
-                      size={20} 
+                      size={20}
                     />
                   </View>
                 </View>

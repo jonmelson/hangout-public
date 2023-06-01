@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Linking,
+  SafeAreaView,
 } from 'react-native';
 
 import { supabase } from '../../lib/supabase';
@@ -16,6 +17,7 @@ import { Feather, EvilIcons, ChevronBackIcon } from '../../components/Icons';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { message } from '../../utils/utils';
 
@@ -34,6 +36,7 @@ const Friends = ({
 
   const [results, setResults] = useState<any>([]);
   const [username, setUsername] = useState('');
+  const insets = useSafeAreaInsets();
 
   const showAlert = (id: string) => {
     Alert.alert(
@@ -246,7 +249,11 @@ const Friends = ({
         <Avatar source={item.avatar} name={fullName} size={45} />
         <View className="flex flex-col">
           <View className="flex flex-row space-x-1">
-            <Text className="text-lg">
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '500',
+              }}>
               {item.first_name} {item.last_name}
             </Text>
           </View>
@@ -274,7 +281,7 @@ const Friends = ({
           <Avatar source={item.avatar} name={fullName} size={45} />
           <View className="flex flex-col">
             <View className="flex flex-row space-x-1">
-              <Text className="text-lg">
+              <Text style={{ fontSize: 16, fontWeight: '500' }}>
                 {item.first_name} {item.last_name}
               </Text>
             </View>
@@ -317,7 +324,7 @@ const Friends = ({
           <Avatar source={item.avatar} name={fullName} size={45} />
           <View className="flex flex-col">
             <View className="flex flex-row space-x-1">
-              <Text className="text-lg">
+              <Text style={{ fontSize: 16, fontWeight: '500' }}>
                 {item.first_name} {item.last_name}
               </Text>
             </View>
@@ -494,113 +501,139 @@ const Friends = ({
   }, [navigation, sessionId]);
 
   return (
-    <View className="flex-1 items-center bg-white px-4">
-      <View className="absolute z-10 w-full pt-2">
-        <SearchBar
-          placeholder="Search friends"
-          searchTerm={searchText}
-          setSearchTerm={setSearchText}
-        />
-      </View>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: insets.top,
+        paddingLeft: insets.left,
+        width: '100%',
+        backgroundColor: 'white',
+      }}>
+      <View className="w-full flex-1 items-center bg-white px-4">
+        <View className="w-full py-2">
+          <SearchBar
+            placeholder="Search friends"
+            searchTerm={searchText}
+            setSearchTerm={setSearchText}
+          />
+        </View>
 
-      <View className="flex-1 items-center justify-center px-4">
-        {/* Before Searching */}
-        {searchText === '' && (
-          <View>
-            {receivedFriendRequests.length !== 0 && (
-              <View className="mb-6">
-                <FlatList
-                  data={receivedFriendRequests}
-                  keyExtractor={item => item.id.toString()}
-                  renderItem={renderFriendRequestItem}
-                  ListHeaderComponent={
-                    <Text className="text-lg font-semibold">Added me</Text>
-                  }
-                />
-              </View>
-            )}
-
-            {friends.length !== 0 && (
-              <FlatList
-                data={friends}
-                keyExtractor={item => item.id.toString()}
-                renderItem={renderFriendItem}
-                ListHeaderComponent={
-                  <Text className="text-lg font-semibold">My Friends</Text>
-                }
-              />
-            )}
-
-            {receivedFriendRequests.length === 0 && friends.length === 0 && (
-              <View className="">
-                <Text className="items-center justify-center bg-pink-100  text-center text-gray-500">
-                  You haven't added any friends yet. Use the search bar to find
-                  your friends.
-                </Text>
-              </View>
-            )}
-          </View>
-        )}
-
-        {/* After Searching */}
-        {searchText !== '' && (
-          <View className="mt-4 flex-1">
-            <TouchableOpacity className="mb-4" onPress={handleInvite}>
-              <View className="flex flex-row items-center space-x-1">
-                <Feather name="external-link" size={25} color="#333333" />
-                <Text className="text-lg">Invite friends</Text>
-              </View>
-            </TouchableOpacity>
-            {results.length !== 0 && (
-              <View>
-                {/* Render the friends from results */}
-                {results.some((item: any) =>
-                  friends.some((friend: any) => friend.id === item.id),
-                ) && (
+        <View className="w-full flex-1 px-2">
+          {/* Before Searching */}
+          {searchText === '' && (
+            <>
+              {receivedFriendRequests.length !== 0 && (
+                <View className="my-2 w-full">
                   <FlatList
-                    data={results.filter((item: any) =>
-                      friends.some((friend: any) => friend.id === item.id),
-                    )}
+                    data={receivedFriendRequests}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={renderFriendRequestItem}
+                    ListHeaderComponent={
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '500',
+                        }}>
+                        Added me
+                      </Text>
+                    }
+                  />
+                </View>
+              )}
+
+              {friends.length !== 0 && (
+                <View className="mt-2 w-full">
+                  <FlatList
+                    data={friends}
                     keyExtractor={item => item.id.toString()}
                     renderItem={renderFriendItem}
                     ListHeaderComponent={
-                      <Text className="text-lg font-semibold">My Friends</Text>
-                    }
-                    className="mb-4"
-                  />
-                )}
-
-                {/* Render the non-matching friends from results */}
-                {results.some(
-                  (item: any) =>
-                    !friends.some((friend: any) => friend.id === item.id),
-                ) && (
-                  <FlatList
-                    data={results.filter(
-                      (item: any) =>
-                        !friends.some((friend: any) => friend.id === item.id),
-                    )}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={renderResultItem}
-                    ListHeaderComponent={
-                      <Text className="text-lg font-semibold">Results</Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '500',
+                        }}>
+                        My Friends
+                      </Text>
                     }
                   />
-                )}
-              </View>
-            )}
+                </View>
+              )}
 
-            {results.length === 0 && (
-              <View className="mt-36">
-                <Text className="items-center justify-center px-16 text-center text-gray-500">
-                  No friends exist with that name.
-                </Text>
-              </View>
-            )}
-          </View>
-        )}
+              {receivedFriendRequests.length === 0 && friends.length === 0 && (
+                <View className="w-full flex-1 items-center justify-center">
+                  <Text className="items-center justify-center text-center text-gray-500">
+                    You haven't added any friends yet. Use the search bar to
+                    find your friends.
+                  </Text>
+                </View>
+              )}
+            </>
+          )}
+          {/* After Searching */}
+          {searchText !== '' && (
+            <>
+              <TouchableOpacity className="mb-4" onPress={handleInvite}>
+                <View className="flex flex-row items-center space-x-1">
+                  <Feather name="external-link" size={25} color="#333333" />
+                  <Text className="text-lg">Invite friends</Text>
+                </View>
+              </TouchableOpacity>
+              {results.length !== 0 && (
+                <View>
+                  {/* Render the friends from results */}
+                  {results.some((item: any) =>
+                    friends.some((friend: any) => friend.id === item.id),
+                  ) && (
+                    <FlatList
+                      data={results.filter((item: any) =>
+                        friends.some((friend: any) => friend.id === item.id),
+                      )}
+                      keyExtractor={item => item.id.toString()}
+                      renderItem={renderFriendItem}
+                      ListHeaderComponent={
+                        <Text className="text-lg font-semibold">
+                          My Friends
+                        </Text>
+                      }
+                      className="mb-4"
+                    />
+                  )}
+
+                  {/* Render the non-matching friends from results */}
+                  {results.some(
+                    (item: any) =>
+                      !friends.some((friend: any) => friend.id === item.id),
+                  ) && (
+                    <FlatList
+                      data={results.filter(
+                        (item: any) =>
+                          !friends.some((friend: any) => friend.id === item.id),
+                      )}
+                      keyExtractor={item => item.id.toString()}
+                      renderItem={renderResultItem}
+                      ListHeaderComponent={
+                        <Text className="text-lg font-semibold">Results</Text>
+                      }
+                    />
+                  )}
+                </View>
+              )}
+
+              {results.length === 0 && (
+                <View className="flex-1 items-center justify-center mb-20">
+                  <Text className="items-center justify-center px-16 text-center text-gray-500">
+                    No friends exist with that name.
+                  </Text>
+                </View>
+              )}
+            </>
+          )}
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
