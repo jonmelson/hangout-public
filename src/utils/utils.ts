@@ -57,6 +57,4 @@ export const reformatPhoneNumber = (phoneNumber: string) => {
   return `+1${digitsOnly}`; // add +1 to the beginning of the digits-only phone number
 };
 
-export const message = (username: string) => {
-  return `Let's hangout…in real life. Add me on hangout https://hangout.social/${username}`;
-};
+ 

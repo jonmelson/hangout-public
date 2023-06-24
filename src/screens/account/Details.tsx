@@ -15,7 +15,6 @@ import GoingButton from '../../components/GoingButton';
 import Avatar from '../../components/Avatar';
 
 import {
-  MaterialCommunityIcons,
   DirectionsIcon,
   ChevronRightIcon,
   ArrowRightIcon,
@@ -27,7 +26,7 @@ import {
 
 import { supabase } from '../../lib/supabase';
 
-import * as DeepLinking from 'expo-linking';
+import { hangoutUrl, hangoutInviteMessage } from '../../utils/constants';
 
 import MapView, { Marker } from 'react-native-maps';
 
@@ -50,8 +49,6 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   const [newDate, setNewDate] = useState<any>([]);
   const [newTime, setNewTime] = useState<any>([]);
   const [isGoing, setIsGoing] = useState(false);
-
-  const prefix = DeepLinking.createURL('https://hangout.social/478363');
 
   const handleGoingPress = async () => {
     if (isGoing === false) {
@@ -116,26 +113,12 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
     );
   };
 
-  const onShare = async () => {
-    Linking.openURL(
-      `sms:&body=You\'re invited: ${title} https://hangout.social/478363 `,
-    );
-    // try {
-    //   const result = await Share.share({
-    //     message: `You\'re invited: ${title} https://hangout.social/478363`,
-    //   });
-    //   if (result.action === Share.sharedAction) {
-    //     if (result.activityType) {
-    //       // shared with activity type of result.activityType
-    //     } else {
-    //       // shared
-    //     }
-    //   } else if (result.action === Share.dismissedAction) {
-    //     // dismissed
-    //   }
-    // } catch (error: any) {
-    //   Alert.alert(error.message);
-    // }
+  const onShare = () => {
+    Share.share({
+      url: hangoutUrl + '/' + id,
+      message: hangoutInviteMessage + ' ' + title,
+      title: 'Hangout',
+    });
   };
 
   const handleUserPress = (userId: any, sessionId: any) => {
@@ -429,7 +412,9 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white  px-4">
+      <TouchableOpacity
+        className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white  px-4"
+        onPress={() => {}}>
         <View className="flex flex-row items-center space-x-2">
           <LinearGradient
             colors={['#7000FF', '#B174FF']}

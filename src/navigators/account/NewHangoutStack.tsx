@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import ChooseLocation from '../../screens/account/ChooseLocation';
 import NewHangout from '../../screens/account/main/NewHangout';
+import SharePage from '../../screens/account/SharePage';
+
 const Stack = createNativeStackNavigator();
 
 const NewHangoutStack = ({
@@ -26,6 +28,13 @@ const NewHangoutStack = ({
         name="NewHangout"
         component={NewHangout}
         initialParams={{ sessionId: sessionId }}
+      />
+
+      <Stack.Screen
+        name="SharePage"
+        component={SharePage}
+        initialParams={{ sessionId: sessionId }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

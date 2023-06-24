@@ -121,15 +121,8 @@ const NewHangout = ({
       if (error) {
         console.error(error);
       } else {
-        navigation.navigate('HomeStack', {
-          screen: 'Home',
-          params: {
-            sessionId: sessionId,
-          },
-        });
+        navigation.navigate('SharePage');
       }
-
-      // console.log(sessionId, title, details, location, startDate, endDate);
     };
 
     const validateInput = async () => {

@@ -155,7 +155,7 @@ const Going = ({
         payload => {
           if (payload.eventType == 'INSERT') {
             // Get the ids from the inserted table
-            console.log('The user has INSERTED HANGOUT');
+            // console.log('The user has INSERTED HANGOUT');
             const newHangout = payload.new;
             // console.log('Friends');
             // console.log(friends);

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { View, Text, Linking, TouchableOpacity } from 'react-native';
+import { View, Text, Share, TouchableOpacity } from 'react-native';
 import {
   ChevronRightIcon,
   ExportSquareIcon,
@@ -10,9 +10,9 @@ import {
   ChevronBackIcon,
 } from '../../../components/Icons';
 
-import { supabase } from '../../../lib/supabase';
+import { hangoutUrl, profileInviteMessage } from '../../../utils/constants';
 
-import { message } from '../../../utils/utils';
+import { supabase } from '../../../lib/supabase';
 
 import { handleContactUsPress } from '../../../utils/utils';
 
@@ -26,9 +26,11 @@ const Settings = (props: NavigationProps) => {
   };
 
   const handleShareInvitePress = () => {
-    const content = message('TBR');
-
-    Linking.openURL(`sms:&body=${content}`);
+    Share.share({
+      url: hangoutUrl,
+      message: profileInviteMessage,
+      title: 'Hangout',
+    });
   };
 
   const handleHelpPress = () => {

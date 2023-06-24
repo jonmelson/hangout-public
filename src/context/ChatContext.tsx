@@ -1,44 +1,62 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
 
-import { StreamChat, Channel } from 'stream-chat';
-import { OverlayProvider, Chat } from 'stream-chat-expo';
+import { StreamChat, Channel } from "stream-chat";
+import { OverlayProvider, Chat } from "stream-chat-expo";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { supabase } from '../lib/supabase';
+import { supabase } from "../lib/supabase";
 
-import { STREAM_API_KEY } from '@env';
-
-import { useNavigation } from '@react-navigation/native';
+import { STREAM_API_KEY } from "@env";
 
 type ChatContextType = {
   currentChannel?: Channel;
   setCurrentChannel: (channel: Channel) => void;
   startDMChatRoom: (chatWithUser: any) => Promise<void>;
+  startGroupChatRoom: (
+    hangoutId: any,
+    userId: any,
+    hangoutName: any,
+    hangoutImage: any
+  ) => Promise<void>;
+  navigateToGroupChatRoom: (hangoutId: any) => Promise<void>;
+  joinGroupChatRoom: (hangoutId: any, userId: any) => Promise<void>;
 };
 
 export const ChatContext = createContext<ChatContextType>({
   currentChannel: undefined,
   setCurrentChannel: (channel: Channel | undefined) => {},
   startDMChatRoom: async (chatWithUser: any) => {},
+  startGroupChatRoom: async (
+    hangoutId: any,
+    userId: any,
+    hangoutName: any,
+    hangoutImage: any
+  ) => {},
+  navigateToGroupChatRoom: async (hangoutId: any) => {},
+  joinGroupChatRoom: async (hangoutId: any, userId: any) => {},
 });
 
 const myMessageTheme = {
   messageSimple: {
     content: {
       textContainer: {
-        backgroundColor: '#7000FF',
+        backgroundColor: "#7000FF",
       },
       markdown: {
         text: {
-          color: 'white',
+          color: "white",
         },
       },
     },
   },
 };
 
-const ChatContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const navigation = useNavigation();
+export function ChatContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [chatClient, setChatClient] = useState<StreamChat>();
   const [currentChannel, setCurrentChannel] = useState<Channel>();
 
@@ -55,9 +73,9 @@ const ChatContextProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (session?.user.id) {
         const { data: user, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session?.user.id);
+          .from("users")
+          .select("*")
+          .eq("id", session?.user.id);
 
         if (error) {
           console.log(error);
@@ -84,7 +102,7 @@ const ChatContextProvider = ({ children }: { children: React.ReactNode }) => {
             name: user.username,
             image: user.avatar,
           },
-          client.devToken(user.id),
+          client.devToken(user.id)
         );
         setChatClient(client);
       }
@@ -105,14 +123,63 @@ const ChatContextProvider = ({ children }: { children: React.ReactNode }) => {
     if (!chatClient) {
       return;
     }
-    const newChannel = chatClient.channel('messaging', {
+    const newChannel = chatClient.channel("messaging", {
       members: [chatClient.userID, chatWithUser.id],
     });
 
     await newChannel.watch();
     setCurrentChannel(newChannel);
 
-    navigation.replace('MessagesStack', { screen: 'ChatRoom' });
+    // navigation.replace("MessagesStack", { screen: "ChatRoom" });
+  };
+
+  const startGroupChatRoom = async (
+    hangoutId: any,
+    userId: any,
+    hangoutName: any,
+    hangoutImage: any
+  ) => {
+    if (!chatClient) {
+      return;
+    }
+
+    const channelId = `room-${hangoutId}`;
+    const eventChannel = chatClient.channel("livestream", channelId, {
+      name: hangoutName,
+      members: [userId],
+      image: hangoutImage,
+    });
+
+    await eventChannel.watch();
+  };
+
+  const navigateToGroupChatRoom = async (hangoutId: any) => {
+    if (!chatClient) {
+      return;
+    }
+
+    const channelId = `room-${hangoutId}`;
+    const eventChannel = chatClient.channel("livestream", channelId);
+
+    await eventChannel.watch();
+    setCurrentChannel(eventChannel);
+
+    // navigation.replace("MessagesStack", { screen: "ChatRoom" });
+  };
+
+  const joinGroupChatRoom = async (hangoutId: any, userId: any) => {
+    if (!chatClient) {
+      return;
+    }
+
+    const channelId = `room-${hangoutId}`;
+    console.log(channelId, hangoutId, userId);
+    const eventChannel = chatClient.channel("livestream", channelId);
+    await eventChannel.addMembers([userId]);
+    // await eventChannel.watch({ watchers: { limit: 100 } });
+    // setCurrentChannel(eventChannel);
+
+    // navigation.replace('MessagesStack', { screen: 'ChatRoom' });
   };
 
   if (!chatClient) {
@@ -124,17 +191,20 @@ const ChatContextProvider = ({ children }: { children: React.ReactNode }) => {
     currentChannel,
     setCurrentChannel,
     startDMChatRoom,
+    startGroupChatRoom,
+    navigateToGroupChatRoom,
+    joinGroupChatRoom,
   };
 
   return (
-    <OverlayProvider value={{ style: myMessageTheme }}>
-      <Chat client={chatClient}>
-        <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
-      </Chat>
-    </OverlayProvider>
+    <GestureHandlerRootView>
+      <OverlayProvider value={{ style: myMessageTheme }}>
+        <Chat client={chatClient}>
+          <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
+        </Chat>
+      </OverlayProvider>
+    </GestureHandlerRootView>
   );
-};
+}
 
 export const useChatContext = () => useContext(ChatContext);
-
-export default ChatContextProvider;

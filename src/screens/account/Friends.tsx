@@ -7,6 +7,7 @@ import {
   Alert,
   Linking,
   SafeAreaView,
+  Share,
 } from 'react-native';
 
 import { supabase } from '../../lib/supabase';
@@ -18,8 +19,7 @@ import { Feather, EvilIcons, ChevronBackIcon } from '../../components/Icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { message } from '../../utils/utils';
+import { hangoutUrl, profileInviteMessage } from '../../utils/constants';
 
 const Friends = ({
   navigation,
@@ -234,8 +234,11 @@ const Friends = ({
   };
 
   const handleInvite = async () => {
-    const content = message(username);
-    Linking.openURL(`sms:&body=${content}`);
+    Share.share({
+      url: hangoutUrl + '/' + username,
+      message: profileInviteMessage,
+      title: 'Hangout',
+    });
   };
 
   const renderFriendItem = ({ item }: { item: any }) => {
@@ -544,7 +547,7 @@ const Friends = ({
               )}
 
               {friends.length !== 0 && (
-                <View className="mt-2 w-full">
+                <View className="mt-2 w-full flex-1">
                   <FlatList
                     data={friends}
                     keyExtractor={item => item.id.toString()}
@@ -598,6 +601,7 @@ const Friends = ({
                           My Friends
                         </Text>
                       }
+                      scrollEnabled={false}
                       className="mb-4"
                     />
                   )}
@@ -614,6 +618,7 @@ const Friends = ({
                       )}
                       keyExtractor={item => item.id.toString()}
                       renderItem={renderResultItem}
+                      scrollEnabled={false}
                       ListHeaderComponent={
                         <Text className="text-lg font-semibold">Results</Text>
                       }

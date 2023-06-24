@@ -42,13 +42,8 @@ const Home = ({
   const [newIsGoing, setNewIsGoing] = useState<any>([]);
   const [mergedData, setMergedData] = useState<any>(null);
   const [sections, setSections] = useState<Section[]>([]);
-  const [modalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const windowDimensions = useWindowDimensions();
-
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -211,9 +206,6 @@ const Home = ({
             if (isFriend || isCurrentUser) {
               setHangouts((prevState: any) => [...prevState, newHangout]);
             }
-            if (isCurrentUser) {
-              setModalVisible(true);
-            }
           } else if (payload.eventType == 'DELETE') {
             // Gets the old data, checks if the ids
             // console.log('The user has DELETE');
@@ -259,7 +251,7 @@ const Home = ({
             const temp = payload.new;
             setNewIsGoing((prevState: any) => [...prevState, temp]);
           } else if (payload.eventType == 'DELETE') {
-            console.log('The user has DELETE1');
+            // console.log('The user has DELETE1');
             const deletedIsGoingId = payload.old.is_going_id;
             setIsGoing((prevState: any) =>
               prevState.filter(
@@ -454,10 +446,7 @@ const Home = ({
       {sections.length > 0 &&
         friends.length >= 0 &&
         (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) && (
-          <View
-            className={
-              modalVisible ? 'bg-dark-overlay flex-1' : 'flex-1 bg-white'
-            }>
+          <View className="flex-1 bg-white">
             {loading ? (
               <View className="items-center justify-center">
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -500,27 +489,6 @@ const Home = ({
             )}
           </View>
         )}
-
-      {modalVisible && (
-        <View
-          style={[
-            styles.overlay,
-            { width: windowDimensions.width, height: windowDimensions.height },
-          ]}
-        />
-      )}
-
-      <Modal
-        visible={modalVisible} // Set the visibility based on the state
-        animationType="slide"
-        transparent={true}
-        onRequestClose={toggleModal}>
-        <ShareModal
-          navigation={navigation}
-          sessionId={sessionId}
-          onClose={toggleModal}
-        />
-      </Modal>
     </>
   );
 };

@@ -6,6 +6,7 @@ import {
   Alert,
   ScrollView,
   RefreshControl,
+  Share,
 } from 'react-native';
 
 import { Image } from 'expo-image';
@@ -31,6 +32,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LocationMetaData } from '../../../utils/other';
 
+import { hangoutUrl, profileInviteMessage } from '../../../utils/constants';
 import { formatDate } from '../../../utils/utils';
 
 const Profile = ({
@@ -65,6 +67,14 @@ const Profile = ({
     getProfile();
     // Once the data fetching or operations are complete, set refreshing to false
     setRefreshing(false);
+  };
+
+  const handleInviteFriends = () => {
+    Share.share({
+      url: hangoutUrl + '/' + username,
+      message: profileInviteMessage,
+      title: 'Hangout',
+    });
   };
 
   const handleEditPress = () => {
@@ -319,7 +329,7 @@ const Profile = ({
                 </LinearGradient>
               </TouchableOpacity>
 
-              <TouchableOpacity className="w-1/2">
+              <TouchableOpacity className="w-1/2" onPress={handleInviteFriends}>
                 <LinearGradient
                   colors={['#7000FF', '#B174FF']}
                   start={{ x: 0, y: 0 }}
