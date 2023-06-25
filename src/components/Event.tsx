@@ -10,6 +10,7 @@ import { ClockIcon, CalendarIcon } from './Icons';
 import { supabase } from '../lib/supabase';
 
 import { EventProps } from '../utils/other';
+import { useChatContext } from '../context/ChatContext';
 
 const Event = (props: EventProps) => {
   const {
@@ -25,6 +26,8 @@ const Event = (props: EventProps) => {
     navigation,
     sessionId,
   } = props;
+  
+  const { joinGroupChatRoom } = useChatContext();
 
   const [isGoing, setIsGoing] = useState(false);
   const [newDate, setNewDate] = useState('');
@@ -35,7 +38,7 @@ const Event = (props: EventProps) => {
       const { data, error } = await supabase
         .from('is_going')
         .insert([{ hangout_id: id, user_id: sessionId }]);
-
+      joinGroupChatRoom(id, sessionId);
       setIsGoing(true);
     } else if (isGoing === true) {
       showAlert();
@@ -152,7 +155,7 @@ const Event = (props: EventProps) => {
             sessionId !== user_id || going.length > 1 ? 'items-center' : ''
           }`}>
           {/* Icon */}
-          <View className="justify-center items-center">
+          <View className="items-center justify-center">
             <AvatarIconGroup userId={user_id} users={going} />
           </View>
 
