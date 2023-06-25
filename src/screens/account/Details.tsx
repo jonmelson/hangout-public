@@ -28,6 +28,8 @@ import { supabase } from '../../lib/supabase';
 
 import { hangoutUrl, hangoutInviteMessage } from '../../utils/constants';
 
+import { useChatContext } from '../../context/ChatContext';
+
 import MapView, { Marker } from 'react-native-maps';
 
 const Details = ({ navigation, route }: { navigation: any; route: any }) => {
@@ -46,6 +48,8 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
 
   const address = location[0].address;
 
+  const { navigateToGroupChatRoom, joinGroupChatRoom } = useChatContext();
+
   const [newDate, setNewDate] = useState<any>([]);
   const [newTime, setNewTime] = useState<any>([]);
   const [isGoing, setIsGoing] = useState(false);
@@ -56,6 +60,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
         .from('is_going')
         .insert([{ hangout_id: id, user_id: sessionId }]);
 
+      joinGroupChatRoom(id, sessionId);
       setIsGoing(true);
     } else if (isGoing === true) {
       showAlert();
@@ -94,6 +99,21 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
     }
   };
 
+  const handleUserPress = (userId: any, sessionId: any) => {
+    if (userId === sessionId) {
+      navigation.replace('ProfileStack', { screen: 'ProfileScreen' });
+    } else {
+      navigation.replace('PublicProfile', {
+        userId: userId,
+        sessionId: sessionId,
+      });
+    }
+  };
+
+  const handleMessagesPress = () => {
+    navigateToGroupChatRoom(id);
+  };
+
   const showAlert = () => {
     Alert.alert(
       'Not going?',
@@ -119,17 +139,6 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
       message: hangoutInviteMessage + ' ' + title,
       title: 'Hangout',
     });
-  };
-
-  const handleUserPress = (userId: any, sessionId: any) => {
-    if (userId === sessionId) {
-      navigation.replace('ProfileStack', { screen: 'ProfileScreen' });
-    } else {
-      navigation.replace('PublicProfile', {
-        userId: userId,
-        sessionId: sessionId,
-      });
-    }
   };
 
   useEffect(() => {
@@ -412,25 +421,27 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white  px-4"
-        onPress={() => {}}>
-        <View className="flex flex-row items-center space-x-2">
-          <LinearGradient
-            colors={['#7000FF', '#B174FF']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            className="rounded-full p-2">
-            <MessagesIcon color="#FFF" />
-          </LinearGradient>
+      {isGoing && (
+        <TouchableOpacity
+          className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white  px-4"
+          onPress={handleMessagesPress}>
+          <View className="flex flex-row items-center space-x-2">
+            <LinearGradient
+              colors={['#7000FF', '#B174FF']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              className="rounded-full p-2">
+              <MessagesIcon color="#FFF" />
+            </LinearGradient>
 
-          <Text className="font-medium">Messages</Text>
-        </View>
+            <Text className="font-medium">Messages</Text>
+          </View>
 
-        <View>
-          <ChevronRightIcon />
-        </View>
-      </TouchableOpacity>
+          <View>
+            <ChevronRightIcon />
+          </View>
+        </TouchableOpacity>
+      )}
 
       {going && (
         <View className="rounded-2xl bg-white px-4 pb-6 pt-2">

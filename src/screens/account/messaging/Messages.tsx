@@ -13,8 +13,6 @@ import { Channel } from 'stream-chat';
 import { ChannelList } from 'stream-chat-expo';
 import { useChatContext } from '../../../context/ChatContext';
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 const Messages = ({
   navigation,
   route,
@@ -25,6 +23,10 @@ const Messages = ({
   const { sessionId } = route?.params ?? {};
 
   const { setCurrentChannel } = useChatContext();
+
+  const filters = {
+    members: { $in: [sessionId || ''] },
+  };
 
   const onSelect = (chanel: Channel) => {
     setCurrentChannel(chanel);
@@ -45,7 +47,7 @@ const Messages = ({
       headerLeft: () => (
         <TouchableOpacity
           className="py-2 pr-4"
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate('Home')}>
           <ChevronBackIcon />
         </TouchableOpacity>
       ),
@@ -59,7 +61,7 @@ const Messages = ({
     });
   }, [navigation]);
 
-  return <ChannelList onSelect={onSelect} />;
+  return <ChannelList onSelect={onSelect} filters={filters} />;
 };
 
 export default Messages;

@@ -22,6 +22,8 @@ import {
 
 import { shareSchema } from '../../../utils/schemas';
 
+import { useChatContext } from '../../../context/ChatContext';
+
 type Location = {
   latitude?: number;
   longitude?: number;
@@ -48,6 +50,8 @@ const NewHangout = ({
   };
 }) => {
   const { locationMetaData, sessionId } = route?.params ?? {};
+
+  const { chatClient, startGroupChatRoom } = useChatContext();
 
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
@@ -108,19 +112,24 @@ const NewHangout = ({
 
   useEffect(() => {
     const handleSharePress = async () => {
-      const { data, error } = await supabase.from('hangouts').insert([
-        {
-          user_id: sessionId,
-          title: title,
-          details: details,
-          location: location,
-          starts: startDate,
-          ends: endDate,
-        },
-      ]);
+      const { data, error } = await supabase
+        .from('hangouts')
+        .insert([
+          {
+            user_id: sessionId,
+            title: title,
+            details: details,
+            location: location,
+            starts: startDate,
+            ends: endDate,
+          },
+        ])
+        .select();
       if (error) {
         console.error(error);
       } else {
+        console.log(data);
+        startGroupChatRoom(data[0].id, data[0].user_id, data[0].title);
         navigation.navigate('SharePage');
       }
     };
@@ -139,7 +148,6 @@ const NewHangout = ({
         setIsValid(false);
       }
     };
-
     // Convert the date string to a Date object
     const startDateObj = new Date(startDate);
     const startTimeObj = new Date(startDate);

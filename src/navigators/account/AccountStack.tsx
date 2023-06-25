@@ -13,7 +13,9 @@ import EditChooseLocation from '../../screens/account/EditChooseLocation';
 
 import { Session } from '@supabase/supabase-js';
 
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
+
+import { ChatContextProvider } from '../../context/ChatContext';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -50,7 +52,8 @@ const AccountStack = ({
     };
   }, []);
 
-  return ( 
+  return (
+    <ChatContextProvider>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -59,7 +62,7 @@ const AccountStack = ({
         <Stack.Screen
           name="HomeStack"
           component={TabNavigator}
-          initialParams={{ sessionId: sessionId  }}
+          initialParams={{ sessionId: sessionId }}
         />
 
         <Stack.Screen
@@ -112,7 +115,8 @@ const AccountStack = ({
           component={EditChooseLocation}
           options={{ presentation: 'modal', headerShown: true }}
         />
-      </Stack.Navigator> 
+      </Stack.Navigator>
+    </ChatContextProvider>
   );
 };
 

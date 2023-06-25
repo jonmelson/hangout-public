@@ -7,6 +7,8 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useChatContext } from '../../../context/ChatContext';
 import { Channel, MessageList, MessageInput } from 'stream-chat-expo';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 const ChatRoom = ({
   navigation,
 }: // route,
@@ -21,6 +23,8 @@ const ChatRoom = ({
   const { showActionSheetWithOptions } = useActionSheet();
 
   const { currentChannel } = useChatContext();
+
+  const insets = useSafeAreaInsets();
 
   const showAlert = () => {
     Alert.alert(
@@ -76,8 +80,6 @@ const ChatRoom = ({
     );
   };
 
-
-
   useEffect(() => {
     navigation.setOptions({
       title: '',
@@ -107,10 +109,12 @@ const ChatRoom = ({
   }
 
   return (
-    <Channel channel={currentChannel}>
-      <MessageList />
-      <MessageInput />
-    </Channel>
+    <View style={{ paddingBottom: insets.bottom, backgroundColor: 'white' }}>
+      <Channel channel={currentChannel}>
+        <MessageList />
+        <MessageInput />
+      </Channel>
+    </View>
   );
 };
 

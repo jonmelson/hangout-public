@@ -4,7 +4,8 @@ import {
   Text,
   TouchableOpacity,
   Alert,
-  ActionSheetIOS,RefreshControl
+  ActionSheetIOS,
+  RefreshControl,
 } from 'react-native';
 
 import { Image } from 'expo-image';
@@ -127,9 +128,8 @@ const PublicProfile = ({
     openBrowserAsync(`https://www.twitter.com/${twitter}`);
   };
 
-  const test = async () => {
-    console.log('test');
-    await startDMChatRoom({ id: userId });
+  const handleMessagePress = async () => {
+    startDMChatRoom({ id: userId });
   };
 
   async function getProfile() {
@@ -410,7 +410,9 @@ const PublicProfile = ({
                   </LinearGradient>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => test()} className="w-1/2">
+                <TouchableOpacity
+                  onPress={handleMessagePress}
+                  className="w-1/2">
                   <LinearGradient
                     colors={['#7000FF', '#B174FF']}
                     start={{ x: 0, y: 0 }}
