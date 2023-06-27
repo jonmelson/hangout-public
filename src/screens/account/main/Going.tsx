@@ -215,11 +215,11 @@ const Going = ({
         },
         payload => {
           if (payload.eventType == 'INSERT') {
-            console.log('The user has INSERTED2');
+            // console.log('The user has INSERTED2');
             const temp = payload.new;
             setNewIsGoing((prevState: any) => [...prevState, temp]);
           } else if (payload.eventType == 'DELETE') {
-            console.log('The user has DELETE2');
+            // console.log('The user has DELETE2');
             const deletedIsGoingId = payload.old.is_going_id;
             setIsGoing((prevState: any) =>
               prevState.filter(

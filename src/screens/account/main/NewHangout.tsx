@@ -128,7 +128,7 @@ const NewHangout = ({
       if (error) {
         console.error(error);
       } else {
-        console.log(data);
+        // console.log(data);
 
         // let { data: users, error } = await supabase
         //   .from('users')

@@ -173,7 +173,7 @@ export function ChatContextProvider({
     }
 
     const channelId = `room-${hangoutId}`;
-    console.log(channelId, hangoutId, userId);
+    // console.log(channelId, hangoutId, userId);
     const eventChannel = chatClient.channel('livestream', channelId);
     await eventChannel.addMembers([userId]);
     // await eventChannel.watch({ watchers: { limit: 100 } });

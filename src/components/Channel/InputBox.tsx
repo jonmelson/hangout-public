@@ -60,18 +60,13 @@ export const InputBox = () => {
   const additionalTextInputProps = useMemo(
     () => ({
       ...contextAdditionalTextInputProps,
-      placeholder:
-        currentChannel && currentChannel?.data?.name
-          ? 'Message #' +
-            currentChannel?.data.name.toLowerCase().replace(' ', '_')
-          : 'Message...',
+      placeholder: 'Message...',
       placeholderTextColor: '#979A9A',
       style: [
         {
           color: colors.text,
           maxHeight: (textHeight || 17) * 4,
         },
-        styles.autoCompleteInput,
       ],
     }),
     [currentChannel?.id, textHeight],
@@ -82,7 +77,7 @@ export const InputBox = () => {
       <ImageUploadPreview />
       <FileUploadPreview />
       <View
-        className="flex flex-row justify-between items-center"
+        className="flex flex-row items-center justify-between"
         style={[
           {
             backgroundColor: 'white',
@@ -93,7 +88,7 @@ export const InputBox = () => {
             paddingVertical: 4,
           },
         ]}>
-        <View className='pl-2 mb-1'>
+        <View className="mb-1 pl-2">
           <AutoCompleteInput
             additionalTextInputProps={additionalTextInputProps}
           />
