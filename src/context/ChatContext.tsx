@@ -2,10 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 
 import { StreamChat, Channel } from 'stream-chat';
-import { OverlayProvider, Chat } from 'stream-chat-expo';
+import { OverlayProvider, Chat, ThemeProvider } from 'stream-chat-expo';
 
 import { supabase } from '../lib/supabase';
 import { useNavigation } from '@react-navigation/native';
+import { theme } from '../theme';
 
 import { STREAM_API_KEY } from '@env';
 
@@ -38,21 +39,6 @@ export const ChatContext = createContext<ChatContextType>({
   navigateToGroupChatRoom: async (hangoutId: any) => {},
   joinGroupChatRoom: async (hangoutId: any, userId: any) => {},
 });
-
-const myMessageTheme = {
-  messageSimple: {
-    content: {
-      textContainer: {
-        backgroundColor: '#7000FF',
-      },
-      markdown: {
-        text: {
-          color: 'white',
-        },
-      },
-    },
-  },
-};
 
 export function ChatContextProvider({
   children,
@@ -104,11 +90,17 @@ export function ChatContextProvider({
         await client.connectUser(
           {
             id: user.id,
-            name: user.username,
+            name: user.first_name + ' ' + user.last_name,
             image: user.avatar,
           },
           client.devToken(user.id),
         );
+
+        // Don't show if the user is online or offline
+        await client.upsertUser({
+          id: user.id,
+          invisible: true,
+        });
 
         setChatClient(client);
       }
@@ -205,10 +197,12 @@ export function ChatContextProvider({
   };
 
   return (
-    <OverlayProvider value={{ style: myMessageTheme }}>
-      <Chat client={chatClient}>
-        <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
-      </Chat>
+    <OverlayProvider>
+      <ThemeProvider style={theme}>
+        <Chat client={chatClient}>
+          <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
+        </Chat>
+      </ThemeProvider>
     </OverlayProvider>
   );
 }

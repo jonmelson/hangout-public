@@ -20,7 +20,7 @@ import ClockIcon from '../components/icons/clock/ClockIcon';
 import CalendarIcon from '../components/icons/calendar/CalendarIcon';
 import CloseIcon from '../components/icons/CloseIcon';
 import MessageQuestionIcon from '../components/icons/MessageQuestionIcon';
-import InfoCircleIcon from '../components/icons/InfoCircleIcon';
+import InfoCircleIcon from './InfoCircleIcon';
 import ProfileCircleIcon from '../components/icons/ProfileCircleIcon';
 import TabBarPlus14Icon from '../components/icons/tabbar_plus/TabBarPlus14Icon';
 import TabBarPlus25Icon from '../components/icons/tabbar_plus/TabBarPlus25Icon';
@@ -34,6 +34,9 @@ import InstagramBlueIcon from '../components/icons/socials/InstagramBlueIcon';
 import InstagramGradientIcon from '../components/icons/socials/InstagramGradientIcon';
 import TwitterBlueIcon from '../components/icons/socials/TwitterBlueIcon';
 import TwitterGradientIcon from '../components/icons/socials/TwitterGradientIcon';
+import MessagesChevronRightIcon from '../components/icons/MessagesChevronRightIcon';
+import MessageImageIcon from '../components/icons/MessageImageIcon';
+import MessageSendIcon from '../components/icons/MessageSendIcon';
 
 // Default Library Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -89,4 +92,7 @@ export {
   AntDesign,
   MaterialCommunityIcons,
   FontAwesome5Icon,
+  MessagesChevronRightIcon,
+  MessageImageIcon,
+  MessageSendIcon,
 };

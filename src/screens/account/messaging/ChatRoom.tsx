@@ -5,7 +5,26 @@ import { ChevronBackIcon, MoreIcon } from '../../../components/Icons';
 
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useChatContext } from '../../../context/ChatContext';
-import { Channel, MessageList, MessageInput } from 'stream-chat-expo';
+import {
+  Channel,
+  MessageList,
+  MessageInput,
+  useMessagesContext,
+  useMessageContext,
+  useChannelContext,
+  Colors,
+  Sound,
+} from 'stream-chat-expo';
+
+import { MessageHeader } from '../../../components/Channel/MessageHeader';
+
+import {
+  InlineDateSeparator,
+  InputButtons,
+  SendButton,
+  InputBox,
+} from '../../../components/Channel';
+import { myMessageTheme } from '../../../theme';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -22,9 +41,12 @@ const ChatRoom = ({
   // const fullName = user.first_name + ' ' + user.last_name;
   const { showActionSheetWithOptions } = useActionSheet();
 
-  const { currentChannel } = useChatContext();
+  const { currentChannel, chatClient } = useChatContext();
+  const { message } = useMessageContext();
 
   const insets = useSafeAreaInsets();
+
+  const MyEmptyComponent = () => null;
 
   const showAlert = () => {
     Alert.alert(
@@ -80,6 +102,7 @@ const ChatRoom = ({
     );
   };
 
+  console.log(message);
   useEffect(() => {
     navigation.setOptions({
       title: '',
@@ -110,8 +133,15 @@ const ChatRoom = ({
 
   return (
     <View style={{ paddingBottom: insets.bottom, backgroundColor: 'white' }}>
-      <Channel channel={currentChannel}>
-        <MessageList />
+      <Channel
+        myMessageTheme={myMessageTheme}
+        channel={currentChannel}
+        DateHeader={MyEmptyComponent}
+        Input={InputBox}
+        MessageFooter={MyEmptyComponent}
+        MessageHeader={MessageHeader}>
+        <MessageList InlineDateSeparator={InlineDateSeparator} />
+
         <MessageInput />
       </Channel>
     </View>

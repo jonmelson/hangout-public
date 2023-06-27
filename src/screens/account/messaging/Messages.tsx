@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import {
   NewMessage14Icon,
@@ -9,9 +9,29 @@ import {
 
 import SearchBar from '../../../components/SearchBar';
 
-import { Channel } from 'stream-chat';
+import { Channel, ChannelSort } from 'stream-chat';
 import { ChannelList } from 'stream-chat-expo';
 import { useChatContext } from '../../../context/ChatContext';
+import EmptyMessageStateIndicator from '../../../components/EmptyMessageStateIndicator';
+
+import { ChannelPreviewMessenger } from '../../../components/ChannelPreview';
+
+const additionalFlatListProps = {
+  keyboardDismissMode: 'on-drag' as const,
+  getItemLayout: (_: any, index: number) => ({
+    index,
+    length: 65,
+    offset: 65 * index,
+  }),
+};
+
+const options = {
+  presence: true,
+  state: true,
+  watch: true,
+};
+
+const sort: ChannelSort = { last_message_at: -1 };
 
 const Messages = ({
   navigation,
@@ -61,7 +81,59 @@ const Messages = ({
     });
   }, [navigation]);
 
-  return <ChannelList onSelect={onSelect} filters={filters} />;
+  return (
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={[styles.channelListContainer]}>
+        <ChannelList
+          additionalFlatListProps={additionalFlatListProps}
+          filters={filters}
+          HeaderNetworkDownIndicator={() => null}
+          maxUnreadCount={99}
+          onSelect={onSelect}
+          options={options}
+          Preview={ChannelPreviewMessenger}
+          sort={sort}
+          EmptyStateIndicator={EmptyMessageStateIndicator}
+        />
+      </View>
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  channelListContainer: {
+    height: '100%',
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: 'white',
+  },
+  emptyIndicatorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
+  },
+  emptyIndicatorText: { paddingTop: 28 },
+  flex: {
+    flex: 1,
+  },
+  searchContainer: {
+    alignItems: 'center',
+    borderRadius: 30,
+    borderWidth: 1,
+    flexDirection: 'row',
+    margin: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    includeFontPadding: false, // for android vertical text centering
+    padding: 0, // removal of default text input padding on android
+    paddingHorizontal: 10,
+    paddingTop: 0, // removal of iOS top padding for weird centering
+    textAlignVertical: 'center', // for android vertical text centering
+  },
+});
 
 export default Messages;

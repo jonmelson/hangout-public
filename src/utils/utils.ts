@@ -1,5 +1,9 @@
 import { Linking, Alert } from 'react-native';
 import { EMAIL } from '@env';
+ 
+import dayjs from 'dayjs';
+import calendar from 'dayjs/plugin/calendar';
+dayjs.extend(calendar);
 
 export const formatInputPhoneNumber = (input: string) => {
   let phoneNumber = input.replace(/\D/g, '');
@@ -57,4 +61,13 @@ export const reformatPhoneNumber = (phoneNumber: string) => {
   return `+1${digitsOnly}`; // add +1 to the beginning of the digits-only phone number
 };
 
- 
+
+
+export function formatLatestMessageDate(date?: Date | string) {
+  return dayjs(date).calendar(undefined, {
+    lastDay: '[Yesterday]', // The day before ( Yesterday )
+    sameDay: 'HH:mm', // The same day ( 17:30 )
+    lastWeek: 'dddd', // Last week ( Monday)
+    sameElse: 'DD/MM/YYYY', // Everything else ( 17/10/2011 )
+  });
+}
