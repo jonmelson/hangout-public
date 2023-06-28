@@ -32,26 +32,12 @@ const Avatar = (props: AvatarProps) => {
           className="items-center justify-center rounded-full">
           <Image
             source={{ uri: source }}
-            style={[ { width: size, height: size }]}
+            style={[{ width: size, height: size }]}
             onLoadStart={handleImageLoadStart}
             onLoad={handleImageLoadEnd}
             className="items-center justify-center rounded-full"
             cachePolicy="none"
           />
-          {isLoading && (
-            <View
-              style={{
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <ActivityIndicator color="purple" size="small" />
-            </View>
-          )}
         </View>
       ) : (
         <View

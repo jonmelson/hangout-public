@@ -23,6 +23,8 @@ import {
 
 import { shareSchema } from '../../utils/schemas';
 
+import { useChatContext } from '../../context/ChatContext';
+
 interface LocationMetaData {
   address?: string;
   geometry?: {
@@ -61,6 +63,7 @@ const EditHangout = ({
   const [formattedStartTime, setFormattedStartTime] = useState('');
   const [formattedEndDate, setFormattedEndDate] = useState('');
   const [formattedEndTime, setFormattedEndTime] = useState('');
+  const { updateGroupChatRoomName } = useChatContext();
 
   const handleTitleChange = (input: string) => {
     setUpdatedTitle(input);
@@ -135,6 +138,9 @@ const EditHangout = ({
         },
       ])
       .eq('id', id);
+
+    // Update Chat Title
+    updateGroupChatRoomName(id, updatedTitle);
 
     if (error) {
       console.error(error);

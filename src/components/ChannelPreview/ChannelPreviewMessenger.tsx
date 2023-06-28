@@ -13,9 +13,12 @@ import { formatLatestMessageDate } from '../../utils/utils';
 import { TrashCan } from '../TrashCan';
 import { Mute } from '../Mute';
 import { Unmute } from '../Unmute';
+import Avatar from '../Avatar';
 
 import { ChannelPreviewStatus } from './ChannelPreviewStatus';
 import { ChannelPreviewMessage } from './ChannelPreviewMessage';
+import ChannelPreviewAvatar from './ChannelPreviewAvatar';
+import ChannelPreviewLatestMessage from './ChannelPreviewLatestMessage';
 
 const styles = StyleSheet.create({
   container: {
@@ -146,7 +149,7 @@ export const ChannelPreviewMessenger = (props: any) => {
       testID="channel-preview-button">
       <View style={[styles.avatarContainer]}>
         <View style={[styles.circle, unread ? styles.circleFill : undefined]} />
-        <PreviewAvatar channel={channel} />
+        <ChannelPreviewAvatar channel={channel} />
       </View>
 
       <View
@@ -167,9 +170,21 @@ export const ChannelPreviewMessenger = (props: any) => {
           />
         </View>
 
-        <View style={[styles.row, row]}>
-          <PreviewMessage latestMessagePreview={latestMessagePreview} />
-        </View>
+        <PreviewMessage latestMessagePreview={latestMessagePreview} />
+        {/* <ChannelPreviewLatestMessage
+          latestMessagePreview={latestMessagePreview}
+        /> */}
+        {/* {latestMessagePreview &&
+          Object.keys(latestMessagePreview.messageObject).length !== 0 &&
+          latestMessagePreview.messageObject.user && (
+            <View style={[styles.row, row]}>
+              <Avatar
+                source={latestMessagePreview.messageObject.image}
+                name={latestMessagePreview.messageObject.name}
+              />
+              <PreviewMessage latestMessagePreview={latestMessagePreview} />
+            </View>
+          )} */}
       </View>
     </TouchableOpacity>
   );

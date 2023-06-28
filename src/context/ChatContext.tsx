@@ -23,6 +23,7 @@ type ChatContextType = {
   ) => Promise<void>;
   navigateToGroupChatRoom: (hangoutId: any) => Promise<void>;
   joinGroupChatRoom: (hangoutId: any, userId: any) => Promise<void>;
+  updateGroupChatRoomName: (hangoutId: any, newName: any) => Promise<void>;
 };
 
 export const ChatContext = createContext<ChatContextType>({
@@ -38,6 +39,7 @@ export const ChatContext = createContext<ChatContextType>({
   ) => {},
   navigateToGroupChatRoom: async (hangoutId: any) => {},
   joinGroupChatRoom: async (hangoutId: any, userId: any) => {},
+  updateGroupChatRoomName: async (hangoutId: any, newName: any) => {},
 });
 
 export function ChatContextProvider({
@@ -182,6 +184,22 @@ export function ChatContextProvider({
     // navigation.replace('MessagesStack', { screen: 'ChatRoom' });
   };
 
+  const updateGroupChatRoomName = async (hangoutId: any, newName: any) => {
+    if (!chatClient) {
+      return;
+    }
+
+    const channelId = `room-${hangoutId}`;
+    // console.log(channelId, hangoutId, userId);
+    const eventChannel = chatClient.channel('livestream', channelId);
+    await eventChannel.updatePartial({ set: { name: newName } });
+
+    // await eventChannel.watch({ watchers: { limit: 100 } });
+    // setCurrentChannel(eventChannel);
+
+    // navigation.replace('MessagesStack', { screen: 'ChatRoom' });
+  };
+
   if (!chatClient) {
     return <ActivityIndicator />;
   }
@@ -194,6 +212,7 @@ export function ChatContextProvider({
     startGroupChatRoom,
     navigateToGroupChatRoom,
     joinGroupChatRoom,
+    updateGroupChatRoomName,
   };
 
   return (

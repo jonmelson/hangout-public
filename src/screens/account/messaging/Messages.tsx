@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import {
@@ -7,7 +7,10 @@ import {
   ChevronBackIcon,
 } from '../../../components/Icons';
 
+import { MessageSearchList } from '../../../components/MessageSearch';
+
 import SearchBar from '../../../components/SearchBar';
+import { SearchContext } from '../../../context/SearchContext';
 
 import { Channel, ChannelSort } from 'stream-chat';
 import { ChannelList } from 'stream-chat-expo';
@@ -43,6 +46,9 @@ const Messages = ({
   const { sessionId } = route?.params ?? {};
 
   const { setCurrentChannel } = useChatContext();
+
+  const { searchQuery, loading, loadMore, messages, refreshing, refreshList } =
+    useContext(SearchContext);
 
   const filters = {
     members: { $in: [sessionId || ''] },
@@ -81,8 +87,29 @@ const Messages = ({
     });
   }, [navigation]);
 
+  const EmptySearchIndicator = () => (
+    <View style={styles.emptyIndicatorContainer}>
+      {/* <Search height={112} width={112} /> */}
+      <Text style={[styles.emptyIndicatorText, { color: '#808080' }]}>
+        {`No results for "${searchQuery}"`}
+      </Text>
+    </View>
+  );
+
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
+    <View
+      style={{ flex: 1, backgroundColor: 'white', flexDirection: 'column' }}>
+      {(!!searchQuery || (messages && messages.length > 0)) && (
+        <MessageSearchList
+          EmptySearchIndicator={EmptySearchIndicator}
+          loading={loading}
+          loadMore={loadMore}
+          messages={messages}
+          refreshing={refreshing}
+          refreshList={refreshList}
+          // setChannelWithId={setChannelWithId}
+        />
+      )}
       <View style={[styles.channelListContainer]}>
         <ChannelList
           additionalFlatListProps={additionalFlatListProps}

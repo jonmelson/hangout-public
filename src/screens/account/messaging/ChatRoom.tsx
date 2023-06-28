@@ -5,6 +5,7 @@ import { ChevronBackIcon, MoreIcon } from '../../../components/Icons';
 
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useChatContext } from '../../../context/ChatContext';
+import Avatar from '../../../components/Avatar';
 import {
   Channel,
   MessageList,
@@ -15,6 +16,8 @@ import {
   Colors,
   Sound,
 } from 'stream-chat-expo';
+
+import MessageAvatarGroup from '../../../components/MessageAvatarGroup';
 
 import { MessageHeader } from '../../../components/Channel/MessageHeader';
 
@@ -43,10 +46,17 @@ const ChatRoom = ({
 
   const { currentChannel, chatClient } = useChatContext();
   const { message } = useMessageContext();
+  const [memberName, setMemberName] = useState('');
+  const [memberImage, setMemberImage] = useState('');
+  const [groupInfo, setGroupInfo] = useState();
 
   const insets = useSafeAreaInsets();
 
   const MyEmptyComponent = () => null;
+  const handleDeleteChannel = async () => {
+    await currentChannel?.hide();
+    navigation.navigate('Messages');
+  };
 
   const showAlert = () => {
     Alert.alert(
@@ -60,7 +70,7 @@ const ChatRoom = ({
         },
         {
           text: 'Confirm',
-          onPress: () => console.log('Confirm'),
+          onPress: handleDeleteChannel,
         },
       ],
       { cancelable: false },
@@ -102,8 +112,38 @@ const ChatRoom = ({
     );
   };
 
-  console.log(message);
+  const queryMembers = async (channel: any) => {
+    if (memberName !== '' || !groupInfo) {
+      let sort = { created_at: -1 };
+      const query = await channel.queryMembers({}, sort, {});
+      const members = query.members;
+
+      if (channel.data.type === 'messaging') {
+        const memberName = members
+          .filter((obj: any) => obj.role === 'member')
+          .map((obj: any) => obj.user.name);
+        const memberImage = members
+          .filter((obj: any) => obj.role === 'member')
+          .map((obj: any) => obj.user.image);
+
+        setMemberName(memberName[0]);
+        setMemberImage(memberImage[0]);
+      } else if (channel.data.type === 'livestream') {
+        const group = members.map((obj: any) => ({
+          role: obj.role,
+          image: obj.user.image,
+          name: obj.user.name,
+        }));
+        setGroupInfo(group);
+      }
+    }
+  };
+
   useEffect(() => {
+    if (currentChannel) {
+      queryMembers(currentChannel);
+    }
+
     navigation.setOptions({
       title: '',
       headerShown: true,
@@ -113,7 +153,26 @@ const ChatRoom = ({
           className="flex flex-row items-center space-x-2 py-2 pr-4"
           onPress={() => navigation.navigate('Messages')}>
           <ChevronBackIcon />
-          <Text className="font-semibold">{currentChannel?.data?.name}</Text>
+
+          {currentChannel?.data?.type === 'messaging' &&
+            memberName &&
+            memberImage && (
+              <View className="flex flex-row items-center justify-center space-x-2">
+                <Avatar source={memberImage} name={memberName} />
+                <Text style={{ fontSize: 16, fontWeight: '600' }}>
+                  {memberName}
+                </Text>
+              </View>
+            )}
+
+          {currentChannel?.data?.type === 'livestream' && groupInfo && (
+            <View className="flex flex-row items-center justify-center space-x-2">
+              <MessageAvatarGroup members={groupInfo} />
+              <Text className="font-semibold">
+                {currentChannel?.data?.name}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       ),
       headerRight: () => (
@@ -124,7 +183,7 @@ const ChatRoom = ({
         </TouchableOpacity>
       ),
     });
-  }, [currentChannel?.data?.name]);
+  }, [currentChannel, memberName, memberImage, groupInfo]);
 
   if (!currentChannel) {
     // Render a loading state or handle the case when currentChannel is undefined

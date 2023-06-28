@@ -132,7 +132,7 @@ const Event = (props: EventProps) => {
     setNewDate(formattedDate);
     setNewTime(displayTime);
   }, [starts, ends]);
-
+ 
   return (
     <>
       <TouchableOpacity
