@@ -46,6 +46,8 @@ const ChatRoom = ({
 
   const { currentChannel, chatClient } = useChatContext();
   const { message } = useMessageContext();
+  const [ownerId, setOwnerId] = useState('');
+  const [memberId, setMemberId] = useState('');
   const [memberName, setMemberName] = useState('');
   const [memberImage, setMemberImage] = useState('');
   const [groupInfo, setGroupInfo] = useState();
@@ -78,7 +80,44 @@ const ChatRoom = ({
   };
 
   const handleMorePress = () => {
-    const options = ['Open details', 'Delete conversation', 'Cancel'];
+    // const options = [ 'Open details', 'Delete conversation', 'Cancel' ];
+     const options = ['Delete conversation', 'Cancel'];
+
+
+    const cancelButtonIndex = 2;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex: 1,
+      },
+      selectedIndex => {
+        switch (selectedIndex) {
+          // case 0:
+          //   // Open details
+          //   console.log('Open details');
+          //   break;
+          case 0:
+            // Delete conversation
+
+            showAlert();
+            break;
+
+          case cancelButtonIndex:
+            // Canceled
+            console.log('Cancel');
+            break;
+
+          default:
+            break;
+        }
+      },
+    );
+  };
+
+  const handleMoreProfilePress = () => {
+    const options = ['Open profile', 'Delete conversation', 'Cancel'];
 
     const cancelButtonIndex = 2;
 
@@ -92,7 +131,10 @@ const ChatRoom = ({
         switch (selectedIndex) {
           case 0:
             // Open details
-            console.log('Open details');
+            navigation.replace('PublicProfile', {
+              userId: memberId,
+              sessionId: ownerId,
+            });
             break;
           case 1:
             // Delete conversation
@@ -119,15 +161,23 @@ const ChatRoom = ({
       const members = query.members;
 
       if (channel.data.type === 'messaging') {
+        const memberId = members
+          .filter((obj: any) => obj.role === 'member')
+          .map((obj: any) => obj.user.id);
         const memberName = members
           .filter((obj: any) => obj.role === 'member')
           .map((obj: any) => obj.user.name);
         const memberImage = members
           .filter((obj: any) => obj.role === 'member')
           .map((obj: any) => obj.user.image);
+        const ownerId = members
+          .filter((obj: any) => obj.role === 'owner')
+          .map((obj: any) => obj.user.id);
 
+        setMemberId(memberId[0]);
         setMemberName(memberName[0]);
         setMemberImage(memberImage[0]);
+        setOwnerId(ownerId[0]);
       } else if (channel.data.type === 'livestream') {
         const group = members.map((obj: any) => ({
           role: obj.role,
@@ -176,14 +226,19 @@ const ChatRoom = ({
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity onPress={handleMorePress}>
+        <TouchableOpacity
+          onPress={
+            currentChannel?.data?.type === 'messaging'
+              ? handleMoreProfilePress
+              : handleMorePress
+          }>
           <View className="items-center">
             <MoreIcon />
           </View>
         </TouchableOpacity>
       ),
     });
-  }, [currentChannel, memberName, memberImage, groupInfo]);
+  }, [currentChannel, memberId, memberName, memberImage, ownerId, groupInfo]);
 
   if (!currentChannel) {
     // Render a loading state or handle the case when currentChannel is undefined

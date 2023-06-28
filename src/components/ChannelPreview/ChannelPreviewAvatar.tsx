@@ -59,19 +59,15 @@ const ChannelPreviewAvatar = (props: ChannelPreviewAvatarProps) => {
   return (
     <>
       {members.length == 1 && (
-        <View className="pl-2">
-          <Avatar source={members[0].image} name={members[0].name} size={44} />
-        </View>
+        <Avatar source={members[0].image} name={members[0].name} size={52} />
       )}
 
       {members.length === 2 && channel.data.type === 'messaging' && (
-        <View className="pl-2">
-          <Avatar
-            source={members.filter(item => item.role === 'member')[0].image}
-            name={members.filter(item => item.role === 'member')[0].name}
-            size={44}
-          />
-        </View>
+        <Avatar
+          source={members.filter(item => item.role === 'member')[0].image}
+          name={members.filter(item => item.role === 'member')[0].name}
+          size={52}
+        />
       )}
       {members.length >= 2 && channel.data.type === 'livestream' && (
         <View
@@ -105,10 +101,10 @@ const styles = StyleSheet.create({
   badge: {
     position: 'absolute',
     bottom: -10,
-    right: -6,
+    right: -4,
     backgroundColor: 'white',
-    borderRadius: 14,
-    width: 30,
+    borderRadius: 20,
+    width: 25,
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
@@ -127,7 +123,7 @@ const styles = StyleSheet.create({
   backgroundStyle: {
     position: 'absolute',
     top: -5,
-    left: 10,
+    left: 13,
     zIndex: 1,
     borderWidth: 4,
     borderColor: '#fff',

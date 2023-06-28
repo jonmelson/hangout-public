@@ -9,7 +9,6 @@ import {
 
 import { MessageSearchList } from '../../../components/MessageSearch';
 
-import SearchBar from '../../../components/SearchBar';
 import { SearchContext } from '../../../context/SearchContext';
 
 import { Channel, ChannelSort } from 'stream-chat';
@@ -99,7 +98,7 @@ const Messages = ({
   return (
     <View
       style={{ flex: 1, backgroundColor: 'white', flexDirection: 'column' }}>
-      {(!!searchQuery || (messages && messages.length > 0)) && (
+      {/* {(!!searchQuery || (messages && messages.length > 0)) && (
         <MessageSearchList
           EmptySearchIndicator={EmptySearchIndicator}
           loading={loading}
@@ -109,7 +108,8 @@ const Messages = ({
           refreshList={refreshList}
           // setChannelWithId={setChannelWithId}
         />
-      )}
+      )} */}
+
       <View style={[styles.channelListContainer]}>
         <ChannelList
           additionalFlatListProps={additionalFlatListProps}
@@ -132,7 +132,8 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'absolute',
     width: '100%',
-    backgroundColor: 'white',
+    flex: 1,
+    backgroundColor: 'black',
   },
   emptyIndicatorContainer: {
     alignItems: 'center',
