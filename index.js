@@ -1,8 +1,12 @@
-import { registerRootComponent } from 'expo';
+import "expo-router/entry";
 
-import App from './App';
+// Ensure we import the CSS for Tailwind so it's included in hot module reloads.
+export const ctx = require.context(
+  "./node_modules/.cache/expo/tailwind",
+  true,
+  /\.css$/
+);
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+if (ctx.keys().length) {
+  ctx(ctx.keys()[0]);
+}
