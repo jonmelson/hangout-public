@@ -216,12 +216,10 @@ export function ChatContextProvider({
   };
 
   return (
-    <OverlayProvider>
-      <ThemeProvider style={theme}>
-        <Chat client={chatClient}>
-          <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
-        </Chat>
-      </ThemeProvider>
+    <OverlayProvider value={{ style: theme }}>
+      <Chat client={chatClient}>
+        <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
+      </Chat>
     </OverlayProvider>
   );
 }
