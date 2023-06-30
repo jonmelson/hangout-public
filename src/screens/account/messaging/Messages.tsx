@@ -1,22 +1,21 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import {
-  NewMessage14Icon,
-  NewMessage22Icon,
-  ChevronBackIcon,
-} from '../../../components/Icons';
+import { NewMessage22Icon, ChevronBackIcon } from '../../../components/Icons';
+import EmptyMessageStateIndicator from '../../../components/EmptyMessageStateIndicator';
 
 import { MessageSearchList } from '../../../components/MessageSearch';
+import MessageSearchBar from '../../../components/MessageSearch/MessagesSearchBar';
 
 import { SearchContext } from '../../../context/SearchContext';
 
 import { Channel, ChannelSort } from 'stream-chat';
 import { ChannelList } from 'stream-chat-expo';
 import { useChatContext } from '../../../context/ChatContext';
-import EmptyMessageStateIndicator from '../../../components/EmptyMessageStateIndicator';
 
 import { ChannelPreviewMessenger } from '../../../components/ChannelPreview';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { SlideOutUp } from 'react-native-reanimated';
 
 const additionalFlatListProps = {
   keyboardDismissMode: 'on-drag' as const,
@@ -42,12 +41,21 @@ const Messages = ({
   navigation: any;
   route?: { params?: { sessionId?: string } };
 }) => {
+  const insets = useSafeAreaInsets();
   const { sessionId } = route?.params ?? {};
 
-  const { setCurrentChannel } = useChatContext();
+  const [clicked, setClicked] = useState(false);
 
-  const { searchQuery, loading, loadMore, messages, refreshing, refreshList } =
-    useContext(SearchContext);
+  const { setCurrentChannel } = useChatContext();
+  const {
+    searchQuery,
+    setSearchQuery,
+    loading,
+    loadMore,
+    messages,
+    refreshing,
+    refreshList,
+  } = useContext(SearchContext);
 
   const filters = {
     members: { $in: [sessionId || ''] },
@@ -58,9 +66,18 @@ const Messages = ({
     navigation.navigate('ChatRoom');
   };
 
+  const EmptySearchIndicator = () => (
+    <View style={styles.emptyIndicatorContainer}>
+      {/* <Search height={112} width={112} /> */}
+      <Text style={[styles.emptyIndicatorText, { color: '#808080' }]}>
+        {`No results for "${searchQuery}"`}
+      </Text>
+    </View>
+  );
+
   useEffect(() => {
     navigation.setOptions({
-      headerShown: true,
+      headerShown: !clicked ? true : false,
       headerShadowVisible: false,
       headerTitle: () => (
         <View>
@@ -84,44 +101,56 @@ const Messages = ({
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
-
-  const EmptySearchIndicator = () => (
-    <View style={styles.emptyIndicatorContainer}>
-      {/* <Search height={112} width={112} /> */}
-      <Text style={[styles.emptyIndicatorText, { color: '#808080' }]}>
-        {`No results for "${searchQuery}"`}
-      </Text>
-    </View>
-  );
+  }, [navigation, clicked]);
 
   return (
     <View
-      style={{ flex: 1, backgroundColor: 'white', flexDirection: 'column' }}>
-      {/* {(!!searchQuery || (messages && messages.length > 0)) && (
-        <MessageSearchList
-          EmptySearchIndicator={EmptySearchIndicator}
-          loading={loading}
-          loadMore={loadMore}
-          messages={messages}
-          refreshing={refreshing}
-          refreshList={refreshList}
-          // setChannelWithId={setChannelWithId}
-        />
-      )} */}
-
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+        flexDirection: 'column',
+        paddingTop: !clicked ? 0 : insets.top,
+      }}>
       <View style={[styles.channelListContainer]}>
-        <ChannelList
-          additionalFlatListProps={additionalFlatListProps}
-          filters={filters}
-          HeaderNetworkDownIndicator={() => null}
-          maxUnreadCount={99}
-          onSelect={onSelect}
-          options={options}
-          Preview={ChannelPreviewMessenger}
-          sort={sort}
-          EmptyStateIndicator={EmptyMessageStateIndicator}
-        />
+        {/* <Animated.View exiting={SlideOutUp} collapsable={false}>
+          <MessageSearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            clicked={clicked}
+            setClicked={setClicked}
+          />
+        </Animated.View>
+
+        {(!!searchQuery || (messages && messages.length > 0)) && (
+          <MessageSearchList
+            EmptySearchIndicator={EmptySearchIndicator}
+            loading={loading}
+            loadMore={loadMore}
+            messages={messages}
+            refreshing={refreshing}
+            refreshList={refreshList}
+            // setChannelWithId={setChannelWithId}
+          />
+        )} */}
+        <View style={{ flex: searchQuery ? 0 : 1 }}>
+          <View
+            style={[
+              styles.channelListContainer,
+              { opacity: searchQuery ? 0 : 1 },
+            ]}>
+            <ChannelList
+              additionalFlatListProps={additionalFlatListProps}
+              filters={filters}
+              HeaderNetworkDownIndicator={() => null}
+              maxUnreadCount={99}
+              onSelect={onSelect}
+              options={options}
+              Preview={ChannelPreviewMessenger}
+              sort={sort}
+              EmptyStateIndicator={EmptyMessageStateIndicator}
+            />
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -130,7 +159,6 @@ const Messages = ({
 const styles = StyleSheet.create({
   channelListContainer: {
     height: '100%',
-    position: 'absolute',
     width: '100%',
     flex: 1,
   },
@@ -142,6 +170,12 @@ const styles = StyleSheet.create({
   emptyIndicatorText: { paddingTop: 28 },
   flex: {
     flex: 1,
+  },
+  programmingLanguagesText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 8,
   },
   searchContainer: {
     alignItems: 'center',

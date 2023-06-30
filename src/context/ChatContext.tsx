@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
 
 import { StreamChat, Channel } from 'stream-chat';
 import { OverlayProvider, Chat, ThemeProvider } from 'stream-chat-expo';
@@ -201,7 +200,7 @@ export function ChatContextProvider({
   };
 
   if (!chatClient) {
-    return <ActivityIndicator />;
+    return null;
   }
 
   const value = {

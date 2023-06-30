@@ -64,6 +64,7 @@ export function usePaginatedSearchedMessages(
       );
 
       const newMessages = res?.results.map(r => r.message);
+   
       if (!newMessages) {
         queryInProgress.current = false;
         done();

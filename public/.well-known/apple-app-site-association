@@ -1,0 +1,27 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "8B43A3X2C6.com.hangoutapp.hangout"
+        ],
+        "components": [
+          {
+            "/": "*",
+            "comment": "Matches all routes"
+          }
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "8B43A3X2C6.com.hangoutapp.hangout"
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "8B43A3X2C6.com.hangoutapp.hangout"
+    ]
+  }
+}

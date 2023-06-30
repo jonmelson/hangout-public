@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 
-import { AvatarProps } from '../utils/other';
+import { AvatarProps } from '../../utils/other';
 
-const HeaderAvatar = (props: AvatarProps) => {
+const ChannelPreviewLastestMessageAvatar = (props: AvatarProps) => {
   const { source, name, size = 24, style } = props;
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,7 +28,7 @@ const HeaderAvatar = (props: AvatarProps) => {
     <>
       {source !== '' ? (
         <View
-          style={[{ width: size, height: size }, style]}
+          style={[{ width: size, height: size, marginRight: 4 }, style]}
           className="items-center justify-center rounded-full">
           <Image
             source={{ uri: source }}
@@ -41,7 +41,7 @@ const HeaderAvatar = (props: AvatarProps) => {
         </View>
       ) : (
         <View
-          style={[{ width: size, height: size }, style]}
+          style={[{ width: size, height: size, marginRight: 4 }, style]}
           className="items-center justify-center rounded-full bg-gray-300">
           <Text className="text-black" style={[{ fontSize }]}>
             {initials}
@@ -52,4 +52,12 @@ const HeaderAvatar = (props: AvatarProps) => {
   );
 };
 
-export default HeaderAvatar;
+const styles = StyleSheet.create({
+  avatar: {
+    borderWidth: 4,
+    borderColor: '#fff',
+    position: 'relative',
+  },
+});
+
+export default ChannelPreviewLastestMessageAvatar;

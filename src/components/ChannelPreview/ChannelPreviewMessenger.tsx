@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { TouchableOpacity, Swipeable } from 'react-native-gesture-handler';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 import {
   useTheme,
   useChannelPreviewDisplayName,
@@ -18,7 +18,7 @@ import Avatar from '../Avatar';
 import { ChannelPreviewStatus } from './ChannelPreviewStatus';
 import { ChannelPreviewMessage } from './ChannelPreviewMessage';
 import ChannelPreviewAvatar from './ChannelPreviewAvatar';
-import ChannelPreviewLatestMessage from './ChannelPreviewLatestMessage';
+import ChannelPreviewLastestMessageAvatar from './ChannelPreviewLastestMessageAvatar';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingTop: 10,
     paddingHorizontal: 8,
+    paddingBottom: 5,
   },
   actionContainer: {
     flex: 1,
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  title: { fontSize: 16, fontWeight: '500', flex: 1, marginBottom: 3 },
+  title: { fontSize: 24, fontWeight: '500', flex: 1, marginBottom: 3 },
   circle: {
     width: 8,
     height: 8,
@@ -137,6 +138,9 @@ export const ChannelPreviewMessenger = (props: any) => {
     },
     [accent_red, channel, mute, muted, unmute],
   );
+  if (latestMessagePreview.messageObject) {
+    console.log(latestMessagePreview.messageObject.updated_at);
+  }
 
   return (
     <TouchableOpacity
@@ -160,7 +164,15 @@ export const ChannelPreviewMessenger = (props: any) => {
         ]}>
         <View style={[styles.row, row]}>
           <View style={[styles.title]}>
-            <PreviewTitle channel={channel} displayName={displayName} />
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '500',
+                color: '#333333',
+                marginBottom: 2,
+              }}>
+              {displayName}
+            </Text>
           </View>
 
           <PreviewStatus
@@ -170,21 +182,19 @@ export const ChannelPreviewMessenger = (props: any) => {
           />
         </View>
 
-        <PreviewMessage latestMessagePreview={latestMessagePreview} />
-        {/* <ChannelPreviewLatestMessage
-          latestMessagePreview={latestMessagePreview}
-        /> */}
-        {/* {latestMessagePreview &&
-          Object.keys(latestMessagePreview.messageObject).length !== 0 &&
-          latestMessagePreview.messageObject.user && (
-            <View style={[styles.row, row]}>
-              <Avatar
-                source={latestMessagePreview.messageObject.image}
-                name={latestMessagePreview.messageObject.name}
+        <View className="flex flex-row items-center space-x-2">
+          {latestMessagePreview &&
+            latestMessagePreview.messageObject &&
+            Object.keys(latestMessagePreview.messageObject).length !== 0 &&
+            channel.data.type === 'livestream' && (
+              <ChannelPreviewLastestMessageAvatar
+                source={latestMessagePreview.messageObject.user.image}
+                name={latestMessagePreview.messageObject.user.name}
+                size={16}
               />
-              <PreviewMessage latestMessagePreview={latestMessagePreview} />
-            </View>
-          )} */}
+            )}
+          <ChannelPreviewMessage latestMessagePreview={latestMessagePreview} />
+        </View>
       </View>
     </TouchableOpacity>
   );

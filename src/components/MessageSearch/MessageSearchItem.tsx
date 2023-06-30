@@ -78,6 +78,7 @@ type MessageSearchListProps = {
   item: MessageResponse;
   // setChannelWithId: (channelId: string, messageId?: string) => Promise<void>;
 };
+
 export const MessageSearchItem: React.FC<MessageSearchListProps> = ({
   item,
   // setChannelWithId,
@@ -97,7 +98,7 @@ export const MessageSearchItem: React.FC<MessageSearchListProps> = ({
           // navigation.navigate('ChatRoom');
         }
       }}
-      style={[styles.container, { borderBottomColor: border }]}
+      style={[styles.container]}
       testID="channel-preview-button">
       <View style={[styles.avatarContainer]}>
         <Avatar

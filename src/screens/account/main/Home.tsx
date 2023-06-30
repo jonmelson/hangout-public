@@ -3,7 +3,6 @@ import {
   Text,
   View,
   SectionList,
-  ActivityIndicator,
   Modal,
   RefreshControl,
   SafeAreaView,
@@ -447,11 +446,7 @@ const Home = ({
         friends.length >= 0 &&
         (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) && (
           <View className="flex-1 bg-white">
-            {loading ? (
-              <View className="items-center justify-center">
-                <ActivityIndicator size="large" color="#0000ff" />
-              </View>
-            ) : (
+            {loading ? null : (
               <SectionList
                 sections={sections}
                 refreshControl={
