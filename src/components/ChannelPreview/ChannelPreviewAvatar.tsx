@@ -71,8 +71,8 @@ const ChannelPreviewAvatar = (props: ChannelPreviewAvatarProps) => {
       )}
       {members.length >= 2 && channel.data.type === 'livestream' && (
         <View
-          className={`relative flex justify-center pr-2 ${
-            sortedUsers.length > 1 ? 'items-start' : 'items-center'
+          className={`relative flex justify-center pr-4  ${
+            sortedUsers.length > 1 ? 'items-start pr-0' : 'items-center'
           }`}>
           {members &&
             sortedUsers
@@ -87,7 +87,7 @@ const ChannelPreviewAvatar = (props: ChannelPreviewAvatarProps) => {
                       : styles.backgroundStyle,
                   ]}
                   source={user.image}
-                  size={44}
+                  size={52}
                 />
               ))}
           {badge}
@@ -100,32 +100,29 @@ const ChannelPreviewAvatar = (props: ChannelPreviewAvatarProps) => {
 const styles = StyleSheet.create({
   badge: {
     position: 'absolute',
-    bottom: -10,
-    right: -4,
+    bottom: 0,
+    right: -6,
     backgroundColor: 'white',
-    borderRadius: 20,
-    width: 25,
+    borderRadius: 14,
+    width: 28,
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#7000FF',
+    borderColor: 'purple',
     zIndex: 10,
-    fontSize: 10,
   },
   foregroundStyle: {
     zIndex: 2,
-    borderWidth: 10,
-    top: 5,
+    top: 1,
     right: 3,
-    borderColor: '#fff',
   },
   backgroundStyle: {
     position: 'absolute',
     top: -5,
-    left: 13,
+    left: 5,
     zIndex: 1,
-    borderWidth: 4,
+    borderWidth: 2,
     borderColor: '#fff',
   },
 });

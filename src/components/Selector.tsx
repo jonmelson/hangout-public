@@ -3,65 +3,41 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 type SelectorProps = {
   leftTab: string;
-  middleTab: string;
   rightTab: string;
   activeTab: number;
   handleTabPress: (tabIndex: number) => void;
-  showPast: boolean;
 };
 
 const Selector = (props: SelectorProps) => {
-  const { leftTab, middleTab, rightTab, activeTab, handleTabPress, showPast } =
-    props;
-  
-  
-  return (
-    <View
-      className={`${
-        showPast ? 'mx-24' : 'mx-10'
-        } mt-16 flex flex-row items-center justify-between mb-2`}>
-      
+  const { leftTab, rightTab, activeTab, handleTabPress } = props;
 
-      <TouchableOpacity
-        className={`w-${showPast ? '1/2' : '1/3'} p-2  ${
-          activeTab === 0 ? 'rounded-full bg-violet-600' : ''
-        }`}
-        onPress={() => handleTabPress(0)}>
+  return (
+    <View className="flex flex-row items-center justify-between">
+      <TouchableOpacity className="w-1/2" onPress={() => handleTabPress(0)}>
         <Text
-          className={`text-center ${
-            activeTab === 0 ? 'font-semibold text-white' : ''
-          }`}>
+          className={`text-center ${activeTab === 0 ? 'font-semibold' : ''}`}>
           {leftTab}
         </Text>
+        <View
+          className={`${
+            activeTab === 0
+              ? 'mt-2 border border-violet-600'
+              : 'mt-2 border border-gray-200'
+          }`}></View>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        className={`w-${showPast ? '1/2' : '1/3'} p-2 ${
-          activeTab === 1 ? 'rounded-full bg-violet-600' : ''
-        }`}
-        onPress={() => handleTabPress(1)}>
+      <TouchableOpacity className="w-1/2" onPress={() => handleTabPress(1)}>
         <Text
-          className={`text-center ${
-            activeTab === 1 ? 'font-semibold text-white' : ''
-          }`}>
-          {middleTab}
+          className={`text-center ${activeTab === 1 ? 'font-semibold' : ''}`}>
+          {rightTab}
         </Text>
+        <View
+          className={`${
+            activeTab === 1
+              ? 'mt-2 border border-violet-600'
+              : 'mt-2 border border-gray-200'
+          }`}></View>
       </TouchableOpacity>
-
-      {showPast && (
-        <TouchableOpacity
-          className={`w-1/3 p-2  ${
-            activeTab === 2 ? 'rounded-full bg-violet-600' : ''
-          }`}
-          onPress={() => handleTabPress(2)}>
-          <Text
-            className={`text-center ${
-              activeTab === 2 ? 'font-semibold text-white' : ''
-            }`}>
-            {rightTab}
-          </Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 };

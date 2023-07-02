@@ -14,7 +14,7 @@ import { supabase } from '../../lib/supabase';
 
 import Avatar from '../../components/Avatar';
 import SearchBar from '../../components/SearchBar';
-import { Feather, EvilIcons, ChevronBackIcon } from '../../components/Icons';
+import { Feather, EvilIcons, ExportSquareIcon } from '../../components/Icons';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -245,7 +245,7 @@ const Friends = ({
     const fullName = item.first_name + ' ' + item.last_name;
     return (
       <TouchableOpacity
-        className="mt-2 flex flex-row items-center space-x-2"
+        className="flex flex-row items-center space-x-2 pt-5"
         onPress={() => {
           handlePublicProfile(item.id);
         }}>
@@ -475,31 +475,8 @@ const Friends = ({
 
   useEffect(() => {
     navigation.setOptions({
-      headerShown: true,
+      headerShown: false,
       headerShadowVisible: false,
-      headerTitle: () => (
-        <View>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
-            Friends
-          </Text>
-        </View>
-      ),
-      headerLeft: () => (
-        <TouchableOpacity
-          className="py-2 pr-4"
-          onPress={() => navigation.goBack()}>
-          <ChevronBackIcon />
-        </TouchableOpacity>
-      ),
-      headerRight: () => (
-        <TouchableOpacity onPress={handleInvite}>
-          <View className="items-center">
-            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
-              Invite
-            </Text>
-          </View>
-        </TouchableOpacity>
-      ),
     });
   }, [navigation, sessionId]);
 
@@ -514,129 +491,163 @@ const Friends = ({
         width: '100%',
         backgroundColor: 'white',
       }}>
-      <View className="w-full flex-1 items-center bg-white px-4">
-        <View className="w-full py-2">
+      <View style={{ backgroundColor: '#F3F3F3' }} className="flex w-full">
+        <View
+          className={` ${
+            searchText === '' ? 'rounded-b-2xl px-4' : 'pl-4'
+          }  bg-white  py-2`}>
           <SearchBar
-            placeholder="Search friends"
+            placeholder="Search for people"
             searchTerm={searchText}
             setSearchTerm={setSearchText}
           />
         </View>
+      </View>
 
-        <View className="w-full flex-1 px-2">
-          {/* Before Searching */}
-          {searchText === '' && (
-            <>
-              {receivedFriendRequests.length !== 0 && (
-                <View className="my-2 w-full">
-                  <FlatList
-                    data={receivedFriendRequests}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={renderFriendRequestItem}
-                    ListHeaderComponent={
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: '500',
-                        }}>
-                        Added me
-                      </Text>
-                    }
-                  />
+      <View
+        className="w-full flex-1 flex-col pt-2"
+        style={{ backgroundColor: searchText === '' ? '#F3F3F3' : 'white' }}>
+        {/* Before Searching */}
+        {searchText === '' && (
+          <>
+            {receivedFriendRequests.length !== 0 && (
+              <View className="mb-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
+                <FlatList
+                  data={receivedFriendRequests}
+                  keyExtractor={item => item.id.toString()}
+                  renderItem={renderFriendRequestItem}
+                  scrollEnabled={false}
+                  ListHeaderComponent={
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                      }}>
+                      Added me
+                    </Text>
+                  }
+                />
+              </View>
+            )}
+
+            <View className="flex h-[57px] flex-col justify-center rounded-2xl  bg-white px-4">
+              <TouchableOpacity onPress={handleInvite}>
+                <View className="flex flex-row items-center space-x-2">
+                  <ExportSquareIcon color="black" />
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: 'black',
+                    }}>
+                    Invite friends
+                  </Text>
                 </View>
-              )}
+              </TouchableOpacity>
+            </View>
 
-              {friends.length !== 0 && (
-                <View className="mt-2 w-full flex-1">
+            {friends.length !== 0 && (
+              <View className="mt-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
+                <FlatList
+                  data={friends}
+                  keyExtractor={item => item.id.toString()}
+                  renderItem={renderFriendItem}
+                  scrollEnabled={false}
+                  ListHeaderComponent={
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: '500',
+                      }}>
+                      My friends
+                    </Text>
+                  }
+                />
+              </View>
+            )}
+
+            {receivedFriendRequests.length === 0 && friends.length === 0 && (
+              <View className="mt-2 flex flex-col justify-center rounded-2xl bg-white p-4">
+                <Text style={{ fontSize: 20, fontWeight: '500' }}>
+                  My friends
+                </Text>
+                <Text
+                  style={{ fontWeight: '500', fontSize: 16, color: '#808080' }}
+                  className="px-5 pb-4 pt-6 text-center">
+                  You haven’t added any friends yet. Use the search bar to find
+                  your friends.
+                </Text>
+              </View>
+            )}
+          </>
+        )}
+
+        {/* After Searching */}
+        {searchText !== '' && (
+          <View className="px-4">
+            <TouchableOpacity className="mb-4" onPress={handleInvite}>
+              <View className="flex flex-row items-center space-x-2">
+                <ExportSquareIcon color="black" />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '500',
+                    color: 'black',
+                  }}>
+                  Invite friends
+                </Text>
+              </View>
+            </TouchableOpacity>
+            {results.length !== 0 && (
+              <View>
+                {/* Render the friends from results */}
+                {results.some((item: any) =>
+                  friends.some((friend: any) => friend.id === item.id),
+                ) && (
                   <FlatList
-                    data={friends}
+                    data={results.filter((item: any) =>
+                      friends.some((friend: any) => friend.id === item.id),
+                    )}
                     keyExtractor={item => item.id.toString()}
                     renderItem={renderFriendItem}
                     ListHeaderComponent={
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: '500',
-                        }}>
-                        My Friends
-                      </Text>
+                      <Text className="text-lg font-semibold">My Friends</Text>
+                    }
+                    scrollEnabled={false}
+                    className="mb-4"
+                  />
+                )}
+
+                {/* Render the non-matching friends from results */}
+                {results.some(
+                  (item: any) =>
+                    !friends.some((friend: any) => friend.id === item.id),
+                ) && (
+                  <FlatList
+                    data={results.filter(
+                      (item: any) =>
+                        !friends.some((friend: any) => friend.id === item.id),
+                    )}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={renderResultItem}
+                    scrollEnabled={false}
+                    ListHeaderComponent={
+                      <Text className="text-lg font-semibold">Results</Text>
                     }
                   />
-                </View>
-              )}
+                )}
+              </View>
+            )}
 
-              {receivedFriendRequests.length === 0 && friends.length === 0 && (
-                <View className="w-full flex-1 items-center justify-center">
-                  <Text className="items-center justify-center text-center text-gray-500">
-                    You haven't added any friends yet. Use the search bar to
-                    find your friends.
-                  </Text>
-                </View>
-              )}
-            </>
-          )}
-          {/* After Searching */}
-          {searchText !== '' && (
-            <>
-              <TouchableOpacity className="mb-4" onPress={handleInvite}>
-                <View className="flex flex-row items-center space-x-1">
-                  <Feather name="external-link" size={25} color="#333333" />
-                  <Text className="text-lg">Invite friends</Text>
-                </View>
-              </TouchableOpacity>
-              {results.length !== 0 && (
-                <View>
-                  {/* Render the friends from results */}
-                  {results.some((item: any) =>
-                    friends.some((friend: any) => friend.id === item.id),
-                  ) && (
-                    <FlatList
-                      data={results.filter((item: any) =>
-                        friends.some((friend: any) => friend.id === item.id),
-                      )}
-                      keyExtractor={item => item.id.toString()}
-                      renderItem={renderFriendItem}
-                      ListHeaderComponent={
-                        <Text className="text-lg font-semibold">
-                          My Friends
-                        </Text>
-                      }
-                      scrollEnabled={false}
-                      className="mb-4"
-                    />
-                  )}
-
-                  {/* Render the non-matching friends from results */}
-                  {results.some(
-                    (item: any) =>
-                      !friends.some((friend: any) => friend.id === item.id),
-                  ) && (
-                    <FlatList
-                      data={results.filter(
-                        (item: any) =>
-                          !friends.some((friend: any) => friend.id === item.id),
-                      )}
-                      keyExtractor={item => item.id.toString()}
-                      renderItem={renderResultItem}
-                      scrollEnabled={false}
-                      ListHeaderComponent={
-                        <Text className="text-lg font-semibold">Results</Text>
-                      }
-                    />
-                  )}
-                </View>
-              )}
-
-              {results.length === 0 && (
-                <View className="flex-1 items-center justify-center mb-20">
-                  <Text className="items-center justify-center px-16 text-center text-gray-500">
-                    No friends exist with that name.
-                  </Text>
-                </View>
-              )}
-            </>
-          )}
-        </View>
+            {results.length === 0 && (
+              <View className="mb-20 flex-1 items-center justify-center">
+                <Text className="items-center justify-center px-16 text-center text-gray-500">
+                  No friends exist with that name.
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

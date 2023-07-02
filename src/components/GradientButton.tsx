@@ -27,7 +27,7 @@ const GradientButton = (props: GradientButtonProps) => {
         style={{ 
           opacity: disabled ? 0.2 : 1,
         }}
-        className="w-full rounded-full h-12 items-center justify-center">
+        className="rounded-full h-12 items-center justify-center">
         <View className="flex flex-row items-center justify-center space-x-1">
           <View>
             <Text

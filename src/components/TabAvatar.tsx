@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 
 import { AvatarProps } from '../utils/other';
 
-const HeaderAvatar = (props: AvatarProps) => {
+const TabAvatar = (props: AvatarProps) => {
   const { source, name, size = 24, style } = props;
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,7 +32,7 @@ const HeaderAvatar = (props: AvatarProps) => {
           className="items-center justify-center rounded-full">
           <Image
             source={{ uri: source }}
-            style={[{ width: size, height: size }]}
+            style={[{ width: size, height: size }, style]}
             onLoadStart={handleImageLoadStart}
             onLoad={handleImageLoadEnd}
             className="items-center justify-center rounded-full"
@@ -52,4 +52,12 @@ const HeaderAvatar = (props: AvatarProps) => {
   );
 };
 
-export default HeaderAvatar;
+const styles = StyleSheet.create({
+  avatar: {
+    borderWidth: 1,
+    borderColor: '#000000',
+    position: 'relative',
+  },
+});
+
+export default TabAvatar;

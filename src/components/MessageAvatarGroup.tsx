@@ -53,7 +53,7 @@ const MessageAvatarGroup = (props: MessageAvatarGroupProps) => {
             index === 0 ? styles.foregroundStyle : styles.backgroundStyle,
           ]}
           source={user.image}
-          size={27}
+          size={28}
         />
       ))}
       {/* {badge} */}
@@ -78,15 +78,15 @@ const styles = StyleSheet.create({
   },
   foregroundStyle: {
     zIndex: 2,
-    borderWidth: 10,
+    borderWidth: 2,
     borderColor: '#fff',
   },
   backgroundStyle: {
     position: 'absolute',
-    top: -5,
-    left: 10,
+    top: -3,
+    left: 5,
     zIndex: 1,
-    borderWidth: 4,
+    borderWidth: 1,
     borderColor: '#fff',
   },
 });

@@ -37,6 +37,11 @@ import TwitterGradientIcon from '../components/icons/socials/TwitterGradientIcon
 import MessagesChevronRightIcon from '../components/icons/MessagesChevronRightIcon';
 import MessageImageIcon from '../components/icons/MessageImageIcon';
 import MessageSendIcon from '../components/icons/MessageSendIcon';
+import TabBarSearchIcon from '../components/icons/TabBarSearchIcon';
+import TabBarMessagingIcon from '../components/icons/TabBarMessagingIcon';
+import TabBarProfileIcon from '../components/icons/TabBarProfileIcon';
+import SettingsIcon from '../components/icons/SettingsIcon';
+import SearchBarIcon from '../components/icons/SearchBarIcon';
 
 // Default Library Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -50,6 +55,9 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
 export {
   TabBarHomeIcon,
+  TabBarSearchIcon,
+  TabBarMessagingIcon,
+  TabBarProfileIcon,
   NewHangoutIcon,
   TabBarGoingIcon,
   ChevronRightIcon,
@@ -95,4 +103,6 @@ export {
   MessagesChevronRightIcon,
   MessageImageIcon,
   MessageSendIcon,
+  SettingsIcon,
+  SearchBarIcon,
 };

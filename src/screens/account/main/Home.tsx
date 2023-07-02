@@ -3,23 +3,21 @@ import {
   Text,
   View,
   SectionList,
-  Modal,
   RefreshControl,
-  SafeAreaView,
-  ScrollView,
   useWindowDimensions,
   StyleSheet,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
+
 import RoquefortText from '../../../components/RoquefortText';
+import BottomCreateIndicator from '../../../components/BottomCreateIndicator';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import Header from '../../../components/Header';
-import Event from '../../../components/Event';
-import GradientButton from '../../../components/GradientButton';
-import ShareModal from '../modals/ShareModal';
+import Card from '../../../components/Card';
 
 import { supabase } from '../../../lib/supabase';
-
-import BottomCreateIndicator from '../../../components/BottomCreateIndicator';
 
 import { Hangout, Section } from '../../../utils/other';
 
@@ -363,40 +361,58 @@ const Home = ({
         friends.length === 0 &&
         sections[0]?.data?.length === 0 &&
         sections[1]?.data?.length === 0 && (
-          <View className="flex-1 bg-white">
-            <View className="flex-1 justify-center">
-              <View className="mx-12 flex flex-col items-center justify-center space-y-4">
-                <Text
-                  style={{
-                    fontSize: 48,
-                  }}
-                  className="text-center">
-                  🧑🏼👩🏽‍🦱👨🏼‍🦱🧔🏻
-                </Text>
-                <RoquefortText
-                  style={{
-                    fontSize: 24,
-                    fontWeight: '500',
-                  }}
-                  className="text-center">
-                  Life's better together!
-                </RoquefortText>
-                <Text
-                  style={{ fontSize: 16 }}
-                  className="text-center text-gray-500">
-                  Add your friends to get started
-                </Text>
-              </View>
-              <View className="mt-4 px-12">
-                <GradientButton
-                  onPress={() => navigation.navigate('Friends')}
-                  title="Add friends"
-                  disabled={false}
-                  size={20}
-                />
+          <View style={{ backgroundColor: '#F3F3F3' }} className="flex-1">
+            <View className="mt-6 flex-1 shadow-lg">
+              <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white">
+                <View className="flex w-full flex-col items-center">
+                  <Image
+                    source={require('../../../../assets/images/emptystate/add-friends.png')}
+                    className="mt-4"
+                  />
+                  <RoquefortText
+                    fontType="Roquefort-Semi-Strong"
+                    style={{
+                      fontSize: 24,
+                    }}
+                    className="mt-4 text-center">
+                    Life’s better together
+                  </RoquefortText>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: '#808080',
+                    }}
+                    className="my-3 text-center">
+                    Add your friends to get started
+                  </Text>
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Search')}
+                    className="flex h-[48px] w-full px-4">
+                    <LinearGradient
+                      colors={['#7000FF', '#B174FF']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      className="h-12 w-full items-center justify-center  rounded-full">
+                      <View className="flex w-full flex-row items-center justify-center  space-x-1">
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 20,
+                              fontWeight: '500',
+                              textAlign: 'center',
+                              color: 'white',
+                            }}>
+                            Add friends
+                          </Text>
+                        </View>
+                      </View>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-
             <BottomCreateIndicator />
           </View>
         )}
@@ -405,37 +421,56 @@ const Home = ({
         friends.length > 0 &&
         sections[0]?.data?.length === 0 &&
         sections[1]?.data?.length === 0 && (
-          <View className="flex-1 bg-white">
-            <View className="flex-1 justify-center">
-              <View className="mx-12 flex flex-col items-center justify-center space-y-4">
-                <Text
-                  style={{
-                    fontSize: 48,
-                  }}
-                  className="text-center">
-                  🏄‍♂️️
-                </Text>
-                <RoquefortText
-                  style={{
-                    fontSize: 24,
-                    fontWeight: '500',
-                  }}
-                  className="text-center">
-                  Let's do something!
-                </RoquefortText>
-                <Text
-                  style={{ fontSize: 16 }}
-                  className="text-center text-gray-500">
-                  Nothing upcoming... Create a new hangout to get started
-                </Text>
-              </View>
-              <View className="mt-4 px-12">
-                <GradientButton
-                  onPress={() => navigation.navigate('NewHangoutStackTemp')}
-                  disabled={false}
-                  title="New hangout"
-                  size={20}
-                />
+          <View style={{ backgroundColor: '#F3F3F3' }} className="flex-1">
+            <View className="mt-6 flex-1 shadow-lg">
+              <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white">
+                <View className="flex w-full flex-col items-center">
+                  <Image
+                    source={require('../../../../assets/images/emptystate/new-hangout.png')}
+                    className="mt-4"
+                  />
+                  <RoquefortText
+                    fontType="Roquefort-Semi-Strong"
+                    style={{
+                      fontSize: 24,
+                    }}
+                    className="mt-4 text-center">
+                    Let's do something!
+                  </RoquefortText>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: '#808080',
+                    }}
+                    className="my-3 text-center">
+                    Create a new hangout to get started
+                  </Text>
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('NewHangoutStackTemp')}
+                    className="flex h-[48px] w-full px-4">
+                    <LinearGradient
+                      colors={['#7000FF', '#B174FF']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      className="h-12 w-full items-center justify-center  rounded-full">
+                      <View className="flex w-full flex-row items-center justify-center  space-x-1">
+                        <View>
+                          <Text
+                            style={{
+                              fontSize: 20,
+                              fontWeight: '500',
+                              textAlign: 'center',
+                              color: 'white',
+                            }}>
+                            New Hangout
+                          </Text>
+                        </View>
+                      </View>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
             <BottomCreateIndicator />
@@ -445,42 +480,32 @@ const Home = ({
       {sections.length > 0 &&
         friends.length >= 0 &&
         (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) && (
-          <View className="flex-1 bg-white">
+          <View className="flex-1">
             {loading ? null : (
-              <SectionList
-                sections={sections}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-                renderSectionHeader={({ section }) => {
-                  if (section.data.length === 0) {
-                    return null;
-                  }
-
+              <>
+                {sections[0].data.map((item, idx) => {
                   return (
-                    <View className="bg-white pt-4">
-                      <View className="ml-4 border-b border-gray-300">
-                        <Text className="mb-1 text-gray-500">
-                          {section.title}
-                        </Text>
-                      </View>
+                    <View className="py-[6px]" key={idx}>
+                      <Card
+                        {...item}
+                        sessionId={sessionId}
+                        navigation={navigation}
+                      />
                     </View>
                   );
-                }}
-                renderItem={({ item }) => (
-                  <View className="py-2">
-                    <Event
-                      {...item}
-                      sessionId={sessionId}
-                      navigation={navigation}
-                    />
-                  </View>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
+                })}
+                {sections[1].data.map((item, idx) => {
+                  return (
+                    <View className="py-[6px]" key={idx}>
+                      <Card
+                        {...item}
+                        sessionId={sessionId}
+                        navigation={navigation}
+                      />
+                    </View>
+                  );
+                })}
+              </>
             )}
           </View>
         )}
@@ -488,16 +513,5 @@ const Home = ({
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 9999,
-  },
-});
-
+ 
 export default Home;

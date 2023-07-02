@@ -8,7 +8,7 @@ import {
   Button,
   TouchableOpacity,
 } from 'react-native';
-import { Feather, Entypo } from '@expo/vector-icons';
+import { SearchBarIcon } from '../Icons';
 
 interface SearchBarProps {
   clicked: boolean;
@@ -24,14 +24,70 @@ const SearchBar: React.FC<SearchBarProps> = ({
   setClicked,
 }) => {
   const handleCancel = () => {
-    Keyboard.dismiss();
+    setSearchQuery('');
     setClicked(false);
-    setSearchQuery(''); // Clear the search query after dismissing the keyboard and updating clicked state
+    Keyboard.dismiss();
   };
 
   const handleInputChange = (text: string) => {
     setSearchQuery(text);
   };
+  // styles
+  const styles = StyleSheet.create({
+    container: {
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      flexDirection: 'row',
+      backgroundColor: 'white',
+      paddingLeft: 16,
+      paddingRight: clicked ? 0 : 16,
+      paddingVertical: 8,
+    },
+    searchBar__unclicked: {
+      height: 44,
+      width: '100%',
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      backgroundColor: 'white',
+      borderRadius: 50,
+      alignItems: 'center',
+      borderColor: '#808080',
+      borderWidth: 1,
+    },
+    searchBar__clicked: {
+      height: 44,
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      width: '80%',
+      backgroundColor: 'white',
+      borderRadius: 50,
+      alignItems: 'center',
+      justifyContent: 'space-evenly',
+      borderColor: '#808080',
+      borderWidth: 1,
+    },
+    searchIcon: {
+      marginLeft: 1,
+    },
+    input: {
+      fontSize: 16,
+      marginLeft: 10,
+      width: '90%',
+      backgroundColor: 'white',
+      flex: 1,
+      flexDirection: 'row',
+    },
+    cancelButtonContainer: {
+      marginRight: 4,
+      flex: 1,
+      alignItems: 'center',
+    },
+    cancelButtonText: {
+      fontSize: 16,
+      color: '#333333',
+      fontWeight: '500',
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -39,12 +95,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         style={
           clicked ? styles.searchBar__clicked : styles.searchBar__unclicked
         }>
-        <Feather
-          name="search"
-          size={20}
-          color="#808080"
-          style={styles.searchIcon}
-        />
+        <SearchBarIcon />
         <TextInput
           style={styles.input}
           value={searchQuery}
@@ -68,58 +119,3 @@ const SearchBar: React.FC<SearchBarProps> = ({
 };
 
 export default SearchBar;
-
-// styles
-const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 15,
-    marginVertical: 5,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '97%',
-    backgroundColor: 'white',
-  },
-  searchBar__unclicked: {
-    padding: 10,
-    flexDirection: 'row',
-    width: '95%',
-    backgroundColor: 'white',
-    borderRadius: 50,
-    alignItems: 'center',
-    borderColor: '#808080',
-    borderWidth: 1,
-  },
-  searchBar__clicked: {
-    padding: 10,
-    flexDirection: 'row',
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    borderColor: '#808080',
-    borderWidth: 1,
-  },
-  searchIcon: {
-    marginLeft: 1,
-  },
-  input: {
-    fontSize: 20,
-    marginLeft: 10,
-    width: '90%',
-    backgroundColor: 'white',
-    flex: 1,
-    flexDirection: 'row',
-  },
-  cancelButtonContainer: {
-    marginRight: 4,
-    flex: 1,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    color: '#333333',
-    fontWeight: '500',
-  },
-});

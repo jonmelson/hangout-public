@@ -57,7 +57,7 @@ const AvatarGroup = (props: AvatarIconGroupProps) => {
 const styles = StyleSheet.create({
   badge: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 0,
     right: -6,
     backgroundColor: 'white',
     borderRadius: 14,
@@ -69,15 +69,16 @@ const styles = StyleSheet.create({
     borderColor: 'purple',
     zIndex: 10,
   },
-  foregroundStyle: { 
+  foregroundStyle: {
     zIndex: 2,
     borderWidth: 4,
     borderColor: '#fff',
+    
   },
   backgroundStyle: {
     position: 'absolute',
-    top: 10,
-    left: 20,
+    top: -7,
+    left: 12,
     zIndex: 1,
     borderWidth: 4,
     borderColor: '#fff',

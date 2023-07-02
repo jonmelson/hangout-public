@@ -138,9 +138,6 @@ export const ChannelPreviewMessenger = (props: any) => {
     },
     [accent_red, channel, mute, muted, unmute],
   );
-  if (latestMessagePreview.messageObject) {
-    console.log(latestMessagePreview.messageObject.updated_at);
-  }
 
   return (
     <TouchableOpacity

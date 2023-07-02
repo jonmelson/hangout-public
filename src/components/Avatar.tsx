@@ -32,7 +32,7 @@ const Avatar = (props: AvatarProps) => {
           className="items-center justify-center rounded-full">
           <Image
             source={{ uri: source }}
-            style={[{ width: size, height: size }]}
+            style={[{ width: size, height: size }, style]}
             onLoadStart={handleImageLoadStart}
             onLoad={handleImageLoadEnd}
             className="items-center justify-center rounded-full"
@@ -54,8 +54,8 @@ const Avatar = (props: AvatarProps) => {
 
 const styles = StyleSheet.create({
   avatar: {
-    borderWidth: 4,
-    borderColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#000000',
     position: 'relative',
   },
 });

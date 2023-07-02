@@ -7,6 +7,7 @@ import {
   ScrollView,
   RefreshControl,
   Share,
+  SectionList,
 } from 'react-native';
 
 import { Image } from 'expo-image';
@@ -18,14 +19,10 @@ import {
   Octicons,
   Feather,
   TabBarGoingIcon,
-  ChevronBackIcon,
-  ExportSquareIcon,
   Location16Icon,
-  InstagramBlueIcon,
-  InstagramGradientIcon,
-  TwitterBlueIcon,
-  TwitterGradientIcon,
 } from '../../../components/Icons';
+import RoquefortText from '../../../components/RoquefortText';
+import Selector from '../../../components/Selector';
 
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -34,6 +31,10 @@ import { LocationMetaData } from '../../../utils/other';
 
 import { hangoutUrl, profileInviteMessage } from '../../../utils/constants';
 import { formatDate } from '../../../utils/utils';
+import { Hangout, Section } from '../../../utils/other';
+
+import Event from '../../../components/Event';
+import { getFriendsMetaData } from '../../../utils/queries';
 
 const Profile = ({
   navigation,
@@ -56,6 +57,16 @@ const Profile = ({
   const [createdAt, setCreatedAt] = useState('');
   const [blurredImage, setBlurredImage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+
+  const [friends, setFriends] = useState<any>([]);
+  const [hangouts, setHangouts] = useState<any>([]);
+  const [isGoing, setIsGoing] = useState<any>([]);
+  const [newIsGoing, setNewIsGoing] = useState<any>([]);
+  const [mergedData, setMergedData] = useState<any>(null);
+
+  const [upcomingSections, setUpcomingSections] = useState<Section[]>([]);
+  const [hostingSections, setHostingSections] = useState<Section[]>([]);
 
   const fullName = firstName + ' ' + lastName;
   const joinedDate = formatDate(createdAt);
@@ -77,6 +88,9 @@ const Profile = ({
     });
   };
 
+  const handleTabPress = (tabIndex: number) => {
+    setActiveTab(tabIndex);
+  };
   const handleEditPress = () => {
     navigation.navigate('EditProfile');
   };
@@ -143,7 +157,7 @@ const Profile = ({
 
       // Subscribe to changes in the users table
       const userSubscription = supabase
-        .channel('changes')
+        .channel('changes1')
         .on(
           'postgres_changes',
           {
@@ -176,19 +190,310 @@ const Profile = ({
     instagram,
   ]);
 
+  // Fetch initial data for friends
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const { data: friendsData, error: friendError } = await supabase
+          .from('friends')
+          .select('friends_id, user_id_1, user_id_2')
+          .or(`user_id_1.eq.${sessionId},user_id_2.eq.${sessionId}`);
+
+        if (!friendError) {
+          const friendsIds = getFriendsMetaData(friendsData, sessionId);
+          setFriends(friendsIds);
+          // console.log(friendsIds);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchFriends();
+  }, []);
+
+  // Fetch initial data for hangouts
+  useEffect(() => {
+    const fetchHangouts = async () => {
+      try {
+        const friendIds = friends.map((friend: any) => friend.friendId);
+        const userIds = [sessionId, ...friendIds];
+        const { data: hangoutsData, error: hangoutsError } = await supabase
+          .from('hangouts')
+          .select('*')
+          .in('user_id', userIds);
+
+        if (!hangoutsError) {
+          setHangouts(hangoutsData);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchHangouts();
+  }, [friends]);
+
+  // Fetch initial data for isGoing
+  useEffect(() => {
+    const fetchIsGoing = async () => {
+      try {
+        const { data: isGoingData, error: isGoingDataError } = await supabase
+          .from('is_going')
+          .select('*')
+          .in(
+            'hangout_id',
+            hangouts.map((hangout: any) => hangout.id),
+          );
+        if (!isGoingDataError) {
+          setIsGoing((prevState: any) => [...prevState, ...isGoingData]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchIsGoing();
+  }, [hangouts]);
+
+  // Fetch realtime data
+  useEffect(() => {
+    const friendsSubscription = supabase
+      .channel('friends-changes3')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'friends',
+        },
+        payload => {
+          if (payload.eventType == 'INSERT') {
+            // Get the ids from the inserted table
+            // console.log('The user has INSERTED');
+            const { friends_id, user_id_1, user_id_2 } = payload.new;
+            const friendsData = [{ friends_id, user_id_1, user_id_2 }];
+            const newFriendsMetaData = getFriendsMetaData(
+              friendsData,
+              sessionId,
+            );
+            setFriends([...friends, ...newFriendsMetaData]);
+          } else if (payload.eventType == 'DELETE') {
+            // Gets the old data, checks if the ids
+            // console.log('The user has DELETED');
+            const deletedId = payload.old.friends_id;
+            setFriends(
+              friends.filter(
+                (friend: any) => friend.friends_table_id !== deletedId,
+              ),
+            );
+          }
+        },
+      )
+      .subscribe();
+
+    // Subscribe to hangouts table changes using Supabase's real-time functionality
+    const hangoutsSubscription = supabase
+      .channel('hangouts-changes3')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'hangouts',
+        },
+        payload => {
+          if (payload.eventType == 'INSERT') {
+            // Get the ids from the inserted table
+            // console.log('The user has INSERTED HANGOUT');
+            const newHangout = payload.new;
+            // console.log('Friends');
+            // console.log(friends);
+            // console.log('New Hangout');
+            // console.log(newHangout);
+            const isFriend = friends.some(
+              (friend: any) => friend.friendId === newHangout.user_id,
+            );
+            const isCurrentUser = sessionId === newHangout.user_id;
+
+            // console.log('is Friend');
+            // console.log(isFriend);
+            // console.log('is CurrentUser');
+            // console.log( isCurrentUser );
+
+            if (isFriend || isCurrentUser) {
+              setHangouts((prevState: any) => [...prevState, newHangout]);
+            }
+          } else if (payload.eventType == 'DELETE') {
+            // Gets the old data, checks if the ids
+            // console.log('The user has DELETE');
+            const deletedHangoutId = payload.old.id;
+            setHangouts((prevState: any) =>
+              prevState.filter(
+                (hangout: any) => hangout.id !== deletedHangoutId,
+              ),
+            );
+          } else if (payload.eventType == 'UPDATE') {
+            // Gets the old data, checks if the ids
+            // console.log('The user has UPDATE');
+            const updatedHangout = payload.new;
+            const isFriend = friends.some(
+              (friend: any) => friend.friendId === updatedHangout.user_id,
+            );
+            const isCurrentUser = sessionId === updatedHangout.user_id;
+
+            if (isFriend || isCurrentUser) {
+              setHangouts((prevState: any) =>
+                prevState.map((hangout: any) =>
+                  hangout.id === updatedHangout.id ? updatedHangout : hangout,
+                ),
+              );
+            }
+          }
+        },
+      )
+      .subscribe();
+
+    const isGoingSubscription = supabase
+      .channel('is-going-changes3')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'is_going',
+        },
+        payload => {
+          if (payload.eventType == 'INSERT') {
+            // console.log('The user has INSERTED2');
+            const temp = payload.new;
+            setNewIsGoing((prevState: any) => [...prevState, temp]);
+          } else if (payload.eventType == 'DELETE') {
+            // console.log('The user has DELETE2');
+            const deletedIsGoingId = payload.old.is_going_id;
+            setIsGoing((prevState: any) =>
+              prevState.filter(
+                (going: any) => going.is_going_id !== deletedIsGoingId,
+              ),
+            );
+            setNewIsGoing((prevState: any) =>
+              prevState.filter(
+                (going: any) => going.is_going_id !== deletedIsGoingId,
+              ),
+            );
+          }
+        },
+      )
+      .subscribe();
+
+    // return () => {
+    //   friendsSubscription.unsubscribe();
+    //   hangoutsSubscription.unsubscribe();
+    //   isGoingSubscription.unsubscribe();
+    // };
+  }, [friends, hangouts, isGoing]);
+
+  // Merge the fetch data and whenever hangouts or isGoing is updated
+  useEffect(() => {
+    const mergeDataFunction = async () => {
+      const newData = await Promise.all(
+        hangouts.map(async (hangout: any) => {
+          const goingIds = isGoing
+            .filter((item: any) => item.hangout_id === hangout.id)
+            .map((item: any) => item.user_id);
+
+          // console.log('Going Ids');
+          // console.log(goingIds);
+          const { data: goingMetaData, error } = await supabase
+            .from('users')
+            .select('*')
+            .in('id', goingIds);
+          if (error) {
+            console.error('Error fetching user data:', error);
+          }
+          // console.log('Going Meta Data');
+          // console.log(goingMetaData);
+          return {
+            ...hangout,
+            going: goingMetaData ?? [],
+          };
+        }),
+      );
+
+      setMergedData(newData);
+    };
+    if (hangouts && isGoing) {
+      mergeDataFunction();
+      // console.log('Fetched MERGED DATA');
+    }
+  }, [hangouts, isGoing]);
+
+  useEffect(() => {
+    if (mergedData) {
+      const today = new Date().getTime();
+
+      // const upcomingHangouts = mergedData.filter(
+      //   (item: Hangout) => new Date(item.starts).getTime() > today,
+      // );
+
+      const goingHangouts = mergedData
+        .filter((item: Hangout) => {
+          // Assuming `username` is the property of the `item` object
+          return item.going.some(
+            (goingItem: any) =>
+              goingItem.id === sessionId && item.user_id !== sessionId,
+          );
+        })
+        .filter((item: Hangout) => new Date(item.starts).getTime() > today);
+
+      // console.log(upcomingHangouts[1].going[0].id);
+
+      const hostingHangouts = mergedData.filter(
+        (item: Hangout) =>
+          new Date(item.starts).getTime() > today && item.user_id === sessionId,
+      );
+
+      // Set upcoming
+      setUpcomingSections([{ title: 'Going', data: goingHangouts }]);
+
+      // Set hosting
+      setHostingSections([{ title: 'Hosting', data: hostingHangouts }]);
+    } else {
+      setUpcomingSections([]);
+      setHostingSections([]);
+    }
+  }, [mergedData]);
+
+  useEffect(() => {
+    const uniqueIsGoingIds = new Set();
+
+    newIsGoing.forEach((item: any) => {
+      const existsInHangout = hangouts.some(
+        (hangout: any) => hangout.id === item.hangout_id,
+      );
+
+      const existsInIsGoing = uniqueIsGoingIds.has(item.is_going_id);
+
+      if (existsInHangout && !existsInIsGoing) {
+        setIsGoing((prevState: any) => {
+          const nextState = [...prevState, item];
+          uniqueIsGoingIds.add(item.is_going_id);
+          return nextState;
+        });
+      }
+    });
+  }, [newIsGoing]);
+
   useEffect(() => {
     navigation.setOptions({
       title: '',
       headerShadowVisible: false,
       headerLeft: () => (
-        <TouchableOpacity
-          className="flex flex-row items-center space-x-2 py-2 pr-4"
-          onPress={() => navigation.goBack()}>
-          <ChevronBackIcon />
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
-            {username}
-          </Text>
-        </TouchableOpacity>
+        <RoquefortText
+          fontType="Roquefort-Semi-Strong"
+          style={{ fontSize: 26, fontWeight: '500', color: '#333333' }}>
+          Profile
+        </RoquefortText>
       ),
       headerRight: () => (
         <TouchableOpacity
@@ -203,92 +508,100 @@ const Profile = ({
   }, [navigation, sessionId, username]);
 
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-      className="flex-1">
-      <View className="flex flex-col">
-        {avatarUrl !== '' ? (
-          <>
-            <View className="h-40">
-              <Image
-                source={{ uri: avatarUrl }}
-                cachePolicy="none"
-                style={{ width: '100%', height: '100%' }}
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+        className="flex-1">
+        <View className="flex flex-col">
+          {avatarUrl !== '' ? (
+            <>
+              <View className="h-32">
+                <Image
+                  source={{ uri: avatarUrl }}
+                  cachePolicy="none"
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </View>
+
+              <BlurView
+                intensity={80}
+                tint="default"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}
               />
+            </>
+          ) : (
+            <View className="h-32"></View>
+          )}
+
+          <View className="relative mt-1 h-[233px] rounded-2xl bg-white px-2">
+            <View className="absolute -top-16 z-10 mb-2 w-full">
+              {avatarUrl == '' ? (
+                <TouchableOpacity
+                  onPress={handleEditProfilePhotoPress}
+                  className=" flex-col items-center justify-center space-y-2">
+                  <Avatar source={avatarUrl} name={fullName} size={120} />
+
+                  <Text className="text-blue-600">Add profile photo</Text>
+                </TouchableOpacity>
+              ) : (
+                <View className=" flex-col items-center justify-center space-y-2">
+                  <Avatar source={avatarUrl} name={fullName} size={120} />
+                </View>
+              )}
             </View>
 
-            <BlurView
-              intensity={80}
-              tint="default"
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-              }}
-            />
-          </>
-        ) : (
-          <View className="h-40"></View>
-        )}
-
-        <View className="relative mt-1 rounded-2xl bg-white px-2">
-          <View className="absolute -top-10 z-10 mb-2 w-full">
-            {avatarUrl == '' ? (
-              <TouchableOpacity
-                onPress={handleEditProfilePhotoPress}
-                className=" flex-col items-center justify-center space-y-2">
-                <Avatar source={avatarUrl} name={fullName} size={80} />
-
-                <Text className="text-blue-600">Add profile photo</Text>
-              </TouchableOpacity>
-            ) : (
-              <View className=" flex-col items-center justify-center space-y-2">
-                <Avatar source={avatarUrl} name={fullName} size={80} />
-              </View>
-            )}
-          </View>
-
-          <View className="mx-2 mb-4 mt-12 flex flex-col space-y-2">
-            {avatarUrl == '' ? (
-              <View className="mt-6 flex flex-row items-center  space-x-2">
-                <View>
-                  <Text className="text-lg font-medium">{fullName}</Text>
+            <View className="text-cemter relative mx-2 mb-4 mt-16 flex flex-col justify-center">
+              {avatarUrl == '' ? (
+                <View className="mb-2 mt-6 flex flex-row  items-center  space-x-2">
+                  <View>
+                    <Text className="text-lg font-medium">{fullName}</Text>
+                  </View>
+                  <View>
+                    <Octicons name="verified" color="#2563eb" size={14} />
+                  </View>
                 </View>
-                <View>
-                  <Octicons name="verified" color="#2563eb" size={14} />
+              ) : (
+                <View className="mb-2 flex flex-row  items-center  space-x-2">
+                  <View>
+                    <Text className="text-lg font-medium">{fullName}</Text>
+                  </View>
+                  <View>
+                    <Octicons name="verified" color="#2563eb" size={14} />
+                  </View>
                 </View>
-              </View>
-            ) : (
-              <View className="flex flex-row items-center  space-x-2">
-                <View>
-                  <Text className="text-lg font-medium">{fullName}</Text>
-                </View>
-                <View>
-                  <Octicons name="verified" color="#2563eb" size={14} />
-                </View>
-              </View>
-            )}
+              )}
 
-            {location && location.length > 0 ? (
-              <View className="flex flex-row items-center space-x-1">
-                <Location16Icon color="#000000" />
-                <Text className="text-black">{location[0].address}</Text>
-              </View>
-            ) : (
-              <TouchableOpacity
-                className="flex flex-row items-center space-x-1"
-                onPress={handleEditLocation}>
-                <Location16Icon color="#3478F6" />
-                <Text className="text-blue-600">Add location</Text>
-              </TouchableOpacity>
-            )}
+              {about !== '' ? (
+                <Text className="mb-2 text-gray-800">{about}</Text>
+              ) : (
+                <TouchableOpacity onPress={handleEditAbout}>
+                  <Text className="mb-2 text-blue-600">Add About</Text>
+                </TouchableOpacity>
+              )}
 
-            <View className="flex flex-row space-x-2 ">
-              <TouchableOpacity className="w-1/2" onPress={handleEditPress}>
+              {location && location.length > 0 ? (
+                <View className="mb-4 flex flex-row items-center space-x-1">
+                  <Location16Icon color="#000000" />
+                  <Text className="text-black">{location[0].address}</Text>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  className="mb-4 flex flex-row items-center space-x-1"
+                  onPress={handleEditLocation}>
+                  <Location16Icon color="#3478F6" />
+                  <Text className="text-blue-600">Add location</Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity onPress={handleEditPress}>
                 <LinearGradient
                   colors={['#7000FF', '#B174FF']}
                   start={{ x: 0, y: 1 }}
@@ -328,148 +641,126 @@ const Profile = ({
                   </View>
                 </LinearGradient>
               </TouchableOpacity>
+            </View>
+          </View>
 
-              <TouchableOpacity className="w-1/2" onPress={handleInviteFriends}>
-                <LinearGradient
-                  colors={['#7000FF', '#B174FF']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  className="h-12 w-full items-center justify-center rounded-full">
-                  <View className="flex flex-row items-center justify-center space-x-2">
-                    <ExportSquareIcon color="#FFF" />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        color: 'white',
-                        fontWeight: '500',
-                      }}>
-                      Invite Friends
-                    </Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
+          <View className="relative mt-2 rounded-2xl bg-white p-4">
+            <Selector
+              leftTab="Going"
+              rightTab="Hosting"
+              activeTab={activeTab}
+              handleTabPress={handleTabPress}
+            />
+            <View className="w-full flex-1 bg-white">
+              {activeTab === 0 && (
+                <>
+                  {upcomingSections[0] &&
+                  upcomingSections[0].data.length > 0 ? (
+                    <>
+                      {upcomingSections[0].data.map((item, idx) => {
+                        return (
+                          <Event
+                            {...item}
+                            key={idx}
+                            sessionId={sessionId}
+                            navigation={navigation}
+                          />
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <View className="mt-4">
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('NewHangoutStackTemp')
+                        }
+                        className="flex h-[48px] w-full">
+                        <LinearGradient
+                          colors={['#7000FF', '#B174FF']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          className="h-12 w-full items-center justify-center  rounded-full">
+                          <View className="flex w-full flex-row items-center justify-center  space-x-1">
+                            <View>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  fontWeight: '500',
+                                  textAlign: 'center',
+                                  color: 'white',
+                                }}>
+                                Create hangout
+                              </Text>
+                            </View>
+                          </View>
+                        </LinearGradient>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </>
+              )}
+              {activeTab === 1 && (
+                <>
+                  {hostingSections[0] && hostingSections[0].data.length > 0 ? (
+                    <>
+                      {hostingSections[0].data.map((item, idx) => {
+                        return (
+                          <Event
+                            {...item}
+                            key={idx}
+                            sessionId={sessionId}
+                            navigation={navigation}
+                          />
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <View className="mt-4">
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('NewHangoutStackTemp')
+                        }
+                        className="flex h-[48px] w-full">
+                        <LinearGradient
+                          colors={['#7000FF', '#B174FF']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          className="h-12 w-full items-center justify-center  rounded-full">
+                          <View className="flex w-full flex-row items-center justify-center  space-x-1">
+                            <View>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  fontWeight: '500',
+                                  textAlign: 'center',
+                                  color: 'white',
+                                }}>
+                                Create hangout
+                              </Text>
+                            </View>
+                          </View>
+                        </LinearGradient>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </>
+              )}
             </View>
           </View>
         </View>
 
-        <View className="mt-1 flex flex-col space-y-3 rounded-2xl bg-white px-4 pb-6 pt-4">
-          <Text className="text-xl font-semibold">About</Text>
-
-          {about !== '' ? (
-            <Text className="text-gray-800">{about}</Text>
-          ) : (
-            <TouchableOpacity onPress={handleEditAbout}>
-              <Text className="text-blue-600">Add About</Text>
-            </TouchableOpacity>
-          )}
-
-          <View className="flex flex-col space-y-1">
-            {instagram !== '' && twitter === '' ? (
-              // Show only Instagram
-              <View className="flex flex-row items-center space-x-2">
-                <InstagramGradientIcon />
-                <MaskedView
-                  maskElement={
-                    <Text className="text-white">@{instagram}</Text>
-                  }>
-                  <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    colors={['#7000FF', '#B174FF']}>
-                    <Text
-                      style={{ opacity: 0, fontSize: 14, fontWeight: '400' }}>
-                      @{instagram}
-                    </Text>
-                  </LinearGradient>
-                </MaskedView>
-              </View>
-            ) : twitter !== '' && instagram === '' ? (
-              // Show only Twitter
-              <View className="flex flex-row items-center space-x-2">
-                <TwitterGradientIcon />
-                <MaskedView
-                  maskElement={<Text className="text-white">@{twitter}</Text>}>
-                  <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    colors={['#7000FF', '#B174FF']}>
-                    <Text
-                      style={{ opacity: 0, fontSize: 14, fontWeight: '400' }}>
-                      @{twitter}
-                    </Text>
-                  </LinearGradient>
-                </MaskedView>
-              </View>
-            ) : instagram !== '' && twitter !== '' ? (
-              // Show both Instagram and Twitter
-              <>
-                <View className="flex flex-row items-center space-x-2">
-                  <InstagramGradientIcon />
-                  <MaskedView
-                    maskElement={
-                      <Text className="text-white">@{instagram}</Text>
-                    }>
-                    <LinearGradient
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      colors={['#7000FF', '#B174FF']}>
-                      <Text
-                        style={{ opacity: 0, fontSize: 14, fontWeight: '400' }}>
-                        @{instagram}
-                      </Text>
-                    </LinearGradient>
-                  </MaskedView>
-                </View>
-
-                <View className="flex flex-row items-center space-x-2">
-                  <TwitterGradientIcon />
-                  <MaskedView
-                    maskElement={
-                      <Text className="text-white">@{twitter}</Text>
-                    }>
-                    <LinearGradient
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      colors={['#7000FF', '#B174FF']}>
-                      <Text
-                        style={{ opacity: 0, fontSize: 14, fontWeight: '400' }}>
-                        @{twitter}
-                      </Text>
-                    </LinearGradient>
-                  </MaskedView>
-                </View>
-              </>
-            ) : (
-              // Show default
-              <>
-                <TouchableOpacity
-                  className="flex flex-row items-center space-x-2"
-                  onPress={handleEditInstagram}>
-                  <InstagramBlueIcon />
-                  <Text className="text-blue-600">Add Instagram</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="flex flex-row items-center space-x-2"
-                  onPress={handleEditTwitter}>
-                  <TwitterBlueIcon />
-                  <Text style={{ color: '#3478F6' }}>Add Twitter</Text>
-                </TouchableOpacity>
-              </>
-            )}
+        <View className="mt-12 flex flex-col items-center justify-center space-y-4 ">
+          <View>
+            <TabBarGoingIcon name="going" color="gray" />
+          </View>
+          <View>
+            <Text className="text-gray-500">
+              Joined hangout on {joinedDate}
+            </Text>
           </View>
         </View>
-      </View>
-
-      <View className="mt-12 flex flex-col items-center justify-center space-y-4 ">
-        <View>
-          <TabBarGoingIcon name="going" color="gray" />
-        </View>
-        <View>
-          <Text className="text-gray-500">Joined hangout on {joinedDate}</Text>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

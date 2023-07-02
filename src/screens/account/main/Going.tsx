@@ -394,7 +394,9 @@ const Going = ({
                       className="text-center">
                       🔍
                     </Text>
-                    <RoquefortText className="text-center text-2xl">
+                    <RoquefortText
+                      className="text-center text-2xl"
+                      fontType="Roquefort-Standard">
                       Find something to do!
                     </RoquefortText>
                     <Text
@@ -446,7 +448,9 @@ const Going = ({
                       className="text-center">
                       🧑🏼👩🏽‍🦱👨🏼‍🦱🧔🏻
                     </Text>
-                    <RoquefortText className="text-center text-2xl">
+                    <RoquefortText
+                      className="text-center text-2xl"
+                      fontType="Roquefort-Standard">
                       Bring your friends together!
                     </RoquefortText>
                     <Text

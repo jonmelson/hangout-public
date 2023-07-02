@@ -1,7 +1,7 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { NewMessage22Icon, ChevronBackIcon } from '../../../components/Icons';
+import { NewMessage22Icon } from '../../../components/Icons';
 import EmptyMessageStateIndicator from '../../../components/EmptyMessageStateIndicator';
 
 import { MessageSearchList } from '../../../components/MessageSearch';
@@ -16,6 +16,7 @@ import { useChatContext } from '../../../context/ChatContext';
 import { ChannelPreviewMessenger } from '../../../components/ChannelPreview';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { SlideOutUp } from 'react-native-reanimated';
+import RoquefortText from '../../../components/RoquefortText';
 
 const additionalFlatListProps = {
   keyboardDismissMode: 'on-drag' as const,
@@ -43,8 +44,6 @@ const Messages = ({
 }) => {
   const insets = useSafeAreaInsets();
   const { sessionId } = route?.params ?? {};
-
-  const [clicked, setClicked] = useState(false);
 
   const { setCurrentChannel } = useChatContext();
   const {
@@ -77,21 +76,15 @@ const Messages = ({
 
   useEffect(() => {
     navigation.setOptions({
-      headerShown: !clicked ? true : false,
+      headerShown: true,
       headerShadowVisible: false,
-      headerTitle: () => (
-        <View>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
-            Messages
-          </Text>
-        </View>
-      ),
+      headerTitle: '',
       headerLeft: () => (
-        <TouchableOpacity
-          className="py-2 pr-4"
-          onPress={() => navigation.navigate('Home')}>
-          <ChevronBackIcon />
-        </TouchableOpacity>
+        <RoquefortText
+          fontType="Roquefort-Semi-Strong"
+          style={{ fontSize: 26, fontWeight: '500', color: '#333333' }}>
+          Messaging
+        </RoquefortText>
       ),
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.navigate('NewMessages')}>
@@ -101,7 +94,7 @@ const Messages = ({
         </TouchableOpacity>
       ),
     });
-  }, [navigation, clicked]);
+  }, [navigation]);
 
   return (
     <View
@@ -109,16 +102,16 @@ const Messages = ({
         flex: 1,
         backgroundColor: 'white',
         flexDirection: 'column',
-        paddingTop: !clicked ? 0 : insets.top,
+        paddingTop: 0,
       }}>
       <View style={[styles.channelListContainer]}>
-        {/* <Animated.View exiting={SlideOutUp} collapsable={false}>
-          <MessageSearchBar
+        <Animated.View exiting={SlideOutUp} collapsable={false}>
+          {/* <MessageSearchBar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             clicked={clicked}
             setClicked={setClicked}
-          />
+          /> */}
         </Animated.View>
 
         {(!!searchQuery || (messages && messages.length > 0)) && (
@@ -131,7 +124,7 @@ const Messages = ({
             refreshList={refreshList}
             // setChannelWithId={setChannelWithId}
           />
-        )} */}
+        )}
         <View style={{ flex: searchQuery ? 0 : 1 }}>
           <View
             style={[

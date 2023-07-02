@@ -5,11 +5,12 @@ import { TabBarPlus14Icon, ChevronDownIcon } from './Icons';
 
 const BottomCreateIndicator = () => {
   return (
-    <View className="flex flex-col items-center justify-center bg-gray-200 pb-2 pt-4">
+    <View className="flex flex-col items-center justify-center  pb-2 pt-4">
       <View className="flex flex-row items-center justify-center space-x-1">
         <Text
           style={{
             fontSize: 16,
+            fontWeight: '500',
           }}
           className="text-center text-gray-500">
           Tap
@@ -18,6 +19,7 @@ const BottomCreateIndicator = () => {
         <Text
           style={{
             fontSize: 16,
+            fontWeight: '500',
           }}
           className="text-center text-gray-500">
           to create your first hangout

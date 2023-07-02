@@ -22,6 +22,7 @@ import {
   ExportSquareIcon,
   CalendarIcon,
   ClockIcon,
+  CloseIcon,
 } from '../../components/Icons';
 
 import { supabase } from '../../lib/supabase';
@@ -200,16 +201,25 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   return (
     <View className="flex flex-col space-y-2">
       <View className="rounded-2xl bg-white px-4 pb-4 pt-4">
-        <View className="items-center">
-          <View className="h-1 w-10 rounded-full bg-gray-300"></View>
-        </View>
-        <View className="flex flex-col space-y-4">
+        {/* <View className="absolute right-3 top-3"> */}
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+          }}>
+          
+            <CloseIcon />
+          </TouchableOpacity>
+        {/* </View> */}
+
+        <View className="flex flex-col">
           <View>
-            <Text className="text-xl font-semibold">{title}</Text>
+            <Text className="mb-2" style={{ fontSize: 24, fontWeight: '600' }}>
+              {title}
+            </Text>
           </View>
 
           {newDate && newDate.length > 1 && (
-            <View className="flex flex-row items-center space-x-2">
+            <View className="mb-2 flex flex-row items-center space-x-2">
               <View className="flex flex-col space-y-1">
                 <View className="flex flex-row space-x-2">
                   <CalendarIcon />
@@ -243,7 +253,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           )}
 
           {newDate && newDate.length === 1 && (
-            <View className="flex flex-col space-y-1">
+            <View className="mb-2 flex flex-col space-y-1">
               <View className="flex flex-row space-x-2">
                 <CalendarIcon />
                 <Text style={{ fontSize: 16, fontWeight: '500' }}>
