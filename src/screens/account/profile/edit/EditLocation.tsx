@@ -14,7 +14,9 @@ import * as Location from 'expo-location';
 import { supabase } from '../../../../lib/supabase';
 
 interface Prediction {
-  description: string;
+  title: string;
+  address: string;
+  coordinates: string;
   place_id: string;
   reference: string;
 }
@@ -41,9 +43,21 @@ const EditLocation = ({
         `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${GOOGLE_MAPS_API_KEY}&input=${searchText}`,
       )
         .then(response => response.json())
-        .then(data => {
-          // console.log(data);
-          setPredictions(data.predictions);
+        .then(async data => {
+          const predictionsWithTitles = await Promise.all(
+            data.predictions.map(async (prediction: Prediction) => {
+              const { title, address, coordinates } = await getPlaceDetails(
+                prediction.place_id,
+              );
+              return {
+                ...prediction,
+                title: title,
+                address: address,
+                coordinates: coordinates,
+              };
+            }),
+          );
+          setPredictions(predictionsWithTitles);
         })
         .catch(error => console.log(error));
     } else {
@@ -56,9 +70,14 @@ const EditLocation = ({
       `https://maps.googleapis.com/maps/api/place/details/json?key=${GOOGLE_MAPS_API_KEY}&place_id=${placeId}`,
     );
     const data = await response.json();
-    return data.result.geometry.location;
-  };
 
+    const title = data.result.name;
+    const address = data.result.formatted_address;
+    const coordinates = data.result.geometry.location;
+
+    return { title, address, coordinates };
+  };
+  
   const handleCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -97,20 +116,17 @@ const EditLocation = ({
   };
 
   const handlePredictionPress = async (prediction: Prediction) => {
-    setSearchText(prediction.description);
-    setPredictions([]);
+    const title = prediction.title;
+    const address = prediction.address;
+    const geometry = prediction.coordinates;
 
-    const geometry = await getPlaceDetails(prediction.place_id);
+    setSearchText(address);
+    setPredictions([]);
 
     const { data: locationData, error } = await supabase
       .from('users')
       .update({
-        location: [
-          {
-            address: prediction.description,
-            geometry: geometry,
-          },
-        ],
+        location: [{ title: title, geometry: geometry, address: address }],
       })
       .eq('id', sessionId);
 
@@ -123,6 +139,7 @@ const EditLocation = ({
       return (
         <View className="mr-1 mt-3 flex flex-row items-center justify-end">
           <Text>powered by </Text>
+
           <GoogleIcon />
         </View>
       );
@@ -132,7 +149,12 @@ const EditLocation = ({
         <TouchableOpacity
           onPress={() => handlePredictionPress(item)}
           className="border-b border-gray-300 px-1 py-2">
-          <Text className="font-medium">{item.description}</Text>
+          <Text
+            style={{ fontSize: 16, color: '#333333', fontWeight: '500' }}
+            className="mb-1">
+            {item.title}
+          </Text>
+          <Text style={{ fontSize: 14, color: '#808080' }}>{item.address}</Text>
         </TouchableOpacity>
       );
     }

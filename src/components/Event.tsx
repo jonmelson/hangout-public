@@ -155,12 +155,12 @@ const Event = (props: EventProps) => {
             sessionId !== user_id || going.length > 1 ? 'items-center' : ''
           }`}>
           {/* Icon */}
-          <View className="items-center justify-center">
+          <View className="w-[25%] items-start justify-center">
             <AvatarIconGroup userId={user_id} users={going} />
           </View>
 
           {/* Info */}
-          <View className="flex flex-1 flex-col justify-center pl-4">
+          <View className="ml-3 flex w-[75%] flex-1 flex-col justify-center ">
             <View>
               <Text style={{ fontWeight: '500', fontSize: 20 }}>{title}</Text>
             </View>

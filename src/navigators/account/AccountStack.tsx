@@ -4,12 +4,13 @@ import * as Linking from 'expo-linking';
 import TabNavigator from './TabNavigator';
 import Friends from '../../screens/account/Friends';
 import PublicProfile from '../../screens/account/profile/PublicProfile';
-import MessagesStack from './MessagesStack';
 import ProfileStack from './ProfileStack';
 import NewHangoutStack from './NewHangoutStack';
 import Details from '../../screens/account/Details';
 import EditHangout from '../../screens/account/EditHangout';
 import EditChooseLocation from '../../screens/account/EditChooseLocation';
+import NewMessages from '../../screens/account/messaging/NewMessages';
+import ChatRoom from '../../screens/account/messaging/ChatRoom';
 
 import { SearchContextProvider } from '../../context/SearchContext';
 
@@ -43,12 +44,6 @@ const AccountStack = ({
           <Stack.Screen
             name="HomeStack"
             component={TabNavigator}
-            initialParams={{ sessionId: sessionId }}
-          />
-
-          <Stack.Screen
-            name="MessagesStack"
-            component={MessagesStack}
             initialParams={{ sessionId: sessionId }}
           />
 
@@ -95,6 +90,18 @@ const AccountStack = ({
             name="EditChooseLocation"
             component={EditChooseLocation}
             options={{ presentation: 'modal', headerShown: true }}
+          />
+
+          <Stack.Screen
+            name="NewMessages"
+            component={NewMessages}
+            initialParams={{ sessionId: sessionId }}
+          />
+
+          <Stack.Screen
+            name="ChatRoom"
+            component={ChatRoom}
+            initialParams={{ sessionId: sessionId }}
           />
         </Stack.Navigator>
       </SearchContextProvider>

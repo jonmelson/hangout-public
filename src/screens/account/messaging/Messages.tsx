@@ -80,15 +80,17 @@ const Messages = ({
       headerShadowVisible: false,
       headerTitle: '',
       headerLeft: () => (
-        <RoquefortText
-          fontType="Roquefort-Semi-Strong"
-          style={{ fontSize: 26, fontWeight: '500', color: '#333333' }}>
-          Messaging
-        </RoquefortText>
+        <View className='ml-4'>
+          <RoquefortText
+            fontType="Roquefort-Semi-Strong"
+            style={{ fontSize: 26, fontWeight: '500', color: '#333333' }}>
+            Messaging
+          </RoquefortText>
+        </View>
       ),
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.navigate('NewMessages')}>
-          <View className="items-center">
+          <View className="mr-4 items-center">
             <NewMessage22Icon />
           </View>
         </TouchableOpacity>
@@ -105,13 +107,15 @@ const Messages = ({
         paddingTop: 0,
       }}>
       <View style={[styles.channelListContainer]}>
-        <Animated.View exiting={SlideOutUp} collapsable={false}>
-          {/* <MessageSearchBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            clicked={clicked}
-            setClicked={setClicked}
-          /> */}
+        <Animated.View
+          exiting={SlideOutUp}
+          collapsable={false}
+          className={`pl-4 ${searchQuery == '' ? 'pr-4' : 'pr-0'} pb-3  pt-2`}>
+          <MessageSearchBar
+            placeholder="Search messages"
+            searchTerm={searchQuery}
+            setSearchTerm={setSearchQuery}
+          />
         </Animated.View>
 
         {(!!searchQuery || (messages && messages.length > 0)) && (

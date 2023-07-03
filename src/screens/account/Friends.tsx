@@ -5,8 +5,9 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
-  Linking,
+  KeyboardAvoidingView,
   SafeAreaView,
+  Platform,
   Share,
 } from 'react-native';
 
@@ -584,7 +585,7 @@ const Friends = ({
 
         {/* After Searching */}
         {searchText !== '' && (
-          <View className="px-4">
+          <View className="flex-1 px-4">
             <TouchableOpacity className="mb-4" onPress={handleInvite}>
               <View className="flex flex-row items-center space-x-2">
                 <ExportSquareIcon color="black" />
@@ -640,11 +641,20 @@ const Friends = ({
             )}
 
             {results.length === 0 && (
-              <View className="mb-20 flex-1 items-center justify-center">
-                <Text className="items-center justify-center px-16 text-center text-gray-500">
-                  No friends exist with that name.
-                </Text>
-              </View>
+              <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                className="flex-1">
+                <View className="flex-1 items-center justify-center">
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: '#808080',
+                    }}>
+                    No results found.
+                  </Text>
+                </View>
+              </KeyboardAvoidingView>
             )}
           </View>
         )}

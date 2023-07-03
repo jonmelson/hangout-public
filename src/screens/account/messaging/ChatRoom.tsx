@@ -81,8 +81,7 @@ const ChatRoom = ({
 
   const handleMorePress = () => {
     // const options = [ 'Open details', 'Delete conversation', 'Cancel' ];
-     const options = ['Delete conversation', 'Cancel'];
-
+    const options = ['Delete conversation', 'Cancel'];
 
     const cancelButtonIndex = 2;
 
@@ -201,7 +200,9 @@ const ChatRoom = ({
       headerLeft: () => (
         <TouchableOpacity
           className="flex flex-row items-center space-x-2 py-2 pr-4"
-          onPress={() => navigation.navigate('Messages')}>
+          onPress={() =>
+            navigation.navigate('Messaging', { screen: 'Messages' })
+          }>
           <ChevronBackIcon />
 
           {currentChannel?.data?.type === 'messaging' &&

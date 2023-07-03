@@ -29,16 +29,15 @@ const TimeDifference: React.FC<TimeDifferenceProps> = ({ timestamp }) => {
     const days = Math.floor(hours / 24);
     const weeks = Math.floor(days / 7);
 
-    if (weeks > 0) {
+    if (timeDifference < 60000) {
+      return 'Just now';
+    } else if (weeks > 0) {
       return `${weeks}w`;
-    }
-    if (days > 0) {
+    } else if (days > 0) {
       return `${days}d`;
-    }
-    if (hours > 0) {
+    } else if (hours > 0) {
       return `${hours}h`;
-    }
-    if (minutes > 0) {
+    } else if (minutes > 0) {
       return `${minutes}m`;
     }
 

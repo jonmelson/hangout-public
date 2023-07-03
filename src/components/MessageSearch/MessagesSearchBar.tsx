@@ -1,115 +1,45 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  StyleSheet,
-  TextInput,
-  Text,
   View,
-  Keyboard,
-  Button,
+  TextInput,
   TouchableOpacity,
+  StyleSheet,
+  Text,
 } from 'react-native';
-import { SearchBarIcon } from '../Icons';
+
+import { Feather, SearchBarIcon, TabBarSearchIcon } from '../Icons';
 
 interface SearchBarProps {
-  clicked: boolean;
-  searchQuery: string;
-  setSearchQuery: (text: string) => void;
-  setClicked: React.Dispatch<React.SetStateAction<boolean>>;
+  placeholder: string;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  clicked,
-  searchQuery,
-  setSearchQuery,
-  setClicked,
+const MessagesSearchBar: React.FC<SearchBarProps> = ({
+  placeholder,
+  searchTerm,
+  setSearchTerm,
 }) => {
-  const handleCancel = () => {
-    setSearchQuery('');
-    setClicked(false);
-    Keyboard.dismiss();
-  };
-
-  const handleInputChange = (text: string) => {
-    setSearchQuery(text);
-  };
-  // styles
-  const styles = StyleSheet.create({
-    container: {
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-      flexDirection: 'row',
-      backgroundColor: 'white',
-      paddingLeft: 16,
-      paddingRight: clicked ? 0 : 16,
-      paddingVertical: 8,
-    },
-    searchBar__unclicked: {
-      height: 44,
-      width: '100%',
-      paddingHorizontal: 16,
-      flexDirection: 'row',
-      backgroundColor: 'white',
-      borderRadius: 50,
-      alignItems: 'center',
-      borderColor: '#808080',
-      borderWidth: 1,
-    },
-    searchBar__clicked: {
-      height: 44,
-      paddingHorizontal: 16,
-      flexDirection: 'row',
-      width: '80%',
-      backgroundColor: 'white',
-      borderRadius: 50,
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-      borderColor: '#808080',
-      borderWidth: 1,
-    },
-    searchIcon: {
-      marginLeft: 1,
-    },
-    input: {
-      fontSize: 16,
-      marginLeft: 10,
-      width: '90%',
-      backgroundColor: 'white',
-      flex: 1,
-      flexDirection: 'row',
-    },
-    cancelButtonContainer: {
-      marginRight: 4,
-      flex: 1,
-      alignItems: 'center',
-    },
-    cancelButtonText: {
-      fontSize: 16,
-      color: '#333333',
-      fontWeight: '500',
-    },
-  });
+  const handleClear = () => setSearchTerm('');
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="w-full">
       <View
         style={
-          clicked ? styles.searchBar__clicked : styles.searchBar__unclicked
+          searchTerm ? styles.searchBar__clicked : styles.searchBar__unclicked
         }>
         <SearchBarIcon />
         <TextInput
-          style={styles.input}
-          value={searchQuery}
-          onChangeText={handleInputChange}
-          onFocus={() => {
-            setClicked(true);
-          }}
-          placeholder={!clicked ? 'Search messages' : ''}
-          placeholderTextColor="#808080"
+          className="ml-2 flex-1"
+          placeholder={placeholder}
+          value={searchTerm}
+          onChangeText={value => setSearchTerm(value)}
         />
       </View>
-      {clicked && (
+
+      {searchTerm && (
         <View style={styles.cancelButtonContainer}>
-          <TouchableOpacity onPress={handleCancel}>
+          <TouchableOpacity onPress={handleClear}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -118,4 +48,58 @@ const SearchBar: React.FC<SearchBarProps> = ({
   );
 };
 
-export default SearchBar;
+// styles
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: 'white',
+  },
+  searchBar__unclicked: {
+    height: 44,
+    width: '100%',
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 50,
+    alignItems: 'center',
+    borderColor: '#808080',
+    borderWidth: 1,
+  },
+  searchBar__clicked: {
+    height: 44,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    borderColor: '#808080',
+    borderWidth: 1,
+  },
+  searchIcon: {
+    marginLeft: 1,
+  },
+  input: {
+    fontSize: 20,
+    marginLeft: 10,
+    width: '90%',
+    backgroundColor: 'white',
+    flex: 1,
+    flexDirection: 'row',
+  },
+  cancelButtonContainer: {
+    marginRight: 4,
+    flex: 1,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    color: '#333333',
+    fontWeight: '500',
+  },
+});
+
+export default MessagesSearchBar;

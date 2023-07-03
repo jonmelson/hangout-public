@@ -7,7 +7,7 @@ import {
   ScrollView,
   RefreshControl,
   Share,
-  SectionList,
+  StyleSheet,
 } from 'react-native';
 
 import { Image } from 'expo-image';
@@ -32,6 +32,7 @@ import { LocationMetaData } from '../../../utils/other';
 import { hangoutUrl, profileInviteMessage } from '../../../utils/constants';
 import { formatDate } from '../../../utils/utils';
 import { Hangout, Section } from '../../../utils/other';
+import TabAvatar from '../../../components/TabAvatar';
 
 import Event from '../../../components/Event';
 import { getFriendsMetaData } from '../../../utils/queries';
@@ -517,7 +518,7 @@ const Profile = ({
         <View className="flex flex-col">
           {avatarUrl !== '' ? (
             <>
-              <View className="h-32">
+              <View className="h-28">
                 <Image
                   source={{ uri: avatarUrl }}
                   cachePolicy="none"
@@ -538,27 +539,37 @@ const Profile = ({
               />
             </>
           ) : (
-            <View className="h-32"></View>
+            <View className="h-28"></View>
           )}
 
-          <View className="relative mt-1 h-[233px] rounded-2xl bg-white px-2">
-            <View className="absolute -top-16 z-10 mb-2 w-full">
-              {avatarUrl == '' ? (
+          <View
+            className={`relative mt-1 ${
+              avatarUrl == '' ? 'h-[258px]' : 'h-[233px]'
+            } rounded-2xl bg-white px-2 pb-2`}>
+            {avatarUrl == '' ? (
+              <View className="absolute -top-[60px] z-10 mb-2 w-full">
                 <TouchableOpacity
                   onPress={handleEditProfilePhotoPress}
-                  className=" flex-col items-center justify-center space-y-2">
-                  <Avatar source={avatarUrl} name={fullName} size={120} />
+                  className="flex flex-col items-center justify-center space-y-1">
+                  <TabAvatar
+                    source={avatarUrl}
+                    name={fullName}
+                    size={120}
+                    style={styles.avatar}
+                  />
 
                   <Text className="text-blue-600">Add profile photo</Text>
                 </TouchableOpacity>
-              ) : (
+              </View>
+            ) : (
+              <View className="absolute -top-[60px] z-10 mb-2 w-full">
                 <View className=" flex-col items-center justify-center space-y-2">
                   <Avatar source={avatarUrl} name={fullName} size={120} />
                 </View>
-              )}
-            </View>
+              </View>
+            )}
 
-            <View className="text-cemter relative mx-2 mb-4 mt-16 flex flex-col justify-center">
+            <View className="text-cemter relative mx-2 mb-2 mt-16 flex flex-col justify-center">
               {avatarUrl == '' ? (
                 <View className="mb-2 mt-6 flex flex-row  items-center  space-x-2">
                   <View>
@@ -580,10 +591,10 @@ const Profile = ({
               )}
 
               {about !== '' ? (
-                <Text className="mb-2 text-gray-800">{about}</Text>
+                <Text className="mb-3 text-gray-800">{about}</Text>
               ) : (
                 <TouchableOpacity onPress={handleEditAbout}>
-                  <Text className="mb-2 text-blue-600">Add About</Text>
+                  <Text className="mb-3 text-blue-600">Add About</Text>
                 </TouchableOpacity>
               )}
 
@@ -764,4 +775,10 @@ const Profile = ({
   );
 };
 
+const styles = StyleSheet.create({
+  avatar: {
+    borderWidth: 6,
+    borderColor: '#fff',
+  },
+});
 export default Profile;

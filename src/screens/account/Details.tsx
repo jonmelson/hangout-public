@@ -200,20 +200,20 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
 
   return (
     <View className="flex flex-col space-y-2">
-      <View className="rounded-2xl bg-white px-4 pb-4 pt-4">
-        {/* <View className="absolute right-3 top-3"> */}
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-          }}>
-          
-            <CloseIcon />
-          </TouchableOpacity>
-        {/* </View> */}
+      <View className="relative rounded-2xl bg-white px-4 pb-4 pt-4">
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+          className="absolute right-4 top-3 z-50">
+          <CloseIcon />
+        </TouchableOpacity>
 
         <View className="flex flex-col">
           <View>
-            <Text className="mb-2" style={{ fontSize: 24, fontWeight: '600' }}>
+            <Text
+              className="mb-2 w-[90%]"
+              style={{ fontSize: 24, fontWeight: '600' }}>
               {title}
             </Text>
           </View>
@@ -278,6 +278,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           {details != '' && (
             <View>
               <Text
+                className="mb-2"
                 style={{ fontSize: 14, fontWeight: '400', color: '#808080' }}>
                 {details}
               </Text>
@@ -504,5 +505,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
     </View>
   );
 };
+
+
 
 export default Details;

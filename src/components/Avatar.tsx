@@ -41,8 +41,11 @@ const Avatar = (props: AvatarProps) => {
         </View>
       ) : (
         <View
-          style={[{ width: size, height: size }, style]}
-          className="items-center justify-center rounded-full bg-gray-300">
+          style={[
+            { width: size, height: size, backgroundColor: '#F3F3F3' },
+            style,
+          ]}
+          className="items-center justify-center rounded-full ">
           <Text className="text-black" style={[{ fontSize }]}>
             {initials}
           </Text>

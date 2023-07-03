@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../../screens/account/main/Home';
-import MessagesStack from './MessagesStack';
+import Messages from '../../screens/account/messaging/Messages';
 import ProfileStack from './ProfileStack';
-import Friends from '../../screens/account/Friends';
+import FriendsStack from './FriendsStack';
 import { Alert, StyleSheet, View } from 'react-native';
 import {
   TabBarHomeIcon,
   TabBarSearchIcon,
   TabBarPlus25Icon,
   TabBarMessagingIcon,
-  TabBarProfileIcon,
 } from '../../components/Icons';
 import { supabase } from '../../lib/supabase';
 import TabAvatar from '../../components/TabAvatar';
@@ -238,7 +237,7 @@ const TabNavigator = ({
         />
         <Stack.Screen
           name="Search"
-          component={Friends}
+          component={FriendsStack}
           initialParams={{
             sessionId: sessionId,
           }}
@@ -255,7 +254,7 @@ const TabNavigator = ({
         />
         <Stack.Screen
           name="Messaging"
-          component={MessagesStack}
+          component={Messages}
           initialParams={{
             sessionId: sessionId,
           }}

@@ -12,7 +12,7 @@ const Selector = (props: SelectorProps) => {
   const { leftTab, rightTab, activeTab, handleTabPress } = props;
 
   return (
-    <View className="flex flex-row items-center justify-between">
+    <View className="flex flex-row items-center justify-between mb-2">
       <TouchableOpacity className="w-1/2" onPress={() => handleTabPress(0)}>
         <Text
           className={`text-center ${activeTab === 0 ? 'font-semibold' : ''}`}>

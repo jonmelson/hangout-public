@@ -255,7 +255,7 @@ const EditProfile = ({
             </View>
           </TouchableOpacity>
 
-          <View className="flex h-28 flex-col space-y-2 rounded-xl bg-white p-4">
+          {/* <View className="flex h-28 flex-col space-y-2 rounded-xl bg-white p-4">
             <Text className="font-medium">Social</Text>
             <View className="flex flex-col space-y-1">
               {instagram !== '' ? (
@@ -323,7 +323,7 @@ const EditProfile = ({
                 </TouchableOpacity>
               )}
             </View>
-          </View>
+          </View> */}
 
           <View className="flex h-96 flex-col space-y-6 p-4">
             <View className="flex flex-row justify-between">

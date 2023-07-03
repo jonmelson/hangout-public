@@ -131,7 +131,7 @@ export function ChatContextProvider({
 
     await newChannel.watch();
 
-    navigation.replace('MessagesStack', { screen: 'ChatRoom' });
+    navigation.replace('ChatRoom');
   };
 
   const startGroupChatRoom = async (
@@ -165,7 +165,7 @@ export function ChatContextProvider({
     await eventChannel.watch();
     setCurrentChannel(eventChannel);
 
-    navigation.replace('MessagesStack', { screen: 'ChatRoom' });
+    navigation.replace('ChatRoom');
   };
 
   const joinGroupChatRoom = async (hangoutId: any, userId: any) => {

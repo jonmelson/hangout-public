@@ -6,7 +6,7 @@ import type { MessageResponse } from 'stream-chat';
 import { MessageSearchItem } from './MessageSearchItem';
 
 const styles = StyleSheet.create({
-  contentContainer: { flexGrow: 1 },
+  contentContainer: { flexGrow: 1, paddingHorizontal: 6 },
   date: {
     fontSize: 12,
     marginLeft: 2,
