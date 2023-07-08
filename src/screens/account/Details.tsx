@@ -205,7 +205,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   }, [starts, ends]);
 
   return (
-    <ScrollView className="flex flex-col space-y-2">
+    <>
       <View className="relative rounded-2xl bg-white px-4 pb-4 pt-4">
         <TouchableOpacity
           onPress={() => {
@@ -373,142 +373,146 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           )}
         </View>
       </View>
-
-      <View className="h-[175px] items-center justify-center">
-        <TouchableWithoutFeedback onPress={handleMapsPress}>
-          <MapView
-            className="h-full w-full"
-            initialRegion={{
-              latitude: location[0].geometry.lat,
-              longitude: location[0].geometry.lng,
-              latitudeDelta: 0.003,
-              longitudeDelta: 0.003,
-            }}
-            mapType="mutedStandard"
-            scrollEnabled={false}
-            zoomEnabled={false}>
-            <Marker
-              coordinate={{
+      <ScrollView className="flex flex-col space-y-2">
+        <View className="h-[175px] items-center justify-center">
+          <TouchableWithoutFeedback onPress={handleMapsPress}>
+            <MapView
+              className="h-full w-full"
+              initialRegion={{
                 latitude: location[0].geometry.lat,
                 longitude: location[0].geometry.lng,
+                latitudeDelta: 0.003,
+                longitudeDelta: 0.003,
               }}
-            />
-          </MapView>
-        </TouchableWithoutFeedback>
-      </View>
-
-      <View className="flex flex-row items-center justify-between rounded-2xl bg-white p-4">
-        <View className="w-3/5">
-          {location[0].address.includes(location[0].title) ? (
-            <>
-              <Text
-                style={{ fontSize: 16, fontWeight: '600' }}
-                className="mb-1">
-                {location[0].address}
-              </Text>
-            </>
-          ) : (
-            <>
-              <Text
-                style={{ fontSize: 16, fontWeight: '600' }}
-                className="mb-1">
-                {location[0].title}
-              </Text>
-              <Text
-                style={{ fontSize: 14, fontWeight: '400', color: '#808080' }}>
-                {location[0].address}
-              </Text>
-            </>
-          )}
+              mapType="mutedStandard"
+              scrollEnabled={false}
+              zoomEnabled={false}>
+              <Marker
+                coordinate={{
+                  latitude: location[0].geometry.lat,
+                  longitude: location[0].geometry.lng,
+                }}
+              />
+            </MapView>
+          </TouchableWithoutFeedback>
         </View>
 
-        <TouchableOpacity className="w-36" onPress={handleMapsPress}>
-          <LinearGradient
-            colors={['#7000FF', '#B174FF']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            className="h-12 w-full items-center justify-center rounded-full">
-            <View className="flex flex-row items-center justify-center space-x-2">
-              <DirectionsIcon />
-              <Text style={{ fontSize: 14, color: 'white', fontWeight: '400' }}>
-                Open in Maps
-              </Text>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
+        <View className="flex flex-row items-center justify-between rounded-2xl bg-white p-4">
+          <View className="w-3/5">
+            {location[0].address.includes(location[0].title) ? (
+              <>
+                <Text
+                  style={{ fontSize: 16, fontWeight: '600' }}
+                  className="mb-1">
+                  {location[0].address}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text
+                  style={{ fontSize: 16, fontWeight: '600' }}
+                  className="mb-1">
+                  {location[0].title}
+                </Text>
+                <Text
+                  style={{ fontSize: 14, fontWeight: '400', color: '#808080' }}>
+                  {location[0].address}
+                </Text>
+              </>
+            )}
+          </View>
 
-      {isGoing && (
-        <TouchableOpacity
-          className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white  px-4"
-          onPress={handleMessagesPress}>
-          <View className="flex flex-row items-center space-x-2">
+          <TouchableOpacity className="w-36" onPress={handleMapsPress}>
             <LinearGradient
               colors={['#7000FF', '#B174FF']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              className="rounded-full p-2">
-              <MessagesIcon color="#FFF" />
+              className="h-12 w-full items-center justify-center rounded-full">
+              <View className="flex flex-row items-center justify-center space-x-2">
+                <DirectionsIcon />
+                <Text
+                  style={{ fontSize: 14, color: 'white', fontWeight: '400' }}>
+                  Open in Maps
+                </Text>
+              </View>
             </LinearGradient>
-
-            <Text className="font-medium">Messages</Text>
-          </View>
-
-          <View>
-            <ChevronRightIcon />
-          </View>
-        </TouchableOpacity>
-      )}
-
-      {going && (
-        <View className="rounded-2xl bg-white px-4 pb-6 pt-2">
-          <Text className="py-2 text-xl">Going</Text>
-          <View className="flex flex-col space-y-4">
-            {going
-              .slice()
-              .sort((a: any, b: any) => {
-                if (a.id === user_id) {
-                  return -1; // `a` is the user, so it should come first
-                }
-                if (b.id === user_id) {
-                  return 1; // `b` is the user, so it should come first
-                }
-                return 0; // maintain the original order
-              })
-              .map((item: any, idx: number) => {
-                return (
-                  <TouchableOpacity
-                    key={idx}
-                    className="flex flex-row space-x-2"
-                    onPress={() => {
-                      handleUserPress(item.id);
-                    }}>
-                    <View>
-                      <Avatar
-                        key={idx}
-                        name={item.first_name + ' ' + item.last_name}
-                        source={item.avatar}
-                        size={45}
-                      />
-                    </View>
-
-                    <View className="flex flex-col justify-center space-y-1">
-                      <View>
-                        <Text className=" ">
-                          {item.first_name + ' ' + item.last_name}
-                        </Text>
-                      </View>
-                      <View>
-                        <Text className="text-gray-500">@{item.username}</Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-          </View>
+          </TouchableOpacity>
         </View>
-      )}
-    </ScrollView>
+
+        {isGoing && (
+          <TouchableOpacity
+            className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white  px-4"
+            onPress={handleMessagesPress}>
+            <View className="flex flex-row items-center space-x-2">
+              <LinearGradient
+                colors={['#7000FF', '#B174FF']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                className="rounded-full p-2">
+                <MessagesIcon color="#FFF" />
+              </LinearGradient>
+
+              <Text className="font-medium">Messages</Text>
+            </View>
+
+            <View>
+              <ChevronRightIcon />
+            </View>
+          </TouchableOpacity>
+        )}
+
+        {going && (
+          <View className="rounded-2xl bg-white px-4 pb-6 pt-2">
+            <Text className="py-2 text-xl">Going</Text>
+            <View className="flex flex-col space-y-4">
+              {going
+                .slice()
+                .sort((a: any, b: any) => {
+                  if (a.id === user_id) {
+                    return -1; // `a` is the user, so it should come first
+                  }
+                  if (b.id === user_id) {
+                    return 1; // `b` is the user, so it should come first
+                  }
+                  return 0; // maintain the original order
+                })
+                .map((item: any, idx: number) => {
+                  return (
+                    <TouchableOpacity
+                      key={idx}
+                      className="flex flex-row space-x-2"
+                      onPress={() => {
+                        handleUserPress(item.id);
+                      }}>
+                      <View>
+                        <Avatar
+                          key={idx}
+                          name={item.first_name + ' ' + item.last_name}
+                          source={item.avatar}
+                          size={45}
+                        />
+                      </View>
+
+                      <View className="flex flex-col justify-center space-y-1">
+                        <View>
+                          <Text className=" ">
+                            {item.first_name + ' ' + item.last_name}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text className="text-gray-500">
+                            @{item.username}
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+            </View>
+          </View>
+        )}
+      </ScrollView>
+    </>
   );
 };
 
