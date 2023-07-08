@@ -66,7 +66,7 @@ const Profile = ({
   const [newIsGoing, setNewIsGoing] = useState<any>([]);
   const [mergedData, setMergedData] = useState<any>(null);
 
-  const [upcomingSections, setUpcomingSections] = useState<Section[]>([]);
+  const [goingSections, setGoingSections] = useState<Section[]>([]);
   const [hostingSections, setHostingSections] = useState<Section[]>([]);
 
   const fullName = firstName + ' ' + lastName;
@@ -151,111 +151,6 @@ const Profile = ({
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    if (sessionId) {
-      getProfile();
-
-      // Subscribe to changes in the users table
-      const userSubscription = supabase
-        .channel('changes1')
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'users',
-          },
-          payload => {
-            setFirstName(payload.new.first_name);
-            setLastName(payload.new.last_name);
-            setUsername(payload.new.username);
-            setAvatarUrl(payload.new.avatar);
-            setLocation(JSON.parse(payload.new.location));
-            setAbout(payload.new.about);
-            setInstagram(payload.new.instagram);
-            setTwitter(payload.new.twitter);
-            setCreatedAt(payload.new.created_at);
-          },
-        )
-        .subscribe();
-    }
-  }, [
-    sessionId,
-    avatarUrl,
-    about,
-    location,
-    firstName,
-    lastName,
-    twitter,
-    instagram,
-  ]);
-
-  // Fetch initial data for friends
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const { data: friendsData, error: friendError } = await supabase
-          .from('friends')
-          .select('friends_id, user_id_1, user_id_2')
-          .or(`user_id_1.eq.${sessionId},user_id_2.eq.${sessionId}`);
-
-        if (!friendError) {
-          const friendsIds = getFriendsMetaData(friendsData, sessionId);
-          setFriends(friendsIds);
-          // console.log(friendsIds);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchFriends();
-  }, []);
-
-  // Fetch initial data for hangouts
-  useEffect(() => {
-    const fetchHangouts = async () => {
-      try {
-        const friendIds = friends.map((friend: any) => friend.friendId);
-        const userIds = [sessionId, ...friendIds];
-        const { data: hangoutsData, error: hangoutsError } = await supabase
-          .from('hangouts')
-          .select('*')
-          .in('user_id', userIds);
-
-        if (!hangoutsError) {
-          setHangouts(hangoutsData);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchHangouts();
-  }, [friends]);
-
-  // Fetch initial data for isGoing
-  useEffect(() => {
-    const fetchIsGoing = async () => {
-      try {
-        const { data: isGoingData, error: isGoingDataError } = await supabase
-          .from('is_going')
-          .select('*')
-          .in(
-            'hangout_id',
-            hangouts.map((hangout: any) => hangout.id),
-          );
-        if (!isGoingDataError) {
-          setIsGoing((prevState: any) => [...prevState, ...isGoingData]);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchIsGoing();
-  }, [hangouts]);
 
   // Fetch realtime data
   useEffect(() => {
@@ -394,6 +289,80 @@ const Profile = ({
     // };
   }, [friends, hangouts, isGoing]);
 
+  useEffect(() => {
+    if (sessionId) {
+      getProfile();
+    }
+  }, []);
+
+  // Fetch initial data for friends
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const { data: friendsData, error: friendError } = await supabase
+          .from('friends')
+          .select('friends_id, user_id_1, user_id_2')
+          .or(`user_id_1.eq.${sessionId},user_id_2.eq.${sessionId}`);
+
+        if (!friendError) {
+          const friendsIds = getFriendsMetaData(friendsData, sessionId);
+          setFriends(friendsIds);
+          // console.log(friendsIds);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchFriends();
+  }, []);
+
+  // Fetch initial data for hangouts
+  useEffect(() => {
+    const fetchHangouts = async () => {
+      try {
+        const friendIds = Array.from(
+          new Set(friends.map((friend: any) => friend.friendId)),
+        );
+        const userIds = [sessionId, ...friendIds];
+        const { data: hangoutsData, error: hangoutsError } = await supabase
+          .from('hangouts')
+          .select('*')
+          .in('user_id', userIds);
+
+        if (!hangoutsError) {
+          setHangouts(hangoutsData);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchHangouts();
+  }, [friends]);
+
+  // Fetch initial data for isGoing
+  useEffect(() => {
+    const fetchIsGoing = async () => {
+      try {
+        const { data: isGoingData, error: isGoingDataError } = await supabase
+          .from('is_going')
+          .select('*')
+          .in(
+            'hangout_id',
+            hangouts.map((hangout: any) => hangout.id),
+          );
+        if (!isGoingDataError) {
+          setIsGoing((prevState: any) => [...prevState, ...isGoingData]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchIsGoing();
+  }, [hangouts]);
+
   // Merge the fetch data and whenever hangouts or isGoing is updated
   useEffect(() => {
     const mergeDataFunction = async () => {
@@ -440,6 +409,7 @@ const Profile = ({
       const goingHangouts = mergedData
         .filter((item: Hangout) => {
           // Assuming `username` is the property of the `item` object
+          // console.log(item.going[0]);
           return item.going.some(
             (goingItem: any) =>
               goingItem.id === sessionId && item.user_id !== sessionId,
@@ -455,12 +425,12 @@ const Profile = ({
       );
 
       // Set upcoming
-      setUpcomingSections([{ title: 'Going', data: goingHangouts }]);
+      setGoingSections([{ title: 'Going', data: goingHangouts }]);
 
       // Set hosting
       setHostingSections([{ title: 'Hosting', data: hostingHangouts }]);
     } else {
-      setUpcomingSections([]);
+      setGoingSections([]);
       setHostingSections([]);
     }
   }, [mergedData]);
@@ -506,7 +476,7 @@ const Profile = ({
         </TouchableOpacity>
       ),
     });
-  }, [navigation, sessionId, username]);
+  }, [sessionId, username]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -655,31 +625,31 @@ const Profile = ({
             </View>
           </View>
 
-          <View className="relative mt-2 rounded-2xl bg-white p-4">
+          <View className="mt-2 flex-1 rounded-2xl bg-white p-4">
             <Selector
               leftTab="Going"
               rightTab="Hosting"
               activeTab={activeTab}
               handleTabPress={handleTabPress}
             />
-            <View className="w-full flex-1 bg-white">
-              {activeTab === 0 && (
-                <>
-                  {upcomingSections[0] &&
-                  upcomingSections[0].data.length > 0 ? (
-                    <>
-                      {upcomingSections[0].data.map((item, idx) => {
-                        return (
-                          <Event
-                            {...item}
-                            key={idx}
-                            sessionId={sessionId}
-                            navigation={navigation}
-                          />
-                        );
-                      })}
-                    </>
-                  ) : (
+
+            {activeTab === 0 && (
+              <>
+                {goingSections[0] && goingSections[0].data.length > 0 ? (
+                  <View className="w-full flex-1 bg-white">
+                    {goingSections[0].data.map((item, idx) => {
+                      return (
+                        <Event
+                          {...item}
+                          key={idx}
+                          sessionId={sessionId}
+                          navigation={navigation}
+                        />
+                      );
+                    })}
+                  </View>
+                ) : (
+                  <View className="w-full flex-1 ">
                     <View className="mt-4">
                       <TouchableOpacity
                         onPress={() =>
@@ -707,25 +677,27 @@ const Profile = ({
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
-                  )}
-                </>
-              )}
-              {activeTab === 1 && (
-                <>
-                  {hostingSections[0] && hostingSections[0].data.length > 0 ? (
-                    <>
-                      {hostingSections[0].data.map((item, idx) => {
-                        return (
-                          <Event
-                            {...item}
-                            key={idx}
-                            sessionId={sessionId}
-                            navigation={navigation}
-                          />
-                        );
-                      })}
-                    </>
-                  ) : (
+                  </View>
+                )}
+              </>
+            )}
+            {activeTab === 1 && (
+              <>
+                {hostingSections[0] && hostingSections[0].data.length > 0 ? (
+                  <View className="w-full flex-1 bg-white">
+                    {hostingSections[0].data.map((item, idx) => {
+                      return (
+                        <Event
+                          {...item}
+                          key={idx}
+                          sessionId={sessionId}
+                          navigation={navigation}
+                        />
+                      );
+                    })}
+                  </View>
+                ) : (
+                  <View className="w-full flex-1 bg-white">
                     <View className="mt-4">
                       <TouchableOpacity
                         onPress={() =>
@@ -753,10 +725,10 @@ const Profile = ({
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
-                  )}
-                </>
-              )}
-            </View>
+                  </View>
+                )}
+              </>
+            )}
           </View>
         </View>
 

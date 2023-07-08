@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { NewMessage22Icon } from '../../../components/Icons';
@@ -14,7 +14,6 @@ import { ChannelList } from 'stream-chat-expo';
 import { useChatContext } from '../../../context/ChatContext';
 
 import { ChannelPreviewMessenger } from '../../../components/ChannelPreview';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { SlideOutUp } from 'react-native-reanimated';
 import RoquefortText from '../../../components/RoquefortText';
 
@@ -42,10 +41,8 @@ const Messages = ({
   navigation: any;
   route?: { params?: { sessionId?: string } };
 }) => {
-  const insets = useSafeAreaInsets();
   const { sessionId } = route?.params ?? {};
-
-  const { setCurrentChannel } = useChatContext();
+  const { setCurrentChannel, setChannelWithId } = useChatContext();
   const {
     searchQuery,
     setSearchQuery,
@@ -65,22 +62,13 @@ const Messages = ({
     navigation.navigate('ChatRoom');
   };
 
-  const EmptySearchIndicator = () => (
-    <View style={styles.emptyIndicatorContainer}>
-      {/* <Search height={112} width={112} /> */}
-      <Text style={[styles.emptyIndicatorText, { color: '#808080' }]}>
-        {`No results for "${searchQuery}"`}
-      </Text>
-    </View>
-  );
-
   useEffect(() => {
     navigation.setOptions({
       headerShown: true,
       headerShadowVisible: false,
       headerTitle: '',
       headerLeft: () => (
-        <View className='ml-4'>
+        <View className="ml-4">
           <RoquefortText
             fontType="Roquefort-Semi-Strong"
             style={{ fontSize: 26, fontWeight: '500', color: '#333333' }}>
@@ -97,6 +85,14 @@ const Messages = ({
       ),
     });
   }, [navigation]);
+
+  const EmptySearchIndicator = () => (
+    <View style={styles.emptyIndicatorContainer}>
+      <Text style={[styles.emptyIndicatorText, { color: '#808080' }]}>
+        {`No results for "${searchQuery}"`}
+      </Text>
+    </View>
+  );
 
   return (
     <View
@@ -126,9 +122,10 @@ const Messages = ({
             messages={messages}
             refreshing={refreshing}
             refreshList={refreshList}
-            // setChannelWithId={setChannelWithId}
+            setChannelWithId={setChannelWithId}
           />
         )}
+
         <View style={{ flex: searchQuery ? 0 : 1 }}>
           <View
             style={[

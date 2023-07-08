@@ -2,10 +2,15 @@ import React from 'react';
 import { View, Text } from 'react-native';
 
 interface TimeDifferenceProps {
-  timestamp: string;
+  timestamp?: string; // Make the `timestamp` prop optional
 }
 
 const TimeDifference: React.FC<TimeDifferenceProps> = ({ timestamp }) => {
+  if (!timestamp) {
+    // Handle the case when `timestamp` is undefined
+    return null; // or any fallback UI
+  }
+
   const getCurrentTime = () => {
     return new Date();
   };

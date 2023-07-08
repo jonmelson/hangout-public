@@ -6,6 +6,7 @@ import {
   Alert,
   ActionSheetIOS,
   RefreshControl,
+  StyleSheet,
 } from 'react-native';
 
 import { Image } from 'expo-image';
@@ -286,7 +287,7 @@ const PublicProfile = ({
         )
         .subscribe();
     }
-  }, [sessionId]);
+  }, [userId, sessionId]);
 
   useEffect(() => {
     checkFriendship();
@@ -300,7 +301,7 @@ const PublicProfile = ({
       headerLeft: () => (
         <TouchableOpacity
           className="flex flex-row items-center space-x-2 py-2 pr-4"
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate('Search', { screen: 'Friends' })}>
           <ChevronBackIcon />
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
             {username}
@@ -320,7 +321,7 @@ const PublicProfile = ({
       <View className="flex flex-col">
         {avatarUrl !== '' ? (
           <>
-            <View className="h-40">
+            <View className="h-28">
               <Image
                 source={{ uri: avatarUrl }}
                 cachePolicy="none"
@@ -341,12 +342,12 @@ const PublicProfile = ({
             />
           </>
         ) : (
-          <View className="h-40"></View>
+          <View className="h-28"></View>
         )}
         <View className="relative rounded-2xl bg-white px-2 py-6">
-          <View className="absolute -top-10 z-10 flex w-full flex-col items-center justify-center space-y-2">
-            <View className="overflow-hidden rounded-full border-4 border-white">
-              <Avatar source={avatarUrl} name={fullName} size={90} />
+          <View className="absolute -top-[60px] z-10  mb-2 flex w-full flex-col items-center justify-center space-y-2">
+            <View className="overflow-hidden rounded-full">
+              <Avatar source={avatarUrl} name={fullName} size={120} />
             </View>
           </View>
 
@@ -544,5 +545,9 @@ const PublicProfile = ({
     </View>
   );
 };
-
+const styles = StyleSheet.create({
+  avatar: {
+    borderWidth: 0,
+  },
+});
 export default PublicProfile;

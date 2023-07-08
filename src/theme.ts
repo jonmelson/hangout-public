@@ -25,5 +25,12 @@ export const myMessageTheme: DeepPartial<Theme> = {
         },
       },
     },
+    replies: {
+      container: {
+        backgroundColor: 'black',
+      },
+    },
   },
 };
+
+ 

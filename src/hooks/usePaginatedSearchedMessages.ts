@@ -16,6 +16,16 @@ export function usePaginatedSearchedMessages(
   const queryInProgress = useRef(false);
   const { chatClient } = useChatContext();
 
+  const filters = {
+    members: { $in: [chatClient?.user?.id || null] },
+  };
+
+  const otherMessageFilters = {
+    text: { $autocomplete: messageFilters },
+    limit: 5,
+    offset: 0,
+  };
+
   const done = () => {
     queryInProgress.current = false;
     setLoading(false);
@@ -51,20 +61,13 @@ export function usePaginatedSearchedMessages(
         return;
       }
       const res = await chatClient?.search(
-        {
-          members: {
-            $in: [chatClient?.user?.id || null],
-          },
-        },
+        filters,
         messageFilters,
-        {
-          limit: MESSAGE_SEARCH_LIMIT,
-          offset: offset.current,
-        },
+        otherMessageFilters,
       );
 
       const newMessages = res?.results.map(r => r.message);
-   
+
       if (!newMessages) {
         queryInProgress.current = false;
         done();

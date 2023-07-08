@@ -7,6 +7,7 @@ import {
   Share,
   Alert,
   TouchableWithoutFeedback,
+  ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -76,6 +77,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
       .eq('user_id', sessionId);
 
     setIsGoing(false);
+    navigation.goBack();
   };
 
   const handleMapsPress = async () => {
@@ -100,13 +102,17 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
     }
   };
 
-  const handleUserPress = (userId: any, sessionId: any) => {
+  const handleUserPress = (userId: any) => {
+    // console.log(userId, sessionId)
     if (userId === sessionId) {
-      navigation.replace('ProfileStack', { screen: 'ProfileScreen' });
+      navigation.navigate('Profile');
     } else {
-      navigation.replace('PublicProfile', {
-        userId: userId,
-        sessionId: sessionId,
+      navigation.navigate('Search', {
+        screen: 'PublicProfile',
+        params: {
+          userId: userId,
+          sessionId: sessionId,
+        },
       });
     }
   };
@@ -148,7 +154,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
         setIsGoing(true);
       }
     });
-  }, [going]);
+  }, [going, isGoing]);
 
   useEffect(() => {
     const date1 = new Date(starts);
@@ -199,7 +205,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   }, [starts, ends]);
 
   return (
-    <View className="flex flex-col space-y-2">
+    <ScrollView className="flex flex-col space-y-2">
       <View className="relative rounded-2xl bg-white px-4 pb-4 pt-4">
         <TouchableOpacity
           onPress={() => {
@@ -278,7 +284,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           {details != '' && (
             <View>
               <Text
-                className="mb-2"
+                className="mb-3"
                 style={{ fontSize: 14, fontWeight: '400', color: '#808080' }}>
                 {details}
               </Text>
@@ -475,7 +481,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
                     key={idx}
                     className="flex flex-row space-x-2"
                     onPress={() => {
-                      handleUserPress(item.id, user_id);
+                      handleUserPress(item.id);
                     }}>
                     <View>
                       <Avatar
@@ -502,10 +508,8 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           </View>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
-
-
 
 export default Details;

@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, Alert } from 'react-native';
 
 import CardGoingButton from './CardGoingButton';
 import Avatar from './Avatar';
-import AvatarIconGroup from './AvatarGroup';
+import AvatarGroup from './AvatarGroup';
 import { ClockIcon, CalendarIcon } from './Icons';
 import MapView, { Marker } from 'react-native-maps';
 import CardEditDetailsButton from '../components/CardEditDetailsButton';
@@ -78,7 +78,7 @@ const Card = (props: EventProps) => {
 
   useEffect(() => {
     setIsGoing(going.some(item => item.id === sessionId));
-  }, [going, sessionId]);
+  }, [going, sessionId, isGoing]);
 
   useEffect(() => {
     const isSameDay = () => {
@@ -160,7 +160,7 @@ const Card = (props: EventProps) => {
             }`}>
             {/* Icon */}
             <View className="items-center justify-center">
-              <AvatarIconGroup userId={user_id} users={going} />
+              <AvatarGroup userId={user_id} users={going} />
             </View>
 
             {/* Info */}

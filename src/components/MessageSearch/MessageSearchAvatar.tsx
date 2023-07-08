@@ -2,34 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
 import Avatar from '../Avatar';
+import { useChatContext } from '../../context/ChatContext';
 
-type ChannelPreviewAvatarProps = {
+type MessageSearchAvatarProps = {
   channel: any;
 };
 
-const ChannelPreviewAvatar = (props: ChannelPreviewAvatarProps) => {
+const MessageSearchAvatar = (props: MessageSearchAvatarProps) => {
   const { channel } = props;
+  const { chatClient } = useChatContext();
   const [members, setMembers] = useState<
     { role: string; image: string; name: string }[]
   >([]);
-
-  const queryMembers = async (channel: any) => {
-    let sort = { created_at: -1 };
-    const query = await channel.queryMembers({}, sort, {});
-    const tempMembers = query.members.map((obj: any) => ({
-      role: obj.role,
-      image: obj.user.image,
-      name: obj.user.name,
-    }));
-
-    setMembers(tempMembers);
-  };
-
-  useEffect(() => {
-    if (channel) {
-      queryMembers(channel);
-    }
-  }, [channel]);
 
   let badge: React.ReactNode = null;
 
@@ -58,7 +42,9 @@ const ChannelPreviewAvatar = (props: ChannelPreviewAvatarProps) => {
 
   return (
     <>
-      {members.length == 1 && (
+      <Avatar source={channel.user.image} name={channel.user.name} size={52} />
+
+      {/* {members.length == 1 && (
         <Avatar source={members[0].image} name={members[0].name} size={52} />
       )}
 
@@ -92,9 +78,11 @@ const ChannelPreviewAvatar = (props: ChannelPreviewAvatarProps) => {
               ))}
           {badge}
         </View>
-      )}
+      )} */}
     </>
   );
+
+  return null;
 };
 
 const styles = StyleSheet.create({
@@ -114,8 +102,8 @@ const styles = StyleSheet.create({
   },
   foregroundStyle: {
     zIndex: 2,
-    borderWidth: 3,
-    borderColor: '#fff',
+    top: 1,
+    right: 3,
   },
   backgroundStyle: {
     position: 'absolute',
@@ -127,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChannelPreviewAvatar;
+export default MessageSearchAvatar;

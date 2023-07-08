@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarContainer: {
-    marginRight: 16,
+    marginRight: 24,
     flexDirection: 'row',
     alignItems: 'center',
     paddingBottom: 5,
@@ -80,7 +80,7 @@ export const ChannelPreviewMessenger = (props: any) => {
   const {
     theme: {
       channelPreview: { container, contentContainer, row },
-      colors: { border, white_snow, accent_red },
+      colors: { border, accent_red },
     },
   } = useTheme();
 
@@ -146,8 +146,7 @@ export const ChannelPreviewMessenger = (props: any) => {
           onSelect(channel);
         }
       }}
-      style={[{ backgroundColor: 'white' }, container, styles.container]}
-      testID="channel-preview-button">
+      style={[{ backgroundColor: 'white' }, container, styles.container]}>
       <View style={[styles.avatarContainer]}>
         <View style={[styles.circle, unread ? styles.circleFill : undefined]} />
         <ChannelPreviewAvatar channel={channel} />
@@ -171,12 +170,6 @@ export const ChannelPreviewMessenger = (props: any) => {
               {displayName}
             </Text>
           </View>
-
-          <PreviewStatus
-            channel={channel}
-            formatLatestMessageDate={formatLatestMessageDate}
-            latestMessagePreview={latestMessagePreview}
-          />
         </View>
 
         <View className="flex flex-row items-center space-x-2">
@@ -193,6 +186,12 @@ export const ChannelPreviewMessenger = (props: any) => {
           <ChannelPreviewMessage latestMessagePreview={latestMessagePreview} />
         </View>
       </View>
+
+      <PreviewStatus
+        channel={channel}
+        formatLatestMessageDate={formatLatestMessageDate}
+        latestMessagePreview={latestMessagePreview}
+      />
     </TouchableOpacity>
   );
 };

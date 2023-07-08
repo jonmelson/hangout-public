@@ -20,7 +20,6 @@ export const SearchContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   const searchProps = usePaginatedSearchedMessages(searchQuery);
- 
 
   return (
     <SearchContext.Provider

@@ -50,7 +50,7 @@ type MessageSearchListProps = {
   messages: MessageResponse[] | undefined;
   refreshing: boolean;
   refreshList: () => void;
-  // setChannelWithId: (channelId: string, messageId?: string) => Promise<void>;
+  setChannelWithId: (channelId: string, messageId?: string) => Promise<void>;
 };
 export const MessageSearchList: React.FC<MessageSearchListProps> = ({
   EmptySearchIndicator,
@@ -59,21 +59,15 @@ export const MessageSearchList: React.FC<MessageSearchListProps> = ({
   messages,
   refreshing,
   refreshList,
-  // setChannelWithId,
+  setChannelWithId,
 }) => {
-  const {
-    theme: {
-      colors: { white_snow },
-    },
-  } = useTheme();
-
   if (loading && !refreshing && (!messages || messages.length === 0)) {
     return (
       <View
         style={[
           styles.indicatorContainer,
           {
-            backgroundColor: white_snow,
+            backgroundColor: "white",
           },
         ]}>
         <Spinner />
@@ -90,7 +84,7 @@ export const MessageSearchList: React.FC<MessageSearchListProps> = ({
         contentContainerStyle={[
           styles.contentContainer,
           {
-            backgroundColor: white_snow,
+            backgroundColor: 'white',
           },
         ]}
         // TODO: Remove the following filter once we have two way scroll functionality on threads.
@@ -101,7 +95,7 @@ export const MessageSearchList: React.FC<MessageSearchListProps> = ({
         onRefresh={refreshList}
         refreshing={refreshing}
         renderItem={({ item }) => (
-          <MessageSearchItem item={item} /> //setChannelWithId={setChannelWithId} />
+          <MessageSearchItem item={item} setChannelWithId={setChannelWithId} />
         )}
         style={styles.flex}
       />

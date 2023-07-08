@@ -3,7 +3,7 @@
     "name": "hngt",
     "slug": "hangout",
     "scheme": "hangout",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "plugins": [
       [
         "expo-image-picker",

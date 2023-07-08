@@ -55,12 +55,4 @@ const Avatar = (props: AvatarProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  avatar: {
-    borderWidth: 1,
-    borderColor: '#000000',
-    position: 'relative',
-  },
-});
-
 export default Avatar;

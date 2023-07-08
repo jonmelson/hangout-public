@@ -1,11 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Avatar, useTheme, vw } from 'stream-chat-expo';
+import { useTheme } from 'stream-chat-expo';
 import type { MessageResponse } from 'stream-chat';
 
-// import { formatLatestMessageDate } from '../../utils';
 import { MessagesChevronRightIcon } from '../Icons';
+import TimeDifference from '../TimeDifference';
+import MessageSearchAvatar from './MessageSearchAvatar';
+import Avatar from '../Avatar';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,11 +15,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingTop: 10,
     paddingHorizontal: 8,
+    paddingBottom: 5,
+  },
+  actionContainer: {
+    flex: 1,
+  },
+  actionButton: {
+    minWidth: 70,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   contentContainer: {
     height: 60,
     flex: 1,
-    borderBottomWidth: 1,
+    justifyContent: 'center',
   },
   avatarContainer: {
     marginRight: 16,
@@ -30,7 +42,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  title: { fontSize: 14, fontWeight: '700', flex: 1, marginBottom: 3 },
+  title: { fontSize: 24, fontWeight: '500', flex: 1, marginBottom: 3 },
   circle: {
     width: 8,
     height: 8,
@@ -39,106 +51,83 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   circleFill: {
-    backgroundColor: '#147EFB',
+    backgroundColor: '#7000FF',
   },
-
-  date: {
-    fontSize: 12,
-    marginLeft: 2,
-    textAlign: 'right',
-  },
-  detailsText: { fontSize: 12 },
-  flex: { flex: 1 },
-  indicatorContainer: {
-    alignItems: 'center',
-    height: '100%',
-    justifyContent: 'center',
-  },
-  itemContainer: {
-    borderBottomWidth: 1,
-    flex: 1,
-    flexDirection: 'row',
-    paddingHorizontal: 8,
-    paddingVertical: 12,
-  },
+  bold: { fontWeight: 'bold' },
   message: {
     flexShrink: 1,
-    fontSize: 12,
-  },
-  titleContainer: {
-    maxWidth: vw(80) - 16 - 40,
-  },
-  svg: {
-    maxWidth: 16,
-    maxHeight: 16,
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#808080',
+    justifyContent: 'center',
   },
 });
 
 type MessageSearchListProps = {
   item: MessageResponse;
-  // setChannelWithId: (channelId: string, messageId?: string) => Promise<void>;
+  setChannelWithId: (channelId: string, messageId?: string) => Promise<void>;
 };
 
 export const MessageSearchItem: React.FC<MessageSearchListProps> = ({
   item,
-  // setChannelWithId,
+  setChannelWithId,
 }) => {
   const navigation = useNavigation();
   const {
     theme: {
-      colors: { black, border, grey },
+      channelPreview: { container },
     },
   } = useTheme();
 
   return (
     <TouchableOpacity
+      className="p-4"
+      style={[container]}
       onPress={() => {
         if (item.channel?.id) {
-          // setChannelWithId(item.channel?.id, item.id);
-          // navigation.navigate('ChatRoom');
+          setChannelWithId(item.channel?.id, item.id);
         }
-      }}
-      style={[styles.container]}
-      testID="channel-preview-button">
-      <View style={[styles.avatarContainer]}>
-        <Avatar
-          image={item.user?.image as string}
-          name={item.user?.name}
-          size={40}
-        />
-      </View>
-
-      <View style={[styles.contentContainer, { borderColor: border }]}>
-        <View style={[styles.row]}>
-          <Text
-            numberOfLines={1}
-            style={[styles.titleContainer, { color: black }]}>
-            <Text style={styles.title}>{`${item.user?.name} `}</Text>
-            {!!item.channel?.name && (
-              <Text style={styles.detailsText}>
-                in
-                <Text style={styles.title}>{` ${item.channel?.name}`}</Text>
-              </Text>
-            )}
-          </Text>
-          <View style={styles.row}>
-            <Text style={[styles.date, { color: grey }]}>
-              {/* {formatLatestMessageDate(item.created_at)} */}
+      }}>
+      <View className="flex flex-row items-center justify-between space-x-4">
+        <MessageSearchAvatar channel={item} />
+        <View className="flex flex-1 flex-col space-y-2">
+          <View>
+            <Text style={{ fontSize: 16, fontWeight: '500' }}>
+              {item.user?.name}
             </Text>
-            <MessagesChevronRightIcon />
+          </View>
+          <View className="flex flex-row items-center">
+            {item.channel?.type === 'livestream' &&
+            item.user &&
+            typeof item.user.image === 'string' &&
+            typeof item.user.name === 'string' ? (
+              <Avatar
+                source={item.user.image}
+                name={item.user.name}
+                size={18}
+              />
+            ) : null}
+
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '400',
+                color: '#808080',
+                marginLeft: item.channel?.type !== 'livestream' ? 0 : 6,
+              }}>
+              {item.text}
+            </Text>
+            <View
+              className="h-0.5 w-0.5 rounded-full"
+              style={{
+                marginHorizontal: 4,
+                backgroundColor: '#808080',
+              }}></View>
+            <TimeDifference timestamp={item.user?.created_at} />
           </View>
         </View>
-        <View style={[styles.row]}>
-          <Text
-            numberOfLines={2}
-            style={[
-              styles.message,
-              {
-                color: grey,
-              },
-            ]}>
-            {item.text}
-          </Text>
+        <View>
+          <MessagesChevronRightIcon />
         </View>
       </View>
     </TouchableOpacity>
