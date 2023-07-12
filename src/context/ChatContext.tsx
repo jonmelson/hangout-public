@@ -167,7 +167,7 @@ export function ChatContextProvider({
     await eventChannel.watch();
     setCurrentChannel(eventChannel);
 
-    navigation.navigate('ChatRoom');
+    navigation.replace('ChatRoom');
   };
 
   const joinGroupChatRoom = async (hangoutId: any, userId: any) => {
@@ -205,7 +205,7 @@ export function ChatContextProvider({
     if (!chatClient) {
       return;
     }
-    console.log(channelId, messageId);
+    // console.log(channelId, messageId);
 
     const eventChannel = chatClient.channel('messaging', channelId);
 

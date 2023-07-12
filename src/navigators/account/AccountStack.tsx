@@ -11,7 +11,6 @@ import EditHangout from '../../screens/account/EditHangout';
 import EditChooseLocation from '../../screens/account/EditChooseLocation';
 import NewMessages from '../../screens/account/messaging/NewMessages';
 import ChatRoom from '../../screens/account/messaging/ChatRoom';
-
 import { SearchContextProvider } from '../../context/SearchContext';
 
 import { Session } from '@supabase/supabase-js';

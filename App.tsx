@@ -33,22 +33,6 @@ export default function App() {
   const [newUser, setNewUser] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const linking = {
-    prefixes: ['hangout://', 'https://hangout.social'],
-    config: {
-      screens: {
-        Account: {
-          path: 'account',
-          screens: {
-            PublicProfile: {
-              path: 'profile/:username',
-            },
-          },
-        },
-      },
-    },
-  };
-
   async function checkIfUserExists(id: string | undefined) {
     const { data: users } = await supabase
       .from('users')
@@ -134,7 +118,7 @@ export default function App() {
     <ActionSheetProvider>
       <SafeAreaProvider>
         <StatusBar style="dark" translucent={true} hidden={false} />
-        <NavigationContainer linking={linking}>
+        <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
               headerShown: false,

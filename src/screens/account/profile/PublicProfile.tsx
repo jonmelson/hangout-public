@@ -71,7 +71,6 @@ const PublicProfile = ({
         tintColor: '#333',
         destructiveButtonIndex: 2,
         cancelButtonIndex: 0,
-        userInterfaceStyle: 'dark',
       },
       buttonIndex => {
         if (buttonIndex === 0) {
@@ -317,7 +316,7 @@ const PublicProfile = ({
   }, [navigation, sessionId, username]);
 
   return (
-    <View className="flex-1">
+    <View className="flex-1"> 
       <View className="flex flex-col">
         {avatarUrl !== '' ? (
           <>
