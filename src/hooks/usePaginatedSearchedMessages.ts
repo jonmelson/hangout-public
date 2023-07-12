@@ -85,7 +85,19 @@ export function usePaginatedSearchedMessages(
             return newMessages;
           }
 
-          const returnMessages = existingMessages.concat(newMessages);
+          const uniqueMessages = newMessages.filter(newMessage => {
+            return !existingMessages.some(
+              existingMessage => existingMessage.id === newMessage.id,
+            );
+          });
+
+          if (uniqueMessages.length === 0) {
+            queryInProgress.current = false;
+            done();
+            return existingMessages;
+          }
+
+          const returnMessages = existingMessages.concat(uniqueMessages);
           messagesLength = returnMessages.length;
           return returnMessages;
         });

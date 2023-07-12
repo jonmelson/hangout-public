@@ -85,7 +85,7 @@ export const MessageSearchItem: React.FC<MessageSearchListProps> = ({
       style={[container]}
       onPress={() => {
         if (item.channel?.id) {
-          setChannelWithId(item.channel?.id, item.id);
+          setChannelWithId(item.channel?.id, item.channel?.type, item.id);
         }
       }}>
       <View className="flex flex-row items-center justify-between space-x-4">

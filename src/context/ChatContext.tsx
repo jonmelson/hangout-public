@@ -23,7 +23,11 @@ type ChatContextType = {
   navigateToGroupChatRoom: (hangoutId: any) => Promise<void>;
   joinGroupChatRoom: (hangoutId: any, userId: any) => Promise<void>;
   updateGroupChatRoomName: (hangoutId: any, newName: any) => Promise<void>;
-  setChannelWithId: (channelId: string, messageId?: string) => Promise<void>;
+  setChannelWithId: (
+    channelId: string,
+    channelType: string,
+    messageId?: string,
+  ) => Promise<void>;
 };
 
 export const ChatContext = createContext<ChatContextType>({
@@ -40,7 +44,11 @@ export const ChatContext = createContext<ChatContextType>({
   navigateToGroupChatRoom: async (hangoutId: any) => {},
   joinGroupChatRoom: async (hangoutId: any, userId: any) => {},
   updateGroupChatRoomName: async (hangoutId: any, newName: any) => {},
-  setChannelWithId: async (channelId: any, messageId: any) => {},
+  setChannelWithId: async (
+    channelId: any,
+    channelType: any,
+    messageId: any,
+  ) => {},
 });
 
 export function ChatContextProvider({
@@ -201,13 +209,17 @@ export function ChatContextProvider({
     // navigation.replace('MessagesStack', { screen: 'ChatRoom' });
   };
 
-  const setChannelWithId = async (channelId: any, messageId: any) => {
+  const setChannelWithId = async (
+    channelId: any,
+    channelType: any,
+    messageId: any,
+  ) => {
     if (!chatClient) {
       return;
     }
-    // console.log(channelId, messageId);
+    // console.log(channelId, channelType, messageId);
 
-    const eventChannel = chatClient.channel('messaging', channelId);
+    const eventChannel = chatClient.channel(channelType, channelId);
 
     await eventChannel.watch();
     setCurrentChannel(eventChannel);

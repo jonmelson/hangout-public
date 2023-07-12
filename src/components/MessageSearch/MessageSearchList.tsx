@@ -67,7 +67,7 @@ export const MessageSearchList: React.FC<MessageSearchListProps> = ({
         style={[
           styles.indicatorContainer,
           {
-            backgroundColor: "white",
+            backgroundColor: 'white',
           },
         ]}>
         <Spinner />
