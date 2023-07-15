@@ -65,6 +65,7 @@ export interface AvatarIconGroupProps {
 }
 
 export type LocationMetaData = {
+  title: string
   address: string;
   geometry: { lat: number; lng: number };
 };

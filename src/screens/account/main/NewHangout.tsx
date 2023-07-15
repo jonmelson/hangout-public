@@ -136,6 +136,7 @@ const NewHangout = ({
         //   .eq('id', data[0].user_id);
 
         startGroupChatRoom(data[0].id, data[0].user_id, data[0].title);
+        navigation.navigate('Home');
         navigation.navigate('SharePage');
       }
     };

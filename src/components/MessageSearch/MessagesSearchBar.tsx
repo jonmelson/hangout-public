@@ -23,14 +23,14 @@ const MessagesSearchBar: React.FC<SearchBarProps> = ({
   const handleClear = () => setSearchTerm('');
 
   return (
-    <View style={styles.container} className="w-full">
+    <View style={styles.container} className="w-full ">
       <View
         style={
           searchTerm ? styles.searchBar__clicked : styles.searchBar__unclicked
         }>
         <SearchBarIcon />
         <TextInput
-          className="ml-2 flex-1"
+          className="ml-2 flex-1 py-2"
           placeholder={placeholder}
           value={searchTerm}
           onChangeText={value => setSearchTerm(value)}

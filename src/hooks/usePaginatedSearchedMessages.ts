@@ -24,6 +24,7 @@ export function usePaginatedSearchedMessages(
     text: { $autocomplete: messageFilters },
     limit: 5,
     offset: 0,
+    sort: [{ relevance: -1 }, { updated_at: 1 }, { my_custom_field: -1 }],
   };
 
   const done = () => {

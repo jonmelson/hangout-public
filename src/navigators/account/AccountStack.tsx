@@ -5,12 +5,15 @@ import TabNavigator from './TabNavigator';
 import Friends from '../../screens/account/Friends';
 import PublicProfile from '../../screens/account/profile/PublicProfile';
 import ProfileStack from './ProfileStack';
-import NewHangoutStack from './NewHangoutStack';
 import Details from '../../screens/account/Details';
 import EditHangout from '../../screens/account/EditHangout';
 import EditChooseLocation from '../../screens/account/EditChooseLocation';
 import NewMessages from '../../screens/account/messaging/NewMessages';
 import ChatRoom from '../../screens/account/messaging/ChatRoom';
+import SharePage from '../../screens/account/SharePage';
+import NewHangoutStack from './NewHangoutStack';
+import { Animated } from 'react-native';
+
 import { SearchContextProvider } from '../../context/SearchContext';
 
 import { Session } from '@supabase/supabase-js';
@@ -18,6 +21,8 @@ import { Session } from '@supabase/supabase-js';
 import { useNavigation } from '@react-navigation/native';
 
 import { ChatContextProvider } from '../../context/ChatContext';
+
+import { TransitionPresets } from '@react-navigation/stack';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -101,6 +106,17 @@ const AccountStack = ({
             name="ChatRoom"
             component={ChatRoom}
             initialParams={{ sessionId: sessionId }}
+          />
+
+          <Stack.Screen
+            name="SharePage"
+            component={SharePage}
+            initialParams={{ sessionId: sessionId }}
+            options={{
+              headerShown: false,
+              presentation: 'transparentModal',
+              animation: 'none',
+            }}
           />
         </Stack.Navigator>
       </SearchContextProvider>

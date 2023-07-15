@@ -49,6 +49,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   } = route.params;
 
   const address = location[0].address;
+  const locationTitle = location[0].title;
 
   const { navigateToGroupChatRoom, joinGroupChatRoom } = useChatContext();
 
@@ -56,6 +57,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   const [newTime, setNewTime] = useState<any>([]);
   const [isGoing, setIsGoing] = useState(false);
 
+ 
   const handleGoingPress = async () => {
     if (isGoing === false) {
       const { data, error } = await supabase
@@ -141,9 +143,25 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   };
 
   const onShare = () => {
+    let message =
+      title +
+      '\n' +
+      newDate[0].date +
+      ' ' +
+      newTime[0].time +
+      '-' +
+      newTime[1].time +
+      '\n';
+
+    if (!address.includes(locationTitle)) {
+      message += locationTitle + '\n';
+    }
+
+    message += address;
+
     Share.share({
-      url: hangoutUrl + '/' + id,
-      message: hangoutInviteMessage + ' ' + title,
+      url: hangoutUrl,
+      message: message,
       title: 'Hangout',
     });
   };
@@ -218,16 +236,25 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
         <View className="flex flex-col">
           <View>
             <Text
-              className="mb-2 w-[90%]"
-              style={{ fontSize: 24, fontWeight: '600' }}>
+              className="w-[90%]"
+              style={{
+                fontSize: 24,
+                fontWeight: '600',
+                paddingBottom: 14,
+                paddingTop: 4,
+              }}>
               {title}
             </Text>
           </View>
 
           {newDate && newDate.length > 1 && (
-            <View className="mb-2 flex flex-row items-center space-x-2">
-              <View className="flex flex-col space-y-1">
-                <View className="flex flex-row space-x-2">
+            <View
+              className="flex flex-row items-center space-x-2"
+              style={{ paddingBottom: 14 }}>
+              <View className="flex flex-col">
+                <View
+                  className="flex flex-row space-x-2"
+                  style={{ paddingBottom: 8 }}>
                   <CalendarIcon />
                   <Text style={{ fontSize: 16, fontWeight: '500' }}>
                     {newDate[0].date}
@@ -241,8 +268,10 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
                 </View>
               </View>
               <ArrowRightIcon />
-              <View className="flex flex-col space-y-1">
-                <View className="flex flex-row space-x-2">
+              <View className="flex flex-col">
+                <View
+                  className="flex flex-row space-x-2"
+                  style={{ paddingBottom: 8 }}>
                   <CalendarIcon />
                   <Text style={{ fontSize: 16, fontWeight: '500' }}>
                     {newDate[1].date}
@@ -259,8 +288,10 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           )}
 
           {newDate && newDate.length === 1 && (
-            <View className="mb-2 flex flex-col space-y-1">
-              <View className="flex flex-row space-x-2">
+            <View className="flex flex-col" style={{ paddingBottom: 14 }}>
+              <View
+                className="flex flex-row space-x-2"
+                style={{ paddingBottom: 8 }}>
                 <CalendarIcon />
                 <Text style={{ fontSize: 16, fontWeight: '500' }}>
                   {newDate[0].date}
@@ -282,9 +313,8 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           )}
 
           {details != '' && (
-            <View>
+            <View style={{ paddingBottom: 14 }}>
               <Text
-                className="mb-3"
                 style={{ fontSize: 14, fontWeight: '400', color: '#808080' }}>
                 {details}
               </Text>

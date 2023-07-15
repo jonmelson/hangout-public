@@ -97,9 +97,9 @@ const EditProfilePhoto = ({
             .from('avatars')
             .getPublicUrl(imagePath, {
               transform: {
-                width: 100,
-                height: 100,
-                resize: 'fill',
+                width: 500,
+                height: 500,
+                resize: 'contain',
               },
             });
 
@@ -131,9 +131,9 @@ const EditProfilePhoto = ({
             .from('avatars')
             .getPublicUrl(imagePath, {
               transform: {
-                width: 100,
-                height: 100,
-                resize: 'fill',
+                width: 500,
+                height: 500,
+                resize: 'contain',
               },
             });
 

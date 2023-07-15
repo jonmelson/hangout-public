@@ -30,7 +30,7 @@ import {
 
 import { useChatContext } from '../../../context/ChatContext';
 
-import { formatDate } from '../../../utils/utils';
+import { formatDate, handleContactUsPress } from '../../../utils/utils';
 
 import { LocationMetaData } from '../../../utils/other';
 
@@ -64,6 +64,20 @@ const PublicProfile = ({
 
   const { startDMChatRoom } = useChatContext();
 
+  const handleRemoveAsFriend = async (id: string) => {
+    // console.log(id, sessionId);
+
+    const { error: tryOne } = await supabase
+      .from('friends')
+      .delete()
+      .match({ user_id_1: sessionId, user_id_2: id });
+
+    const { error: tryTwo } = await supabase
+      .from('friends')
+      .delete()
+      .match({ user_id_1: id, user_id_2: sessionId });
+  };
+
   const onPress = () =>
     ActionSheetIOS.showActionSheetWithOptions(
       {
@@ -78,7 +92,7 @@ const PublicProfile = ({
           console.log('Cancel');
         } else if (buttonIndex === 1) {
           // Report User
-          console.log('Report User');
+          handleContactUsPress();
         }
       },
     );
@@ -96,6 +110,25 @@ const PublicProfile = ({
         {
           text: 'Confirm',
           onPress: () => handleCancelRequest(id),
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
+  const showRemoveAlert = (id: string) => {
+    Alert.alert(
+      'Remove from friends?',
+      'Are you sure you want to remove from friends?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: () => handleRemoveAsFriend(id),
         },
       ],
       { cancelable: false },
@@ -131,6 +164,24 @@ const PublicProfile = ({
   const handleMessagePress = async () => {
     startDMChatRoom({ id: userId });
   };
+
+  const friendsSheet = () =>
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ['Cancel', 'Remove from friends'],
+        tintColor: '#333',
+        destructiveButtonIndex: 2,
+        cancelButtonIndex: 0,
+      },
+      buttonIndex => {
+        if (buttonIndex === 0) {
+          // cancel action
+          console.log('Cancel');
+        } else if (buttonIndex === 1) {
+          showRemoveAlert(userId);
+        }
+      },
+    );
 
   async function getProfile() {
     try {
@@ -316,7 +367,7 @@ const PublicProfile = ({
   }, [navigation, sessionId, username]);
 
   return (
-    <View className="flex-1"> 
+    <View className="flex-1">
       <View className="flex flex-col">
         {avatarUrl !== '' ? (
           <>
@@ -343,15 +394,19 @@ const PublicProfile = ({
         ) : (
           <View className="h-28"></View>
         )}
-        <View className="relative rounded-2xl bg-white px-2 py-6">
-          <View className="absolute -top-[60px] z-10  mb-2 flex w-full flex-col items-center justify-center space-y-2">
+        <View className="relative rounded-2xl bg-white">
+          <View className="absolute -top-[60px] z-10 flex  w-full flex-col items-center justify-center">
             <View className="overflow-hidden rounded-full">
               <Avatar source={avatarUrl} name={fullName} size={120} />
             </View>
           </View>
 
-          <View className="mx-2 mt-12 flex flex-col space-y-2">
-            <View className="flex flex-row items-center  space-x-2">
+          <View
+            className="flex flex-col"
+            style={{ margin: 16, paddingTop: 48 }}>
+            <View
+              className="flex flex-row items-center space-x-2"
+              style={{ paddingBottom: 12 }}>
               <View>
                 <Text className="text-lg font-medium">{fullName}</Text>
               </View>
@@ -360,16 +415,24 @@ const PublicProfile = ({
               </View>
             </View>
 
+            {about.trim() !== '' && (
+              <View style={{ paddingBottom: 12 }}>
+                <Text className="text-gray-800">{about}</Text>
+              </View>
+            )}
+
             {location && location.length > 0 && (
-              <View className="flex flex-row items-center space-x-1">
+              <View
+                className="flex flex-row items-center space-x-1"
+                style={{ paddingBottom: 12 }}>
                 <Location16Icon color="#000000" />
                 <Text className="text-black">{location[0].address}</Text>
               </View>
             )}
 
             {isFriend ? (
-              <View className="mt-2 flex flex-row space-x-2">
-                <TouchableOpacity className="w-1/2">
+              <View className="flex flex-row space-x-2 ">
+                <TouchableOpacity className="w-1/2" onPress={friendsSheet}>
                   <LinearGradient
                     colors={['#7000FF', '#B174FF']}
                     start={{ x: 0, y: 1 }}
@@ -435,9 +498,7 @@ const PublicProfile = ({
             ) : (
               <>
                 {requested ? (
-                  <TouchableOpacity
-                    onPress={() => showAlert(userId)}
-                    className="mt-2 ">
+                  <TouchableOpacity onPress={() => showAlert(userId)}>
                     <LinearGradient
                       colors={['#7000FF', '#B174FF']}
                       start={{ x: 0, y: 1 }}
@@ -501,37 +562,6 @@ const PublicProfile = ({
             )}
           </View>
         </View>
-        {about !== '' ||
-          instagram !== '' ||
-          (twitter !== '' && (
-            <View className="flex flex-col space-y-3 rounded-2xl bg-white p-4">
-              <Text className="text-xl font-semibold">About</Text>
-              {about !== '' && (
-                <View>
-                  <Text className="text-gray-800">{about}</Text>
-                </View>
-              )}
-              <View className="flex flex-col space-y-1">
-                {instagram && (
-                  <TouchableOpacity
-                    className="flex flex-row items-center space-x-2"
-                    onPress={handleInstagramPress}>
-                    <FontAwesome name="instagram" color="purple" size={18} />
-                    <Text style={{ color: 'purple' }}>{instagram}</Text>
-                  </TouchableOpacity>
-                )}
-
-                {twitter && (
-                  <TouchableOpacity
-                    className="flex flex-row items-center space-x-2"
-                    onPress={handleTwitterPress}>
-                    <FontAwesome name="twitter" color="blue" size={18} />
-                    <Text style={{ color: 'blue' }}>{twitter}</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-          ))}
       </View>
       <View className="mt-12 flex flex-col items-center justify-center space-y-4">
         <View>

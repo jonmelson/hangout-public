@@ -50,7 +50,11 @@ type MessageSearchListProps = {
   messages: MessageResponse[] | undefined;
   refreshing: boolean;
   refreshList: () => void;
-  setChannelWithId: (channelId: string, messageId?: string) => Promise<void>;
+  setChannelWithId: (
+    channelId: string,
+    channelType: string,
+    messageId?: string,
+  ) => Promise<void>;
 };
 export const MessageSearchList: React.FC<MessageSearchListProps> = ({
   EmptySearchIndicator,

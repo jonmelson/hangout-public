@@ -12,7 +12,10 @@ import {
 import RoquefortText from '../../../components/RoquefortText';
 import BottomCreateIndicator from '../../../components/BottomCreateIndicator';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as SplashScreen from 'expo-splash-screen';
+
+import { TransitionSpecs } from '@react-navigation/stack';
+
+import { HangoutBlackLogo } from '../../../components/Icons';
 
 import Header from '../../../components/Header';
 import Card from '../../../components/Card';
@@ -40,20 +43,6 @@ const Home = ({
   const [mergedData, setMergedData] = useState<any>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [appIsReady, setAppIsReady] = useState(false);
-
-  useEffect(() => {
-    async function prepare() {
-      // Keep the splash screen visible
-      await SplashScreen.preventAutoHideAsync();
-      // Do what you need before the splash screen gets hidden
-      setLoading(true);
-      fetchFriends();
-      // Then tell the application to render
-      setAppIsReady(true);
-    }
-    prepare();
-  }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -318,15 +307,17 @@ const Home = ({
   useEffect(() => {
     if (mergedData) {
       const today = new Date().toDateString();
-      const upcoming = mergedData.filter(
-        (item: Hangout) => new Date(item.starts) > new Date(),
-      );
+      const currentTime = new Date();
 
-      const todayHangouts = mergedData.filter(
-        (item: Hangout) => new Date(item.starts).toDateString() === today,
-      );
-      const upcomingHangouts = upcoming.filter(
-        (item: Hangout) => new Date(item.starts).toDateString() !== today,
+      const todayHangouts = mergedData.filter((item: Hangout) => {
+        const endTime = new Date(item.ends);
+        return endTime > currentTime && endTime.toDateString() === today;
+      });
+
+      const upcomingHangouts = mergedData.filter(
+        (item: Hangout) =>
+          new Date(item.ends) > currentTime &&
+          new Date(item.ends).toDateString() !== today,
       );
 
       setSections([
@@ -360,16 +351,19 @@ const Home = ({
     });
   }, [newIsGoing]);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      // Hide the splash screen
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
+  useEffect(() => {
+    navigation.setOptions({
+      title: '',
+      headerShown: true,
+      headerShadowVisible: false,
+      headerLeft: () => (
+        <View style={{ paddingLeft: 16 }}>
+          <HangoutBlackLogo />
+        </View>
+      ),
+    });
+  }, []);
 
-  if (!appIsReady) {
-    return null;
-  }
 
   return (
     <>
@@ -380,137 +374,133 @@ const Home = ({
         </View>
       ) : (
         <>
-          <Header navigation={navigation} sessionId={sessionId} />
-          <ScrollView
-            onLayout={onLayoutRootView}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            }>
-            {sections.length > 0 &&
-            friends.length === 0 &&
+          {sections.length > 0 &&
+          friends.length === 0 &&
+          sections[0]?.data?.length === 0 &&
+          sections[1]?.data?.length === 0 ? (
+            <View style={{ backgroundColor: '#F3F3F3' }} className="flex-1  ">
+              <View className="mt-6 flex-1   shadow-lg">
+                <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white">
+                  <View className="flex w-full flex-col items-center">
+                    <Image
+                      source={require('../../../../assets/images/emptystate/add-friends.png')}
+                      className="mt-4"
+                    />
+                    <RoquefortText
+                      fontType="Roquefort-Semi-Strong"
+                      style={{
+                        fontSize: 24,
+                      }}
+                      className="mt-4 text-center">
+                      Life’s better together
+                    </RoquefortText>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        color: '#808080',
+                      }}
+                      className="my-3 text-center">
+                      Add your friends to get started
+                    </Text>
+
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('Search')}
+                      className="flex h-[48px] w-full px-4">
+                      <LinearGradient
+                        colors={['#7000FF', '#B174FF']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        className="h-12 w-full items-center justify-center  rounded-full">
+                        <View className="flex w-full flex-row items-center justify-center  space-x-1">
+                          <View>
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                fontWeight: '500',
+                                textAlign: 'center',
+                                color: 'white',
+                              }}>
+                              Add friends
+                            </Text>
+                          </View>
+                        </View>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+              <BottomCreateIndicator />
+            </View>
+          ) : sections.length > 0 &&
+            friends.length > 0 &&
             sections[0]?.data?.length === 0 &&
             sections[1]?.data?.length === 0 ? (
-              <View style={{ backgroundColor: '#F3F3F3' }} className="flex-1">
-                <View className="mt-6 flex-1 shadow-lg">
-                  <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white">
-                    <View className="flex w-full flex-col items-center">
-                      <Image
-                        source={require('../../../../assets/images/emptystate/add-friends.png')}
-                        className="mt-4"
-                      />
-                      <RoquefortText
-                        fontType="Roquefort-Semi-Strong"
-                        style={{
-                          fontSize: 24,
-                        }}
-                        className="mt-4 text-center">
-                        Life’s better together
-                      </RoquefortText>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: '500',
-                          color: '#808080',
-                        }}
-                        className="my-3 text-center">
-                        Add your friends to get started
-                      </Text>
+            <View style={{ backgroundColor: '#F3F3F3' }} className="flex-1">
+              <View className="mt-6 flex-1 shadow-lg">
+                <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white">
+                  <View className="flex w-full flex-col items-center">
+                    <Image
+                      source={require('../../../../assets/images/emptystate/new-hangout.png')}
+                      className="mt-4"
+                    />
+                    <RoquefortText
+                      fontType="Roquefort-Semi-Strong"
+                      style={{
+                        fontSize: 24,
+                      }}
+                      className="mt-4 text-center">
+                      Let's do something!
+                    </RoquefortText>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        color: '#808080',
+                      }}
+                      className="my-3 text-center">
+                      Create a new hangout to get started
+                    </Text>
 
-                      <TouchableOpacity
-                        onPress={() => navigation.navigate('Search')}
-                        className="flex h-[48px] w-full px-4">
-                        <LinearGradient
-                          colors={['#7000FF', '#B174FF']}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 1 }}
-                          className="h-12 w-full items-center justify-center  rounded-full">
-                          <View className="flex w-full flex-row items-center justify-center  space-x-1">
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  fontWeight: '500',
-                                  textAlign: 'center',
-                                  color: 'white',
-                                }}>
-                                Add friends
-                              </Text>
-                            </View>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('NewHangoutStackTemp')}
+                      className="flex h-[48px] w-full px-4">
+                      <LinearGradient
+                        colors={['#7000FF', '#B174FF']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        className="h-12 w-full items-center justify-center  rounded-full">
+                        <View className="flex w-full flex-row items-center justify-center  space-x-1">
+                          <View>
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                fontWeight: '500',
+                                textAlign: 'center',
+                                color: 'white',
+                              }}>
+                              New Hangout
+                            </Text>
                           </View>
-                        </LinearGradient>
-                      </TouchableOpacity>
-                    </View>
+                        </View>
+                      </LinearGradient>
+                    </TouchableOpacity>
                   </View>
                 </View>
-                <BottomCreateIndicator />
               </View>
-            ) : sections.length > 0 &&
-              friends.length > 0 &&
-              sections[0]?.data?.length === 0 &&
-              sections[1]?.data?.length === 0 ? (
-              <View style={{ backgroundColor: '#F3F3F3' }} className="flex-1">
-                <View className="mt-6 flex-1 shadow-lg">
-                  <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white">
-                    <View className="flex w-full flex-col items-center">
-                      <Image
-                        source={require('../../../../assets/images/emptystate/new-hangout.png')}
-                        className="mt-4"
-                      />
-                      <RoquefortText
-                        fontType="Roquefort-Semi-Strong"
-                        style={{
-                          fontSize: 24,
-                        }}
-                        className="mt-4 text-center">
-                        Let's do something!
-                      </RoquefortText>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: '500',
-                          color: '#808080',
-                        }}
-                        className="my-3 text-center">
-                        Create a new hangout to get started
-                      </Text>
-
-                      <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate('NewHangoutStackTemp')
-                        }
-                        className="flex h-[48px] w-full px-4">
-                        <LinearGradient
-                          colors={['#7000FF', '#B174FF']}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 1 }}
-                          className="h-12 w-full items-center justify-center  rounded-full">
-                          <View className="flex w-full flex-row items-center justify-center  space-x-1">
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  fontWeight: '500',
-                                  textAlign: 'center',
-                                  color: 'white',
-                                }}>
-                                New Hangout
-                              </Text>
-                            </View>
-                          </View>
-                        </LinearGradient>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-                <BottomCreateIndicator />
-              </View>
-            ) : sections.length > 0 &&
-              friends.length >= 0 &&
-              (sections[0]?.data?.length > 0 ||
-                sections[1]?.data?.length > 0) ? (
+              <BottomCreateIndicator />
+            </View>
+          ) : sections.length > 0 &&
+            friends.length >= 0 &&
+            (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) ? (
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+              className="flex-1">
               <View className="flex-1">
                 {loading ? null : (
                   <>
@@ -539,8 +529,8 @@ const Home = ({
                   </>
                 )}
               </View>
-            ) : null}
-          </ScrollView>
+            </ScrollView>
+          ) : null}
         </>
       )}
     </>

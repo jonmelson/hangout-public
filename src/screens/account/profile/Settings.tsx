@@ -28,7 +28,6 @@ const Settings = (props: NavigationProps) => {
   const handleShareInvitePress = () => {
     Share.share({
       url: hangoutUrl,
-      message: profileInviteMessage,
       title: 'Hangout',
     });
   };

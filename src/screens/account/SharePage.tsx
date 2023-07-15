@@ -46,6 +46,7 @@ const SharePage = ({
   const [avatarUrl, setAvatarUrl] = useState('');
 
   const address = location && location[0] ? location[0].address : '';
+  const locationTitle = location && location[0] ? location[0].title : '';
 
   const fullName = firstName + ' ' + lastName;
 
@@ -59,9 +60,17 @@ const SharePage = ({
   };
 
   const onShare = () => {
+    let message = title + '\n' + date + ' ' + time.replace(/\s/g, '') + '\n';
+
+    if (!address.includes(locationTitle)) {
+      message += locationTitle + '\n';
+    }
+
+    message += address;
+
     Share.share({
-      url: hangoutUrl + '/' + hangoutId,
-      message: hangoutInviteMessage + ' ' + title,
+      url: hangoutUrl,
+      message: message,
       title: 'Hangout',
     });
   };
@@ -172,15 +181,16 @@ const SharePage = ({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
       }}>
-      <View className="absolute top-5 right-5">
+      <View className="h-62 flex w-5/6 flex-col space-y-3 rounded-2xl  bg-white p-4">
+        {/* <View className="absolute right-5 top-5"> */}
         <TouchableOpacity onPress={onClose}>
           <View style={{ alignSelf: 'flex-end' }}>
             <CloseIcon />
           </View>
         </TouchableOpacity>
-      </View>
-      <View className="h-62 flex w-5/6 flex-col space-y-3 rounded-2xl  bg-white p-4">
+        {/* </View> */}
         <View className="items-center justify-center  text-center">
           <Text className="mb-4 text-xl">Your hangout is live!</Text>
           <View className="mb-4">

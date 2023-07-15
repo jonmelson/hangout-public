@@ -88,7 +88,7 @@ export const InputBox = () => {
             paddingVertical: 4,
           },
         ]}>
-        <View className="mb-1 pl-2">
+        <View className="pl-2 w-[90%] mb-1 py-0.5">
           <AutoCompleteInput
             additionalTextInputProps={additionalTextInputProps}
           />

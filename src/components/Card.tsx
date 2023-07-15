@@ -204,8 +204,8 @@ const Card = (props: EventProps) => {
               initialRegion={{
                 latitude: location[0].geometry.lat,
                 longitude: location[0].geometry.lng,
-                latitudeDelta: 0.0005,
-                longitudeDelta: 0.0005,
+                latitudeDelta: 0.002,
+                longitudeDelta: 0.002,
               }}
               mapType="mutedStandard"
               scrollEnabled={false}

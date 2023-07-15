@@ -411,17 +411,16 @@ const Profile = ({
           // Assuming `username` is the property of the `item` object
           // console.log(item.going[0]);
           return item.going.some(
-            (goingItem: any) =>
-              goingItem.id === sessionId && item.user_id !== sessionId,
+            (goingItem: any) => goingItem.id === sessionId,
           );
         })
-        .filter((item: Hangout) => new Date(item.starts).getTime() > today);
+        .filter((item: Hangout) => new Date(item.ends).getTime() > today);
 
       // console.log(upcomingHangouts[1].going[0].id);
 
       const hostingHangouts = mergedData.filter(
         (item: Hangout) =>
-          new Date(item.starts).getTime() > today && item.user_id === sessionId,
+          new Date(item.ends).getTime() > today && item.user_id === sessionId,
       );
 
       // Set upcoming
@@ -512,12 +511,9 @@ const Profile = ({
             <View className="h-28"></View>
           )}
 
-          <View
-            className={`relative mt-1 ${
-              avatarUrl == '' ? 'h-[258px]' : 'h-[233px]'
-            } rounded-2xl bg-white px-2 pb-2`}>
+          <View className={`relative mt-1 rounded-2xl bg-white pb-2`}>
             {avatarUrl == '' ? (
-              <View className="absolute -top-[60px] z-10 mb-2 w-full">
+              <View className="absolute -top-[60px] z-10 w-full">
                 <TouchableOpacity
                   onPress={handleEditProfilePhotoPress}
                   className="flex flex-col items-center justify-center space-y-1">
@@ -532,16 +528,18 @@ const Profile = ({
                 </TouchableOpacity>
               </View>
             ) : (
-              <View className="absolute -top-[60px] z-10 mb-2 w-full">
-                <View className=" flex-col items-center justify-center space-y-2">
+              <View className="absolute -top-[60px] z-10 w-full">
+                <View className="flex flex-col items-center justify-center">
                   <Avatar source={avatarUrl} name={fullName} size={120} />
                 </View>
               </View>
             )}
 
-            <View className="text-cemter relative mx-2 mb-2 mt-16 flex flex-col justify-center">
+            <View className="text-cemter relative mx-2 mt-16 flex flex-col justify-center px-2">
               {avatarUrl == '' ? (
-                <View className="mb-2 mt-6 flex flex-row  items-center  space-x-2">
+                <View
+                  className="mt-6 flex flex-row  items-center  space-x-2 "
+                  style={{ paddingVertical: 12 }}>
                   <View>
                     <Text className="text-lg font-medium">{fullName}</Text>
                   </View>
@@ -550,9 +548,13 @@ const Profile = ({
                   </View>
                 </View>
               ) : (
-                <View className="mb-2 flex flex-row  items-center  space-x-2">
+                <View
+                  className="flex flex-row  items-center  space-x-2"
+                  style={{ paddingVertical: 12 }}>
                   <View>
-                    <Text className="text-lg font-medium">{fullName}</Text>
+                    <Text style={{ fontSize: 20, fontWeight: '500' }}>
+                      {fullName}
+                    </Text>
                   </View>
                   <View>
                     <Octicons name="verified" color="#2563eb" size={14} />
@@ -560,29 +562,38 @@ const Profile = ({
                 </View>
               )}
 
-              {about !== '' ? (
-                <Text className="mb-3 text-gray-800">{about}</Text>
+              {about.trim() !== '' ? (
+                <Text className="text-gray-800" style={{ paddingBottom: 12 }}>
+                  {about}
+                </Text>
               ) : (
-                <TouchableOpacity onPress={handleEditAbout}>
-                  <Text className="mb-3 text-blue-600">Add About</Text>
+                <TouchableOpacity
+                  onPress={handleEditAbout}
+                  style={{ paddingBottom: 12 }}>
+                  <Text className="text-blue-600">Add About</Text>
                 </TouchableOpacity>
               )}
 
               {location && location.length > 0 ? (
-                <View className="mb-4 flex flex-row items-center space-x-1">
+                <View
+                  className="flex flex-row items-center space-x-1"
+                  style={{ paddingBottom: 12 }}>
                   <Location16Icon color="#000000" />
                   <Text className="text-black">{location[0].address}</Text>
                 </View>
               ) : (
                 <TouchableOpacity
-                  className="mb-4 flex flex-row items-center space-x-1"
+                  className="flex flex-row items-center space-x-1"
+                  style={{ paddingBottom: 12 }}
                   onPress={handleEditLocation}>
                   <Location16Icon color="#3478F6" />
                   <Text className="text-blue-600">Add location</Text>
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity onPress={handleEditPress}>
+              <TouchableOpacity
+                onPress={handleEditPress}
+                style={{ marginBottom: 16 }}>
                 <LinearGradient
                   colors={['#7000FF', '#B174FF']}
                   start={{ x: 0, y: 1 }}

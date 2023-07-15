@@ -72,7 +72,7 @@ const Messages = ({
           <RoquefortText
             fontType="Roquefort-Semi-Strong"
             style={{ fontSize: 26, fontWeight: '500', color: '#333333' }}>
-            Messaging
+            Activity
           </RoquefortText>
         </View>
       ),

@@ -236,8 +236,7 @@ const Friends = ({
 
   const handleInvite = async () => {
     Share.share({
-      url: hangoutUrl + '/' + username,
-      message: profileInviteMessage,
+      url: hangoutUrl,
       title: 'Hangout',
     });
   };
@@ -482,57 +481,118 @@ const Friends = ({
   }, [navigation, sessionId]);
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: insets.top,
-        paddingLeft: insets.left,
-        width: '100%',
-        backgroundColor: 'white',
-      }}>
-      <View style={{ backgroundColor: '#F3F3F3' }} className="flex w-full">
-        <View
-          className={` ${
-            searchText === '' ? 'rounded-b-2xl px-4' : 'pl-4'
-          }  bg-white  py-2`}>
-          <SearchBar
-            placeholder="Search for people"
-            searchTerm={searchText}
-            setSearchTerm={setSearchText}
-          />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      className="flex-1">
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingTop: insets.top,
+          paddingLeft: insets.left,
+          width: '100%',
+          backgroundColor: 'white',
+        }}>
+        <View style={{ backgroundColor: '#F3F3F3' }} className="flex w-full">
+          <View
+            className={` ${
+              searchText === '' ? 'rounded-b-2xl px-4' : 'pl-4'
+            }  bg-white  py-2`}>
+            <SearchBar
+              placeholder="Search for people"
+              searchTerm={searchText}
+              setSearchTerm={setSearchText}
+            />
+          </View>
         </View>
-      </View>
 
-      <View
-        className="w-full flex-1 flex-col pt-2"
-        style={{ backgroundColor: searchText === '' ? '#F3F3F3' : 'white' }}>
-        {/* Before Searching */}
-        {searchText === '' && (
-          <>
-            {receivedFriendRequests.length !== 0 && (
-              <View className="mb-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
-                <FlatList
-                  data={receivedFriendRequests}
-                  keyExtractor={item => item.id.toString()}
-                  renderItem={renderFriendRequestItem}
-                  scrollEnabled={false}
-                  ListHeaderComponent={
+        <View
+          className="w-full flex-1 flex-col pt-2"
+          style={{ backgroundColor: searchText === '' ? '#F3F3F3' : 'white' }}>
+          {/* Before Searching */}
+          {searchText === '' && (
+            <>
+              {receivedFriendRequests.length !== 0 && (
+                <View className="mb-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
+                  <FlatList
+                    data={receivedFriendRequests}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={renderFriendRequestItem}
+                    scrollEnabled={false}
+                    ListHeaderComponent={
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '500',
+                        }}>
+                        Added me
+                      </Text>
+                    }
+                  />
+                </View>
+              )}
+
+              <View className="flex h-[57px] flex-col justify-center rounded-2xl  bg-white px-4">
+                <TouchableOpacity onPress={handleInvite}>
+                  <View className="flex flex-row items-center space-x-2">
+                    <ExportSquareIcon color="black" />
                     <Text
                       style={{
                         fontSize: 16,
                         fontWeight: '500',
+                        color: 'black',
                       }}>
-                      Added me
+                      Invite friends
                     </Text>
-                  }
-                />
+                  </View>
+                </TouchableOpacity>
               </View>
-            )}
 
-            <View className="flex h-[57px] flex-col justify-center rounded-2xl  bg-white px-4">
-              <TouchableOpacity onPress={handleInvite}>
+              {friends.length !== 0 && (
+                <View className="mt-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
+                  <FlatList
+                    data={friends}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={renderFriendItem}
+                    scrollEnabled={false}
+                    ListHeaderComponent={
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: '500',
+                        }}>
+                        My friends
+                      </Text>
+                    }
+                  />
+                </View>
+              )}
+
+              {receivedFriendRequests.length === 0 && friends.length === 0 && (
+                <View className="mt-2 flex flex-col justify-center rounded-2xl bg-white p-4">
+                  <Text style={{ fontSize: 20, fontWeight: '500' }}>
+                    My friends
+                  </Text>
+                  <Text
+                    style={{
+                      fontWeight: '500',
+                      fontSize: 16,
+                      color: '#808080',
+                    }}
+                    className="px-5 pb-4 pt-6 text-center">
+                    You haven’t added any friends yet. Use the search bar to
+                    find your friends.
+                  </Text>
+                </View>
+              )}
+            </>
+          )}
+
+          {/* After Searching */}
+          {searchText !== '' && (
+            <View className="flex-1 px-4">
+              <TouchableOpacity className="mb-4" onPress={handleInvite}>
                 <View className="flex flex-row items-center space-x-2">
                   <ExportSquareIcon color="black" />
                   <Text
@@ -545,105 +605,50 @@ const Friends = ({
                   </Text>
                 </View>
               </TouchableOpacity>
-            </View>
+              {results.length !== 0 && (
+                <View>
+                  {/* Render the friends from results */}
+                  {results.some((item: any) =>
+                    friends.some((friend: any) => friend.id === item.id),
+                  ) && (
+                    <FlatList
+                      data={results.filter((item: any) =>
+                        friends.some((friend: any) => friend.id === item.id),
+                      )}
+                      keyExtractor={item => item.id.toString()}
+                      renderItem={renderFriendItem}
+                      ListHeaderComponent={
+                        <Text className="text-lg font-semibold">
+                          My Friends
+                        </Text>
+                      }
+                      scrollEnabled={false}
+                      className="mb-4"
+                    />
+                  )}
 
-            {friends.length !== 0 && (
-              <View className="mt-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
-                <FlatList
-                  data={friends}
-                  keyExtractor={item => item.id.toString()}
-                  renderItem={renderFriendItem}
-                  scrollEnabled={false}
-                  ListHeaderComponent={
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: '500',
-                      }}>
-                      My friends
-                    </Text>
-                  }
-                />
-              </View>
-            )}
+                  {/* Render the non-matching friends from results */}
+                  {results.some(
+                    (item: any) =>
+                      !friends.some((friend: any) => friend.id === item.id),
+                  ) && (
+                    <FlatList
+                      data={results.filter(
+                        (item: any) =>
+                          !friends.some((friend: any) => friend.id === item.id),
+                      )}
+                      keyExtractor={item => item.id.toString()}
+                      renderItem={renderResultItem}
+                      scrollEnabled={false}
+                      ListHeaderComponent={
+                        <Text className="text-lg font-semibold">Results</Text>
+                      }
+                    />
+                  )}
+                </View>
+              )}
 
-            {receivedFriendRequests.length === 0 && friends.length === 0 && (
-              <View className="mt-2 flex flex-col justify-center rounded-2xl bg-white p-4">
-                <Text style={{ fontSize: 20, fontWeight: '500' }}>
-                  My friends
-                </Text>
-                <Text
-                  style={{ fontWeight: '500', fontSize: 16, color: '#808080' }}
-                  className="px-5 pb-4 pt-6 text-center">
-                  You haven’t added any friends yet. Use the search bar to find
-                  your friends.
-                </Text>
-              </View>
-            )}
-          </>
-        )}
-
-        {/* After Searching */}
-        {searchText !== '' && (
-          <View className="flex-1 px-4">
-            <TouchableOpacity className="mb-4" onPress={handleInvite}>
-              <View className="flex flex-row items-center space-x-2">
-                <ExportSquareIcon color="black" />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '500',
-                    color: 'black',
-                  }}>
-                  Invite friends
-                </Text>
-              </View>
-            </TouchableOpacity>
-            {results.length !== 0 && (
-              <View>
-                {/* Render the friends from results */}
-                {results.some((item: any) =>
-                  friends.some((friend: any) => friend.id === item.id),
-                ) && (
-                  <FlatList
-                    data={results.filter((item: any) =>
-                      friends.some((friend: any) => friend.id === item.id),
-                    )}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={renderFriendItem}
-                    ListHeaderComponent={
-                      <Text className="text-lg font-semibold">My Friends</Text>
-                    }
-                    scrollEnabled={false}
-                    className="mb-4"
-                  />
-                )}
-
-                {/* Render the non-matching friends from results */}
-                {results.some(
-                  (item: any) =>
-                    !friends.some((friend: any) => friend.id === item.id),
-                ) && (
-                  <FlatList
-                    data={results.filter(
-                      (item: any) =>
-                        !friends.some((friend: any) => friend.id === item.id),
-                    )}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={renderResultItem}
-                    scrollEnabled={false}
-                    ListHeaderComponent={
-                      <Text className="text-lg font-semibold">Results</Text>
-                    }
-                  />
-                )}
-              </View>
-            )}
-
-            {results.length === 0 && (
-              <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1">
+              {results.length === 0 && (
                 <View className="flex-1 items-center justify-center">
                   <Text
                     style={{
@@ -654,12 +659,12 @@ const Friends = ({
                     No results found.
                   </Text>
                 </View>
-              </KeyboardAvoidingView>
-            )}
-          </View>
-        )}
-      </View>
-    </SafeAreaView>
+              )}
+            </View>
+          )}
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

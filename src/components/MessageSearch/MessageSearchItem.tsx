@@ -65,7 +65,11 @@ const styles = StyleSheet.create({
 
 type MessageSearchListProps = {
   item: MessageResponse;
-  setChannelWithId: (channelId: string, messageId?: string) => Promise<void>;
+  setChannelWithId: (
+    channelId: string,
+    channelType: string,
+    messageId?: string,
+  ) => Promise<void>;
 };
 
 export const MessageSearchItem: React.FC<MessageSearchListProps> = ({

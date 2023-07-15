@@ -4,6 +4,7 @@ import Home from '../../screens/account/main/Home';
 import Messages from '../../screens/account/messaging/Messages';
 import ProfileStack from './ProfileStack';
 import FriendsStack from './FriendsStack';
+
 import { Alert, StyleSheet, View } from 'react-native';
 import {
   TabBarHomeIcon,
