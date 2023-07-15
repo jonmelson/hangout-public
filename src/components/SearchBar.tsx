@@ -30,7 +30,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         }>
         <SearchBarIcon />
         <TextInput
-          className="ml-2 flex-1"
+          className="ml-2 flex-1 py-2"
           placeholder={placeholder}
           value={searchTerm}
           onChangeText={value => setSearchTerm(value)}
