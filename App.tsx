@@ -23,9 +23,7 @@ const Stack = createNativeStackNavigator();
 
 const SplashScreen = () => (
   // Render a temporary loading screen here
-  <View>
-    <ActivityIndicator size="large" color="blue" />
-  </View>
+  <View></View>
 );
 
 export default function App() {

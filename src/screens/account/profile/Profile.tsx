@@ -416,6 +416,11 @@ const Profile = ({
         })
         .filter((item: Hangout) => new Date(item.ends).getTime() > today);
 
+      const sortedGoingHangouts = goingHangouts.sort((a: Hangout, b: Hangout) => {
+        const dateA = new Date(a.starts);
+        const dateB = new Date(b.starts);
+        return dateA.getTime() - dateB.getTime();
+      });
       // console.log(upcomingHangouts[1].going[0].id);
 
       const hostingHangouts = mergedData.filter(
@@ -423,11 +428,19 @@ const Profile = ({
           new Date(item.ends).getTime() > today && item.user_id === sessionId,
       );
 
+      const sortedHostingHangouts = hostingHangouts.sort(
+        (a: Hangout, b: Hangout) => {
+          const dateA = new Date(a.starts);
+          const dateB = new Date(b.starts);
+          return dateA.getTime() - dateB.getTime();
+        },
+      );
+
       // Set upcoming
-      setGoingSections([{ title: 'Going', data: goingHangouts }]);
+      setGoingSections([{ title: 'Going', data: sortedGoingHangouts }]);
 
       // Set hosting
-      setHostingSections([{ title: 'Hosting', data: hostingHangouts }]);
+      setHostingSections([{ title: 'Hosting', data: sortedHostingHangouts }]);
     } else {
       setGoingSections([]);
       setHostingSections([]);

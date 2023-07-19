@@ -1,23 +1,20 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
   RefreshControl,
-  useWindowDimensions,
   Image,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
 import RoquefortText from '../../../components/RoquefortText';
 import BottomCreateIndicator from '../../../components/BottomCreateIndicator';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { TransitionSpecs } from '@react-navigation/stack';
-
 import { HangoutBlackLogo } from '../../../components/Icons';
 
-import Header from '../../../components/Header';
 import Card from '../../../components/Card';
 
 import { supabase } from '../../../lib/supabase';
@@ -25,6 +22,7 @@ import { supabase } from '../../../lib/supabase';
 import { Hangout, Section } from '../../../utils/other';
 
 import { getFriendsMetaData } from '../../../utils/queries';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Home = ({
   navigation,
@@ -35,7 +33,7 @@ const Home = ({
 }) => {
   const { sessionId } = route?.params ?? {};
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [friends, setFriends] = useState<any>([]);
   const [hangouts, setHangouts] = useState<any>([]);
   const [isGoing, setIsGoing] = useState<any>([]);
@@ -43,6 +41,9 @@ const Home = ({
   const [mergedData, setMergedData] = useState<any>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets();
+
+  const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -64,7 +65,6 @@ const Home = ({
       if (!friendError) {
         const friendsIds = getFriendsMetaData(friendsData, sessionId);
         setFriends(friendsIds);
-        // console.log(friendsIds);
       }
     } catch (error) {
       console.error(error);
@@ -87,6 +87,23 @@ const Home = ({
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    const delay = 2000; // Delay in milliseconds (2 seconds in this example)
+
+    setLoading(true);
+    const timeoutId = setTimeout(() => {
+      // Code to be executed after the delay
+      fetchFriends();
+      // console.log('Timeout executed!');
+      setLoading(false);
+    }, delay);
+
+    // Cleanup function to cancel the timeout if the component unmounts
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
 
   // Fetch initial data for hangouts
   useEffect(() => {
@@ -314,20 +331,34 @@ const Home = ({
         return endTime > currentTime && endTime.toDateString() === today;
       });
 
+      const sortedTodayHangouts = todayHangouts.sort(
+        (a: Hangout, b: Hangout) => {
+          const dateA = new Date(a.starts);
+          const dateB = new Date(b.starts);
+          return dateA.getTime() - dateB.getTime();
+        },
+      );
+
       const upcomingHangouts = mergedData.filter(
         (item: Hangout) =>
           new Date(item.ends) > currentTime &&
           new Date(item.ends).toDateString() !== today,
       );
 
+      const sortedUpcomingHangouts = upcomingHangouts.sort(
+        (a: Hangout, b: Hangout) => {
+          const dateA = new Date(a.starts);
+          const dateB = new Date(b.starts);
+          return dateA.getTime() - dateB.getTime();
+        },
+      );
+
       setSections([
-        { title: 'Today', data: todayHangouts },
-        { title: 'Upcoming', data: upcomingHangouts },
+        { title: 'Today', data: sortedTodayHangouts },
+        { title: 'Upcoming', data: sortedUpcomingHangouts },
       ]);
-      setLoading(false);
     } else {
       setSections([]);
-      setLoading(false);
     }
   }, [mergedData]);
 
@@ -354,23 +385,32 @@ const Home = ({
   useEffect(() => {
     navigation.setOptions({
       title: '',
-      headerShown: true,
-      headerShadowVisible: false,
-      headerLeft: () => (
-        <View style={{ paddingLeft: 16 }}>
-          <HangoutBlackLogo />
-        </View>
-      ),
+      headerShown: false,
     });
   }, []);
-
 
   return (
     <>
       {loading ? (
         // Show the splash screen while loading is true
-        <View>
-          <Text>Loading...</Text>
+        <View
+          style={{ paddingTop: insets.top, backgroundColor: 'white' }}
+          className="flex flex-1 flex-col items-center">
+          <View className="w-full bg-white px-4 py-2">
+            <HangoutBlackLogo />
+          </View>
+          <View
+            style={{ backgroundColor: '#F3F3F3', flex: 1 }}
+            className="w-full">
+            <View className="flex flex-col space-y-2 p-2">
+              <ShimmerPlaceholder
+                style={{ width: '100%', height: 233, borderRadius: 8 }}
+              />
+              <ShimmerPlaceholder
+                style={{ width: '100%', height: 233, borderRadius: 8 }}
+              />
+            </View>
+          </View>
         </View>
       ) : (
         <>
@@ -378,9 +418,16 @@ const Home = ({
           friends.length === 0 &&
           sections[0]?.data?.length === 0 &&
           sections[1]?.data?.length === 0 ? (
-            <View style={{ backgroundColor: '#F3F3F3' }} className="flex-1  ">
-              <View className="mt-6 flex-1   shadow-lg">
-                <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white">
+            <View
+              style={{ paddingTop: insets.top }}
+              className="flex flex-1 flex-col items-center justify-center">
+              <View
+                className="absolute left-0 top-0 w-full bg-white px-4 py-2"
+                style={{ paddingTop: insets.top }}>
+                <HangoutBlackLogo />
+              </View>
+              <View className="flex-1 justify-center shadow-lg">
+                <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white px-4">
                   <View className="flex w-full flex-col items-center">
                     <Image
                       source={require('../../../../assets/images/emptystate/add-friends.png')}
@@ -436,9 +483,16 @@ const Home = ({
             friends.length > 0 &&
             sections[0]?.data?.length === 0 &&
             sections[1]?.data?.length === 0 ? (
-            <View style={{ backgroundColor: '#F3F3F3' }} className="flex-1">
-              <View className="mt-6 flex-1 shadow-lg">
-                <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white">
+            <View
+              style={{ paddingTop: insets.top }}
+              className="flex flex-1 flex-col items-center justify-center">
+              <View
+                className="absolute left-0 top-0 w-full bg-white px-4 py-2"
+                style={{ paddingTop: insets.top }}>
+                <HangoutBlackLogo />
+              </View>
+              <View className="flex-1 justify-center shadow-lg">
+                <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white px-4">
                   <View className="flex w-full flex-col items-center">
                     <Image
                       source={require('../../../../assets/images/emptystate/new-hangout.png')}
@@ -493,43 +547,52 @@ const Home = ({
           ) : sections.length > 0 &&
             friends.length >= 0 &&
             (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) ? (
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-              className="flex-1">
-              <View className="flex-1">
-                {loading ? null : (
-                  <>
-                    {sections[0].data.map((item, idx) => {
-                      return (
-                        <View className="py-[6px]" key={idx}>
-                          <Card
-                            {...item}
-                            sessionId={sessionId}
-                            navigation={navigation}
-                          />
-                        </View>
-                      );
-                    })}
-                    {sections[1].data.map((item, idx) => {
-                      return (
-                        <View className="py-[6px]" key={idx}>
-                          <Card
-                            {...item}
-                            sessionId={sessionId}
-                            navigation={navigation}
-                          />
-                        </View>
-                      );
-                    })}
-                  </>
-                )}
+            <View
+              style={{ paddingTop: 48, backgroundColor: 'white' }}
+              className="flex w-full flex-1 flex-col items-center justify-center">
+              <View className="w-full bg-white px-4 py-2">
+                <HangoutBlackLogo />
               </View>
-            </ScrollView>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
+                className="w-full flex-1 "
+                style={{ backgroundColor: '#F3F3F3' }}>
+                <View className="flex-1">
+                  {loading ? null : (
+                    <>
+                      {sections[0].data.map((item, idx) => {
+                        return (
+                          <View className="py-[6px]" key={idx}>
+                            <Card
+                              {...item}
+                              sessionId={sessionId}
+                              navigation={navigation}
+                            />
+                          </View>
+                        );
+                      })}
+                      {sections[1].data.map((item, idx) => {
+                        return (
+                          <View className="py-[6px]" key={idx}>
+                            <Card
+                              {...item}
+                              sessionId={sessionId}
+                              navigation={navigation}
+                            />
+                          </View>
+                        );
+                      })}
+                    </>
+                  )}
+                </View>
+              </ScrollView>
+            </View>
           ) : null}
         </>
       )}
