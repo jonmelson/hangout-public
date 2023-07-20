@@ -23,6 +23,8 @@ type ChatContextType = {
   navigateToGroupChatRoom: (hangoutId: any) => Promise<void>;
   joinGroupChatRoom: (hangoutId: any, userId: any) => Promise<void>;
   updateGroupChatRoomName: (hangoutId: any, newName: any) => Promise<void>;
+  updateUserImage: (userId: any, image: any) => Promise<void>;
+  updateUserName: (userId: any, name: any) => Promise<void>;
   setChannelWithId: (
     channelId: string,
     channelType: string,
@@ -44,6 +46,8 @@ export const ChatContext = createContext<ChatContextType>({
   navigateToGroupChatRoom: async (hangoutId: any) => {},
   joinGroupChatRoom: async (hangoutId: any, userId: any) => {},
   updateGroupChatRoomName: async (hangoutId: any, newName: any) => {},
+  updateUserImage: async (userId: any, image: any) => {},
+  updateUserName: async (userId: any, name: any) => {},
   setChannelWithId: async (
     channelId: any,
     channelType: any,
@@ -209,6 +213,36 @@ export function ChatContextProvider({
     // navigation.replace('MessagesStack', { screen: 'ChatRoom' });
   };
 
+  const updateUserImage = async (userId: any, image: any) => {
+    if (!chatClient) {
+      return;
+    }
+
+    const update = {
+      id: userId,
+      set: {
+        image: image,
+      },
+    };
+
+    await chatClient.partialUpdateUser(update);
+  };
+
+  const updateUserName = async (userId: any, name: any) => {
+    if (!chatClient) {
+      return;
+    }
+
+    const update = {
+      id: userId,
+      set: {
+        name: name,
+      },
+    };
+
+    await chatClient.partialUpdateUser(update);
+  };
+
   const setChannelWithId = async (
     channelId: any,
     channelType: any,
@@ -241,6 +275,8 @@ export function ChatContextProvider({
     joinGroupChatRoom,
     updateGroupChatRoomName,
     setChannelWithId,
+    updateUserImage,
+    updateUserName,
   };
 
   return (

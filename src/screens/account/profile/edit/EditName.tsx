@@ -8,6 +8,8 @@ import { ChevronBackIcon } from '../../../../components/Icons';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { useChatContext } from '../../../../context/ChatContext';
+
 const EditName = ({
   navigation,
   route,
@@ -19,6 +21,8 @@ const EditName = ({
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+
+  const { updateUserName } = useChatContext();
 
   const handleFirstNameChange = (input: string) => {
     setFirstName(input);
@@ -95,6 +99,9 @@ const EditName = ({
         </TouchableOpacity>
       ),
     });
+
+    const fullName = firstName + ' ' + lastName;
+    updateUserName(sessionId, fullName);
   }, [firstName, lastName, navigation]);
 
   return (

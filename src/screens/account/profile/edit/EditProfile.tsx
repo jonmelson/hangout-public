@@ -244,7 +244,7 @@ const EditProfile = ({
             onPress={handleEditAbout}>
             <View className="flex  flex-col justify-center space-y-2 ">
               <Text className="font-medium">About</Text>
-              {about ? (
+              {about.trim() !== '' ? (
                 <Text className="text-gray-500">{about}</Text>
               ) : (
                 <Text className="text-blue-600">Add about...</Text>

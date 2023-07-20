@@ -19,6 +19,8 @@ import { supabase } from '../../../../lib/supabase';
 
 import { User2 } from '../../../../utils/other';
 
+import { useChatContext } from '../../../../context/ChatContext';
+
 const EditProfilePhoto = ({
   navigation,
   route,
@@ -31,6 +33,7 @@ const EditProfilePhoto = ({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
+  const { updateUserImage } = useChatContext();
   const { showActionSheetWithOptions } = useActionSheet();
 
   const pickImage = async () => {
@@ -108,6 +111,9 @@ const EditProfilePhoto = ({
             .update({ avatar: imageMetadata.data.publicUrl })
             .eq('id', sessionId);
 
+          // Update url in GetStream
+          updateUserImage(sessionId, imageMetadata.data.publicUrl);
+
           if (updateUserAvatar.error) {
             console.log('Error updating user avatar:', updateUserAvatar.error);
           } else {
@@ -141,6 +147,9 @@ const EditProfilePhoto = ({
             .from('users')
             .update({ avatar: imageMetadata.data.publicUrl })
             .eq('id', sessionId);
+
+          // Update url in GetStream
+          updateUserImage(sessionId, imageMetadata.data.publicUrl);
 
           console.log('Avatar updated successfully');
           setAvatarUrl(imageMetadata.data.publicUrl);
