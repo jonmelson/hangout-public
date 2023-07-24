@@ -33,7 +33,8 @@ const Card = (props: EventProps) => {
 
   const [isGoing, setIsGoing] = useState(false);
   const [newDate, setNewDate] = useState('');
-  const [newTime, setNewTime] = useState('');
+  const [ newTime, setNewTime ] = useState( '' );
+  const [newLocation, setNewLocation] = useState(location)
 
   const handlePress = async () => {
     if (isGoing === false) {
@@ -202,8 +203,8 @@ const Card = (props: EventProps) => {
               style={{ borderRadius: 20 }}
               className="h-full w-full rounded-xl"
               initialRegion={{
-                latitude: location[0].geometry.lat,
-                longitude: location[0].geometry.lng,
+                latitude: newLocation[0].geometry.lat,
+                longitude: newLocation[0].geometry.lng,
                 latitudeDelta: 0.002,
                 longitudeDelta: 0.002,
               }}
@@ -212,8 +213,8 @@ const Card = (props: EventProps) => {
               zoomEnabled={false}>
               <Marker
                 coordinate={{
-                  latitude: location[0].geometry.lat,
-                  longitude: location[0].geometry.lng,
+                  latitude: newLocation[0].geometry.lat,
+                  longitude: newLocation[0].geometry.lng,
                 }}
               />
             </MapView>

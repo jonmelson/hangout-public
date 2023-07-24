@@ -42,6 +42,7 @@ import TabBarMessagingIcon from '../components/icons/TabBarMessagingIcon';
 import TabBarProfileIcon from '../components/icons/TabBarProfileIcon';
 import SettingsIcon from '../components/icons/SettingsIcon';
 import SearchBarIcon from '../components/icons/SearchBarIcon';
+import MessageFeedbackIcon from '../components/icons/MessageFeedbackIcon';
 
 // Default Library Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -105,4 +106,5 @@ export {
   MessageSendIcon,
   SettingsIcon,
   SearchBarIcon,
+  MessageFeedbackIcon,
 };

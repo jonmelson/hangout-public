@@ -16,6 +16,8 @@ import { supabase } from '../../lib/supabase';
 
 import { fullNameSchema } from '../../utils/schemas';
 
+import { useChatContext } from '../../context/ChatContext';
+
 const FullName = ({ navigation, route }: { navigation: any; route: any }) => {
   const { sessionId } = route.params ?? {};
   const inputRef = useRef<TextInput>(null);
@@ -23,6 +25,8 @@ const FullName = ({ navigation, route }: { navigation: any; route: any }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [isValid, setIsValid] = useState(false);
+
+  const { updateUserName } = useChatContext();
 
   const handleBackPress = async () => {
     supabase.auth.signOut();
@@ -46,6 +50,8 @@ const FullName = ({ navigation, route }: { navigation: any; route: any }) => {
       .update({ first_name: firstName, last_name: lastName })
       .eq('id', sessionId);
 
+    const fullName = firstName + ' ' + lastName;
+    updateUserName(sessionId, fullName);
     navigation.navigate('UserName');
   }
 
@@ -63,7 +69,7 @@ const FullName = ({ navigation, route }: { navigation: any; route: any }) => {
           className="flex flex-row items-center space-x-2 py-2 pr-4"
           onPress={handleBackPress}>
           <ChevronBackIcon />
-          <Text style={{fontSize:16, fontWeight:"600"}}>Back</Text>
+          <Text style={{ fontSize: 16, fontWeight: '600' }}>Back</Text>
         </TouchableOpacity>
       ),
     });
@@ -108,7 +114,7 @@ const FullName = ({ navigation, route }: { navigation: any; route: any }) => {
             onPress={() => updateUser()}
             title="Next"
             disabled={!isValid}
-            size={16} 
+            size={16}
             iconName="arrow-forward"
             iconSize={20}
             iconColor="white"

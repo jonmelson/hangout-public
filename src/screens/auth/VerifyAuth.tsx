@@ -88,16 +88,6 @@ const VerifyAuth = ({ navigation, route }: { navigation: any; route: any }) => {
             Enter the code we just texted you
           </Text>
 
-          {phone === '+18888888888' && otp && (
-            <Text
-              className="text-center"
-              style={{
-                fontSize: 20,
-              }}>
-              {otp}
-            </Text>
-          )}
-
           <View className="mt-4 flex w-full flex-col space-y-2 rounded-full">
             <TextInput
               value={otp}

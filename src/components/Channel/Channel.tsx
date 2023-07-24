@@ -18,8 +18,6 @@ import { HahaReaction } from '../icons/HahaReaction';
 import { QuestionReaction } from '../icons/QuestionReaction';
 import { ExclamationReaction } from '../icons/ExclamationReaction';
 
-import { ChatContext } from '../../context/ChatContext';
-
 import { InlineDateSeparator } from './InlineDateSeparator';
 import { InputButtons } from './InputButtons';
 import { SendButton } from './SendButton';

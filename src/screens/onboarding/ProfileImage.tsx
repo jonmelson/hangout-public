@@ -22,6 +22,8 @@ import { supabase } from '../../lib/supabase';
 
 import { User2 } from '../../utils/other';
 
+import { useChatContext } from '../../context/ChatContext';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ProfileImage = ({
@@ -38,6 +40,8 @@ const ProfileImage = ({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  const { updateUserImage } = useChatContext();
 
   const handleRefresh = () => {
     // Perform your refresh action here
@@ -63,7 +67,7 @@ const ProfileImage = ({
 
     if (!result.canceled) {
       const input = result.assets[0];
-      console.log(input);
+      // console.log(input);
       uploadImage(input);
     }
   };
@@ -129,6 +133,8 @@ const ProfileImage = ({
             .update({ avatar: imageMetadata.data.publicUrl })
             .eq('id', sessionId);
 
+          updateUserImage(sessionId, imageMetadata.data.publicUrl);
+
           if (updateUserAvatar.error) {
             console.log('Error updating user avatar:', updateUserAvatar.error);
           } else {
@@ -163,6 +169,7 @@ const ProfileImage = ({
             .update({ avatar: imageMetadata.data.publicUrl })
             .eq('id', sessionId);
 
+          updateUserImage(sessionId, imageMetadata.data.publicUrl);
           console.log('Avatar updated successfully');
           setAvatarUrl(imageMetadata.data.publicUrl);
         }

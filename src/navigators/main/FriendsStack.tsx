@@ -2,8 +2,7 @@ import React, { useEffect } from 'react';
 
 import Friends from '../../screens/account/Friends';
 import PublicProfile from '../../screens/account/profile/PublicProfile';
-
-import { ChatContextProvider } from '../../context/ChatContext';
+ 
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 

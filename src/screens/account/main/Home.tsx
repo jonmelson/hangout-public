@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
@@ -13,7 +14,10 @@ import RoquefortText from '../../../components/RoquefortText';
 import BottomCreateIndicator from '../../../components/BottomCreateIndicator';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { HangoutBlackLogo } from '../../../components/Icons';
+import {
+  HangoutBlackLogo,
+  MessageFeedbackIcon,
+} from '../../../components/Icons';
 
 import Card from '../../../components/Card';
 
@@ -23,6 +27,7 @@ import { Hangout, Section } from '../../../utils/other';
 
 import { getFriendsMetaData } from '../../../utils/queries';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as MailComposer from 'expo-mail-composer';
 
 const Home = ({
   navigation,
@@ -44,6 +49,35 @@ const Home = ({
   const insets = useSafeAreaInsets();
 
   const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
+
+  const sendEmail = async () => {
+    const isAvailable = await MailComposer.isAvailableAsync();
+    if (!isAvailable) {
+      Alert.alert('Error', 'Email is not available on this device.');
+      return;
+    }
+
+    const bccRecipients = ['jon.melson@gmail.com'];
+    const ccRecipients = ['jon.melson@gmail.com'];
+    const recipients = ['hello@hangout.social'];
+    const subject = 'Give use feedback!';
+    const body = "What's not working? \n\nWhat features should we add?";
+
+    try {
+      await MailComposer.composeAsync({
+        recipients,
+        subject,
+        body,
+        bccRecipients,
+        ccRecipients,
+      });
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'An error occurred while trying to compose the email.',
+      );
+    }
+  };
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -95,6 +129,7 @@ const Home = ({
     const timeoutId = setTimeout(() => {
       // Code to be executed after the delay
       fetchFriends();
+
       // console.log('Timeout executed!');
       setLoading(false);
     }, delay);
@@ -389,42 +424,209 @@ const Home = ({
     });
   }, []);
 
+  // console.log(sections.length, friends.length);
+
   return (
     <>
       {loading ? (
         // Show the splash screen while loading is true
         <View
-          style={{ paddingTop: insets.top, backgroundColor: 'white' }}
+          style={{ paddingTop: 48, backgroundColor: 'white' }}
           className="flex flex-1 flex-col items-center">
-          <View className="w-full bg-white px-4 py-2">
+          <View className="flex w-full flex-row items-center justify-between bg-white px-4 py-2">
             <HangoutBlackLogo />
+            {/* <TouchableOpacity onPress={() => sendEmail()}>
+              <MessageFeedbackIcon />
+            </TouchableOpacity> */}
           </View>
           <View
             style={{ backgroundColor: '#F3F3F3', flex: 1 }}
             className="w-full">
-            <View className="flex flex-col space-y-2 p-2">
-              <ShimmerPlaceholder
-                style={{ width: '100%', height: 233, borderRadius: 8 }}
-              />
-              <ShimmerPlaceholder
-                style={{ width: '100%', height: 233, borderRadius: 8 }}
-              />
+            <View className="mt-2 flex flex-col space-y-2">
+              <View className="mx-2 rounded-2xl bg-white px-2 py-4 shadow-md">
+                <View className="flex flex-col space-y-4">
+                  <View className="flex flex-row">
+                    <ShimmerPlaceholder
+                      style={{
+                        width: 52,
+                        height: 52,
+                        borderRadius: 40,
+                        marginLeft: 14,
+                      }}
+                    />
+                    <View className="ml-4 flex  flex-col justify-center space-y-2">
+                      <ShimmerPlaceholder
+                        style={{
+                          width: '33%',
+                          height: 12,
+                          marginLeft: 10,
+                          borderRadius: 12,
+                        }}
+                      />
+                      <ShimmerPlaceholder
+                        style={{
+                          width: '66%',
+                          height: 12,
+                          marginLeft: 10,
+                          borderRadius: 12,
+                        }}
+                      />
+                      <ShimmerPlaceholder
+                        style={{
+                          width: '100%',
+                          height: 12,
+                          marginLeft: 10,
+                          borderRadius: 12,
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <ShimmerPlaceholder
+                    style={{
+                      width: '100%',
+                      height: 106,
+                      borderRadius: 20,
+                    }}
+                  />
+
+                  <ShimmerPlaceholder
+                    style={{
+                      width: '100%',
+                      height: 48,
+                      borderRadius: 40,
+                    }}
+                  />
+                </View>
+              </View>
+
+              <View className="mx-2 rounded-2xl bg-white px-2 py-4 shadow-md">
+                <View className="flex flex-col space-y-4">
+                  <View className="flex flex-row">
+                    <ShimmerPlaceholder
+                      style={{
+                        width: 52,
+                        height: 52,
+                        borderRadius: 40,
+                        marginLeft: 14,
+                      }}
+                    />
+                    <View className="ml-4 flex  flex-col justify-center space-y-2">
+                      <ShimmerPlaceholder
+                        style={{
+                          width: '33%',
+                          height: 12,
+                          marginLeft: 10,
+                          borderRadius: 12,
+                        }}
+                      />
+                      <ShimmerPlaceholder
+                        style={{
+                          width: '66%',
+                          height: 12,
+                          marginLeft: 10,
+                          borderRadius: 12,
+                        }}
+                      />
+                      <ShimmerPlaceholder
+                        style={{
+                          width: '100%',
+                          height: 12,
+                          marginLeft: 10,
+                          borderRadius: 12,
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <ShimmerPlaceholder
+                    style={{
+                      width: '100%',
+                      height: 106,
+                      borderRadius: 20,
+                    }}
+                  />
+
+                  <ShimmerPlaceholder
+                    style={{
+                      width: '100%',
+                      height: 48,
+                      borderRadius: 40,
+                    }}
+                  />
+                </View>
+              </View>
             </View>
           </View>
         </View>
       ) : (
         <>
-          {sections.length > 0 &&
-          friends.length === 0 &&
-          sections[0]?.data?.length === 0 &&
-          sections[1]?.data?.length === 0 ? (
+          {friends.length >= 0 &&
+          (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) ? (
+            <View
+              style={{ paddingTop: 48, backgroundColor: 'white' }}
+              className="flex w-full flex-1 flex-col items-center justify-center">
+              <View className="flex w-full flex-row items-center justify-between bg-white px-4 py-2">
+                <HangoutBlackLogo />
+                {/* <TouchableOpacity onPress={() => sendEmail()}>
+                  <MessageFeedbackIcon />
+                </TouchableOpacity> */}
+              </View>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
+                className="w-full flex-1 "
+                style={{ backgroundColor: '#F3F3F3' }}>
+                <View className="flex-1">
+                  {loading ? null : (
+                    <>
+                      {sections[0].data.map((item, idx) => {
+                        return (
+                          <View className="py-[6px]" key={idx}>
+                            <Card
+                              {...item}
+                              key={idx}
+                              sessionId={sessionId}
+                              navigation={navigation}
+                            />
+                          </View>
+                        );
+                      })}
+                      {sections[1].data.map((item, idx) => {
+                        return (
+                          <View className="py-[6px]" key={idx}>
+                            <Card
+                              {...item}
+                              key={idx}
+                              sessionId={sessionId}
+                              navigation={navigation}
+                            />
+                          </View>
+                        );
+                      })}
+                    </>
+                  )}
+                </View>
+              </ScrollView>
+            </View>
+          ) : friends.length === 0 &&
+            sections[0]?.data?.length === 0 &&
+            sections[1]?.data?.length === 0 ? (
             <View
               style={{ paddingTop: insets.top }}
               className="flex flex-1 flex-col items-center justify-center">
               <View
-                className="absolute left-0 top-0 w-full bg-white px-4 py-2"
+                className="absolute left-0 top-0 flex w-full flex-row items-center justify-between bg-white px-4 py-2"
                 style={{ paddingTop: insets.top }}>
                 <HangoutBlackLogo />
+                {/* <TouchableOpacity>
+                  <MessageFeedbackIcon />
+                </TouchableOpacity> */}
               </View>
               <View className="flex-1 justify-center shadow-lg">
                 <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white px-4">
@@ -479,8 +681,7 @@ const Home = ({
               </View>
               <BottomCreateIndicator />
             </View>
-          ) : sections.length > 0 &&
-            friends.length > 0 &&
+          ) : friends.length > 0 &&
             sections[0]?.data?.length === 0 &&
             sections[1]?.data?.length === 0 ? (
             <View
@@ -543,55 +744,6 @@ const Home = ({
                 </View>
               </View>
               <BottomCreateIndicator />
-            </View>
-          ) : sections.length > 0 &&
-            friends.length >= 0 &&
-            (sections[0]?.data?.length > 0 || sections[1]?.data?.length > 0) ? (
-            <View
-              style={{ paddingTop: 48, backgroundColor: 'white' }}
-              className="flex w-full flex-1 flex-col items-center justify-center">
-              <View className="w-full bg-white px-4 py-2">
-                <HangoutBlackLogo />
-              </View>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-                className="w-full flex-1 "
-                style={{ backgroundColor: '#F3F3F3' }}>
-                <View className="flex-1">
-                  {loading ? null : (
-                    <>
-                      {sections[0].data.map((item, idx) => {
-                        return (
-                          <View className="py-[6px]" key={idx}>
-                            <Card
-                              {...item}
-                              sessionId={sessionId}
-                              navigation={navigation}
-                            />
-                          </View>
-                        );
-                      })}
-                      {sections[1].data.map((item, idx) => {
-                        return (
-                          <View className="py-[6px]" key={idx}>
-                            <Card
-                              {...item}
-                              sessionId={sessionId}
-                              navigation={navigation}
-                            />
-                          </View>
-                        );
-                      })}
-                    </>
-                  )}
-                </View>
-              </ScrollView>
             </View>
           ) : null}
         </>

@@ -36,17 +36,17 @@ const Landing = (props: NavigationProps) => {
         paddingLeft: insets.left,
         paddingRight: insets.right,
       }}>
-      <View className="mx-6 flex-1 justify-between">
+      <View className="mx-[5%]  flex-1 justify-between">
         <View className="mt-8 items-center">
           <HangoutGradientLogo />
         </View>
 
-        <View >
+        <View>
           <GradientText
             text="Real Friends, Real Life."
             style={{
               fontFamily: 'Roquefort-Semi-Strong',
-              fontSize: 75,
+              fontSize: 70,
             }}
           />
         </View>
