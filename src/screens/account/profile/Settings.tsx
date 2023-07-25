@@ -78,6 +78,26 @@ const Settings = (props: NavigationProps) => {
       );
       return;
     }
+    const bccRecipients = ['jon.melson@gmail.com'];
+    const ccRecipients = ['jon.melson@gmail.com'];
+    const recipients = ['hello@hangout.social'];
+    const subject = 'Give use feedback!';
+    const body = "What's not working? \n\nWhat features should we add?";
+
+    try {
+      await MailComposer.composeAsync({
+        recipients,
+        subject,
+        body,
+        bccRecipients,
+        ccRecipients,
+      });
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'An error occurred while trying to compose the email.',
+      );
+    }
   };
 
   const handleAboutPress = () => {

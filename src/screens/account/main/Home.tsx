@@ -118,13 +118,13 @@ const Home = ({
     const body = "What's not working? \n\nWhat features should we add?";
 
     try {
-      await MailComposer.composeAsync({
-        recipients,
-        subject,
-        body,
-        bccRecipients,
-        ccRecipients,
-      });
+     await MailComposer.composeAsync({
+       recipients,
+       subject,
+       body,
+       bccRecipients,
+       ccRecipients,
+     });
     } catch (error) {
       Alert.alert(
         'Error',
