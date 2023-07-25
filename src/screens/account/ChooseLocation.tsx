@@ -11,10 +11,11 @@ import {
 import { Image } from 'expo-image';
 
 import SearchBar from '../../components/SearchBar';
-import { Location24Icon } from '../../components/Icons';
+import { Location24Icon, ChevronBackIcon } from '../../components/Icons';
 
 import { GOOGLE_MAPS_API_KEY } from '@env';
 import GoogleIcon from '../../components/icons/google/GoogleIcon';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as Location from 'expo-location';
 
@@ -41,6 +42,7 @@ const ChooseLocation = ({
   const { sessionId } = route?.params ?? {};
   const [searchText, setSearchText] = useState('');
   const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [recentSearches, setRecentSearches] = useState<Prediction[]>([]);
 
   const getPlaceDetails = async (placeId: string) => {
     const response = await fetch(
@@ -144,6 +146,27 @@ const ChooseLocation = ({
     const address = prediction.address;
     const geometry = prediction.coordinates;
 
+    try {
+      // Retrieve the existing past searches from AsyncStorage
+      const storedSearches = await AsyncStorage.getItem('pastSearches');
+      let pastSearches: Prediction[] = [];
+
+      if (storedSearches) {
+        pastSearches = JSON.parse(storedSearches);
+      }
+
+      // Add the selected prediction to the beginning of the array
+      pastSearches.unshift(prediction);
+
+      // Limit the array to the most recent three searches
+      pastSearches = pastSearches.slice(0, 3);
+
+      // Store the modified pastSearches array in AsyncStorage
+      await AsyncStorage.setItem('pastSearches', JSON.stringify(pastSearches));
+    } catch (error) {
+      console.log('Error saving prediction to AsyncStorage:', error);
+    }
+
     setSearchText(address);
     setPredictions([]);
 
@@ -170,7 +193,7 @@ const ChooseLocation = ({
       return (
         <TouchableOpacity
           onPress={() => handlePredictionPress(item)}
-          className="border-b border-gray-300 px-1 py-2">
+          className="border-b border-gray-300 mx-1 py-2">
           <Text
             style={{ fontSize: 16, color: '#333333', fontWeight: '500' }}
             className="mb-1">
@@ -183,13 +206,30 @@ const ChooseLocation = ({
   };
 
   useEffect(() => {
+    // Retrieve the past searches from AsyncStorage when the component mounts
+    const getPastSearches = async () => {
+      try {
+        const storedSearches = await AsyncStorage.getItem('pastSearches');
+        if (storedSearches) {
+          const pastSearchesData = JSON.parse(storedSearches);
+          setRecentSearches(pastSearchesData);
+        }
+      } catch (error) {
+        console.log('Error retrieving past searches from AsyncStorage:', error);
+      }
+    };
+
+    getPastSearches();
+  }, []);
+
+  useEffect(() => {
     handleTextChange();
   }, [searchText]);
 
   useEffect(() => {
     navigation.setOptions({
-      presentation: 'modal',
       headerShadowVisible: false,
+      gestureDirection: 'horizontal',
       headerTitle: () => (
         <View className="mt-4">
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
@@ -198,13 +238,11 @@ const ChooseLocation = ({
         </View>
       ),
       headerLeft: () => (
-        <View className="mt-4">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
-              Cancel
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={() => navigation.pop()}
+          className="mt-3 py-2 pr-4">
+          <ChevronBackIcon />
+        </TouchableOpacity>
       ),
     });
   }, [navigation, sessionId]);
@@ -212,7 +250,7 @@ const ChooseLocation = ({
   return (
     <View className="flex-1 bg-white">
       <View className="mx-4">
-        <View className="my-4">
+        <View className="mb-4 mt-2">
           <SearchBar
             placeholder="Search"
             searchTerm={searchText}
@@ -231,6 +269,18 @@ const ChooseLocation = ({
               <Text className="font-medium">Use Current Location</Text>
             </View>
           </TouchableOpacity>
+        )}
+
+        {recentSearches.length > 0 && searchText === '' && (
+          <View className="flex flex-col">
+            <View className="border-b border-gray-300 mx-1 py-2">
+              <Text style={{ fontSize: 16, fontWeight: '500',  }}>
+                Recent
+              </Text>
+            </View>
+
+            <FlatList data={recentSearches} renderItem={renderItem} />
+          </View>
         )}
 
         <FlatList data={predictions} renderItem={renderItem} />

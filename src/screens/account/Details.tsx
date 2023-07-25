@@ -23,7 +23,7 @@ import {
   ExportSquareIcon,
   CalendarIcon,
   ClockIcon,
-  CloseIcon,
+  CloseIconGray,
 } from '../../components/Icons';
 
 import { supabase } from '../../lib/supabase';
@@ -57,7 +57,6 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   const [newTime, setNewTime] = useState<any>([]);
   const [isGoing, setIsGoing] = useState(false);
 
- 
   const handleGoingPress = async () => {
     if (isGoing === false) {
       const { data, error } = await supabase
@@ -230,7 +229,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
             navigation.goBack();
           }}
           className="absolute right-4 top-3 z-50">
-          <CloseIcon />
+          <CloseIconGray />
         </TouchableOpacity>
 
         <View className="flex flex-col">

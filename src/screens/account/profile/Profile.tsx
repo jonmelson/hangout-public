@@ -20,6 +20,7 @@ import {
   Feather,
   TabBarGoingIcon,
   Location16Icon,
+  ExportSquareIcon,
 } from '../../../components/Icons';
 import RoquefortText from '../../../components/RoquefortText';
 import Selector from '../../../components/Selector';
@@ -81,12 +82,11 @@ const Profile = ({
     setRefreshing(false);
   };
 
-  const handleInviteFriends = () => {
-    Share.share({
-      url: hangoutUrl + '/' + username,
-      message: profileInviteMessage,
-      title: 'Hangout',
-    });
+  const handleShareInvite = () => {
+   Share.share({
+     url: hangoutUrl,
+     title: 'Hangout',
+   });
   };
 
   const handleTabPress = (tabIndex: number) => {
@@ -416,11 +416,13 @@ const Profile = ({
         })
         .filter((item: Hangout) => new Date(item.ends).getTime() > today);
 
-      const sortedGoingHangouts = goingHangouts.sort((a: Hangout, b: Hangout) => {
-        const dateA = new Date(a.starts);
-        const dateB = new Date(b.starts);
-        return dateA.getTime() - dateB.getTime();
-      });
+      const sortedGoingHangouts = goingHangouts.sort(
+        (a: Hangout, b: Hangout) => {
+          const dateA = new Date(a.starts);
+          const dateB = new Date(b.starts);
+          return dateA.getTime() - dateB.getTime();
+        },
+      );
       // console.log(upcomingHangouts[1].going[0].id);
 
       const hostingHangouts = mergedData.filter(
@@ -604,48 +606,74 @@ const Profile = ({
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity
-                onPress={handleEditPress}
-                style={{ marginBottom: 16 }}>
-                <LinearGradient
-                  colors={['#7000FF', '#B174FF']}
-                  start={{ x: 0, y: 1 }}
-                  end={{ x: 1, y: 1 }}
-                  style={{
-                    borderRadius: 100,
-                    overflow: 'hidden',
-                    padding: 1,
-                  }}
-                  className="w-full rounded-full">
-                  <View className="flex h-12 flex-row items-center justify-center space-x-2 rounded-full bg-white ">
-                    <MaskedView
-                      maskElement={
-                        <Text
-                          style={{
-                            backgroundColor: 'transparent',
-                            fontSize: 16,
-                            fontWeight: '500',
-                          }}>
-                          Edit Profile
-                        </Text>
-                      }>
-                      <LinearGradient
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        colors={['#7000FF', '#B174FF']}>
-                        <Text
-                          style={{
-                            opacity: 0,
-                            fontSize: 16,
-                            fontWeight: '500',
-                          }}>
-                          Edit Profile
-                        </Text>
-                      </LinearGradient>
-                    </MaskedView>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
+              <View
+                className="flex flex-row  justify-between "
+                style={{ paddingBottom: 16 }}>
+                <TouchableOpacity
+                  onPress={handleEditPress}
+                  className="w-1/2 pr-1">
+                  <LinearGradient
+                    colors={['#7000FF', '#B174FF']}
+                    start={{ x: 0, y: 1 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderRadius: 100,
+                      overflow: 'hidden',
+                      padding: 1,
+                    }}
+                    className="w-full rounded-full">
+                    <View className="flex h-12 flex-row items-center justify-center rounded-full bg-white">
+                      <MaskedView
+                        maskElement={
+                          <Text
+                            style={{
+                              backgroundColor: 'transparent',
+                              fontSize: 16,
+                              fontWeight: '500',
+                            }}>
+                            Edit Profile
+                          </Text>
+                        }>
+                        <LinearGradient
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          colors={['#7000FF', '#B174FF']}>
+                          <Text
+                            style={{
+                              opacity: 0,
+                              fontSize: 16,
+                              fontWeight: '500',
+                            }}>
+                            Edit Profile
+                          </Text>
+                        </LinearGradient>
+                      </MaskedView>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={handleShareInvite}
+                  className="w-1/2 pl-1">
+                  <LinearGradient
+                    colors={['#7000FF', '#B174FF']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    className="h-12 w-full items-center justify-center rounded-full">
+                    <View className="flex flex-row items-center justify-center space-x-2">
+                      <ExportSquareIcon color="#FFF" />
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: 'white',
+                          fontWeight: '500',
+                        }}>
+                        Share invite
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 

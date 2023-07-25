@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Share } from 'react-native';
 
 import CardGoingButton from './CardGoingButton';
 import Avatar from './Avatar';
 import AvatarGroup from './AvatarGroup';
-import { ClockIcon, CalendarIcon } from './Icons';
+import { ClockIcon, CalendarIcon, ExportSquareIcon } from './Icons';
 import MapView, { Marker } from 'react-native-maps';
 import CardEditDetailsButton from '../components/CardEditDetailsButton';
+
+import { LinearGradient } from 'expo-linear-gradient';
+
+import { hangoutUrl } from '../utils/constants';
 
 import { supabase } from '../lib/supabase';
 
@@ -33,8 +37,28 @@ const Card = (props: EventProps) => {
 
   const [isGoing, setIsGoing] = useState(false);
   const [newDate, setNewDate] = useState('');
-  const [ newTime, setNewTime ] = useState( '' );
-  const [newLocation, setNewLocation] = useState(location)
+  const [newTime, setNewTime] = useState('');
+  const [newLocation, setNewLocation] = useState(location);
+
+  const address = location && location[0] ? location[0].address : '';
+  const locationTitle = location && location[0] ? location[0].title : '';
+
+  const handleShareHangout = () => {
+    let message =
+      title + '\n' + newDate + ' ' + newTime.replace(/\s/g, '') + '\n';
+
+    if (!address.includes(locationTitle)) {
+      message += locationTitle + '\n';
+    }
+
+    message += address;
+
+    Share.share({
+      url: hangoutUrl,
+      message: message,
+      title: 'Hangout',
+    });
+  };
 
   const handlePress = async () => {
     if (isGoing === false) {
@@ -226,7 +250,7 @@ const Card = (props: EventProps) => {
               <CardGoingButton onPress={handlePress} isGoing={isGoing} />
             </View>
           ) : (
-            <View className="mt-2">
+            <View className="mt-2 flex flex-row">
               <CardEditDetailsButton
                 onPress={() =>
                   navigation.navigate('EditHangout', {
@@ -240,6 +264,25 @@ const Card = (props: EventProps) => {
                   })
                 }
               />
+              <TouchableOpacity className="w-1/2 pl-1" onPress={handleShareHangout}>
+                <LinearGradient
+                  colors={['#7000FF', '#B174FF']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="h-12 w-full items-center justify-center rounded-full">
+                  <View className="flex flex-row items-center justify-center space-x-2">
+                    <ExportSquareIcon color="#FFF" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: 'white',
+                        fontWeight: '500',
+                      }}>
+                      Share hangout
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
             </View>
           )}
         </View>

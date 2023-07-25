@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import * as Linking from 'expo-linking';
+import React from 'react';
 
 import TabNavigator from './TabNavigator';
 import Friends from '../../screens/account/Friends';
@@ -12,15 +11,9 @@ import NewMessages from '../../screens/account/messaging/NewMessages';
 import ChatRoom from '../../screens/account/messaging/ChatRoom';
 import SharePage from '../../screens/account/SharePage';
 import NewHangoutStack from './NewHangoutStack';
-import { Animated } from 'react-native';
+import FeedbackPopup from '../../screens/account/FeedbackPopup';
 
 import { SearchContextProvider } from '../../context/SearchContext';
-
-import { Session } from '@supabase/supabase-js';
-
-import { useNavigation } from '@react-navigation/native';
-
-import { TransitionPresets } from '@react-navigation/stack';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -113,6 +106,16 @@ const AccountStack = ({
             headerShown: false,
             presentation: 'transparentModal',
             animation: 'none',
+          }}
+        />
+
+        <Stack.Screen
+          name="FeedbackPopup"
+          component={FeedbackPopup}
+          initialParams={{ sessionId: sessionId }}
+          options={{
+            headerShown: false,
+            presentation: 'modal',
           }}
         />
       </Stack.Navigator>

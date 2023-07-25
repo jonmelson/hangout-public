@@ -76,7 +76,7 @@ const NewHangout = ({
   const [formattedEndTime, setFormattedEndTime] = useState('');
 
   const handleBackPress = () => {
-    navigation.navigate('ChooseLocation');
+    navigation.navigate('HomeStack');
   };
 
   const handleTitleChange = (input: string) => {
@@ -92,6 +92,8 @@ const NewHangout = ({
     selectedDate?: Date,
   ) => {
     if (selectedDate) {
+      const minutes = Math.ceil(selectedDate.getMinutes() / 5) * 5;
+      selectedDate.setMinutes(minutes);
       setStartDate(selectedDate);
       // set end date to one hour after start date
       const oneHourAfterStartDate = new Date(
@@ -106,9 +108,17 @@ const NewHangout = ({
     selectedDate?: Date,
   ) => {
     if (selectedDate !== undefined) {
+      const minutes = Math.ceil(selectedDate.getMinutes() / 5) * 5;
+      selectedDate.setMinutes(minutes);
       setEndDate(selectedDate);
     }
   };
+
+  useEffect(() => {
+    if (locationMetaData && locationMetaData.length > 0) {
+      setAddress(locationMetaData[0]?.address || '');
+    }
+  }, [locationMetaData]);
 
   useEffect(() => {
     const handleSharePress = async () => {
@@ -211,8 +221,8 @@ const NewHangout = ({
       ),
       headerLeft: () => (
         <View className="mt-4">
-          <TouchableOpacity onPress={handleBackPress} className="py-2 pr-4">
-            <ChevronBackIcon />
+          <TouchableOpacity onPress={handleBackPress}>
+            <Text style={{ fontSize: 16, fontWeight: '500' }}>Cancel</Text>
           </TouchableOpacity>
         </View>
       ),
@@ -262,37 +272,46 @@ const NewHangout = ({
           </View>
         </View>
 
-        <View className="flex flex-col space-y-3 rounded-xl bg-white p-4">
-          <Text className="text-lg">Details</Text>
+        <View className="flex flex-col  rounded-xl bg-white p-4">
+          <Text style={{ fontWeight: '500', fontSize: 20 }} className="mb-3">
+            Details
+          </Text>
           <TextInput
             placeholder="Add optional details..."
             onChangeText={input => {
               handleDetailsChange(input);
             }}
             value={details}
-            className="py-1 text-gray-500"
+            className="text-gray-500"
           />
         </View>
 
         <TouchableOpacity
           className="flex flex-col rounded-xl bg-white p-4"
-          onPress={() => navigation.goBack()}>
-          <View className="mb-2">
-            <Text className="text-lg">Location</Text>
-          </View>
+          onPress={() => navigation.navigate('ChooseLocation')}>
+          <Text style={{ fontWeight: '500', fontSize: 20 }} className="mb-3">
+            Location
+          </Text>
 
-          <View className="mb-1 flex flex-row items-center justify-between">
-            <View>
-              <Text className="text-gray-500">{address}</Text>
+          {address !== '' ? (
+            <View className="mb-1 flex flex-row items-center justify-between">
+              <View>
+                <Text className="text-gray-500">{address}</Text>
+              </View>
+              <View>
+                <ChevronRightIcon />
+              </View>
             </View>
-            <View>
+          ) : (
+            <View className="mb-1 flex flex-row items-center justify-between">
+              <Text className="text-[#C5C5C7]">Add location</Text>
               <ChevronRightIcon />
             </View>
-          </View>
+          )}
         </TouchableOpacity>
 
         <View className="flex flex-col space-y-3 rounded-xl bg-white p-4">
-          <Text className="text-lg">Time</Text>
+          <Text style={{ fontWeight: '500', fontSize: 20 }}>Time</Text>
           <View className="flex flex-col space-y-2">
             <View className="flex flex-row items-center justify-between">
               <Text>Starts</Text>
@@ -325,6 +344,7 @@ const NewHangout = ({
                   themeVariant="light"
                   minimumDate={new Date()}
                   maximumDate={undefined}
+                  minuteInterval={5}
                 />
               </View>
             )}
@@ -362,6 +382,7 @@ const NewHangout = ({
                   themeVariant="light"
                   minimumDate={new Date()}
                   maximumDate={undefined}
+                  minuteInterval={5}
                 />
               </View>
             )}

@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Platform,
   Share,
+  RefreshControl,
 } from 'react-native';
 
 import { supabase } from '../../lib/supabase';
@@ -21,6 +22,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { hangoutUrl, profileInviteMessage } from '../../utils/constants';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Friends = ({
   navigation,
@@ -32,12 +34,24 @@ const Friends = ({
   const { sessionId } = route?.params ?? {};
   const [searchText, setSearchText] = useState('');
   const [friends, setFriends] = useState<any>([]);
+  const [allUsers, setAllUsers] = useState<any>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [receivedFriendRequests, setReceivedFriendRequests] = useState<any>([]);
   const [sentFriendRequests, setSentFriendRequests] = useState<any>([]);
 
   const [results, setResults] = useState<any>([]);
   const [username, setUsername] = useState('');
   const insets = useSafeAreaInsets();
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+
+    // Perform the necessary data fetching or operations here
+    getFriends();
+    getAllUsers();
+    // Once the data fetching or operations are complete, set refreshing to false
+    setRefreshing(false);
+  };
 
   const showAlert = (id: string) => {
     Alert.alert(
@@ -113,6 +127,28 @@ const Friends = ({
 
       // Set the state with the list of friends' names
       setFriends(users);
+    }
+  };
+
+  const getAllUsers = async () => {
+    const { data: allUsersData, error: allUsersError } = await supabase
+      .from('users')
+      .select('*');
+
+    if (allUsersError) {
+      console.error(allUsersError);
+    } else {
+      // Filter out the user with username 'test_name'
+      const filteredUsers = allUsersData.filter(
+        user => user.username !== 'test_account' && user.id !== sessionId,
+      );
+
+      // Sort the filtered users by first_name
+      const sortedUsers = filteredUsers.sort((a, b) =>
+        a.first_name.localeCompare(b.first_name),
+      );
+
+      setAllUsers(sortedUsers);
     }
   };
 
@@ -391,6 +427,7 @@ const Friends = ({
     if (sessionId) {
       getProfile();
       getFriends();
+      getAllUsers();
       getReceivedFriendRequests();
       getSentFriendRequests();
       // Subscribe to changes in the users, friends and friend_requests table
@@ -507,9 +544,12 @@ const Friends = ({
           </View>
         </View>
 
-        <View
+        <ScrollView
           className="w-full flex-1 flex-col pt-2"
-          style={{ backgroundColor: searchText === '' ? '#F3F3F3' : 'white' }}>
+          style={{ backgroundColor: searchText === '' ? '#F3F3F3' : 'white' }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }>
           {/* Before Searching */}
           {searchText === '' && (
             <>
@@ -586,6 +626,24 @@ const Friends = ({
                   </Text>
                 </View>
               )}
+
+              <View className="mt-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
+                <FlatList
+                  data={allUsers}
+                  keyExtractor={item => item.id.toString()}
+                  renderItem={renderFriendItem}
+                  scrollEnabled={false}
+                  ListHeaderComponent={
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: '500',
+                      }}>
+                      Suggested
+                    </Text>
+                  }
+                />
+              </View>
             </>
           )}
 
@@ -662,7 +720,7 @@ const Friends = ({
               )}
             </View>
           )}
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

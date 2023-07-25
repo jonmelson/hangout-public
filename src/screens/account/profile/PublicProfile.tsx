@@ -7,6 +7,7 @@ import {
   ActionSheetIOS,
   RefreshControl,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 
 import { Image } from 'expo-image';
@@ -15,7 +16,9 @@ import { BlurView } from 'expo-blur';
 import { openBrowserAsync } from 'expo-web-browser';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { getFriendsMetaData } from '../../../utils/queries';
 
+import Event from '../../../components/Event';
 import Avatar from '../../../components/Avatar';
 import {
   Octicons,
@@ -55,14 +58,30 @@ const PublicProfile = ({
   const [instagram, setInstagram] = useState('');
   const [twitter, setTwitter] = useState('');
   const [createdAt, setCreatedAt] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   const [isFriend, setIsFriend] = useState(false);
   const [requested, setRequested] = useState(false);
+
+  const [friends, setFriends] = useState<any>([]);
+  const [hangouts, setHangouts] = useState<any>([]);
+  const [isGoing, setIsGoing] = useState<any>([]);
+  const [mergedData, setMergedData] = useState<any>(null);
 
   const fullName = firstName + ' ' + lastName;
   const joinedDate = formatDate(createdAt);
 
   const { startDMChatRoom } = useChatContext();
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+
+    // Perform the necessary data fetching or operations here
+    getProfile();
+    getHangoutsOfGoing();
+    // Once the data fetching or operations are complete, set refreshing to false
+    setRefreshing(false);
+  };
 
   const handleRemoveAsFriend = async (id: string) => {
     // console.log(id, sessionId);
@@ -153,14 +172,6 @@ const PublicProfile = ({
     setRequested(true);
   };
 
-  const handleInstagramPress = () => {
-    openBrowserAsync(`https://www.instagram.com/${instagram}`);
-  };
-
-  const handleTwitterPress = () => {
-    openBrowserAsync(`https://www.twitter.com/${twitter}`);
-  };
-
   const handleMessagePress = async () => {
     startDMChatRoom({ id: userId });
   };
@@ -178,12 +189,16 @@ const PublicProfile = ({
           // cancel action
           console.log('Cancel');
         } else if (buttonIndex === 1) {
-          showRemoveAlert(userId);
+          if (userId) {
+            showRemoveAlert(userId);
+          } else {
+            console.log('userId is undefined');
+          }
         }
       },
     );
 
-  async function getProfile() {
+  const getProfile = async () => {
     try {
       setLoading(true);
       // if (!session?.user) throw new Error('No user on the session!');
@@ -215,7 +230,45 @@ const PublicProfile = ({
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const getHangouts = async (ids: any) => {
+    const hangoutIds = ids.map((obj: any) => obj.hangout_id);
+
+    try {
+      const currentTime = new Date(); // Get the current date and time
+
+      const { data: hangoutsData, error: hangoutsError } = await supabase
+        .from('hangouts')
+        .select('*')
+        .in('id', hangoutIds);
+
+      if (!hangoutsError) {
+        setHangouts(hangoutsData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getHangoutsOfGoing = async () => {
+    try {
+      const { data: hangoutIdsData, error: hangoutIdsError } = await supabase
+        .from('is_going')
+        .select('hangout_id')
+        .eq('user_id', userId);
+
+      if (!hangoutIdsError) {
+        getHangouts(hangoutIdsData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getHangoutsOfGoing();
+  }, []);
 
   const checkFriendship = async () => {
     // Check if the userId and sessionId are in the friends table
@@ -262,6 +315,76 @@ const PublicProfile = ({
       setRequested(false);
     }
   };
+
+  // Fetch initial data for isGoing
+  useEffect(() => {
+    const fetchIsGoing = async () => {
+      try {
+        const { data: isGoingData, error: isGoingDataError } = await supabase
+          .from('is_going')
+          .select('*')
+          .in(
+            'hangout_id',
+            hangouts.map((hangout: any) => hangout.id),
+          );
+        if (!isGoingDataError) {
+          setIsGoing((prevState: any) => [...prevState, ...isGoingData]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchIsGoing();
+  }, [hangouts]);
+
+  useEffect(() => {
+    const mergeDataFunction = async () => {
+      const newData = await Promise.all(
+        hangouts.map(async (hangout: any) => {
+          const goingIds = isGoing
+            .filter((item: any) => item.hangout_id === hangout.id)
+            .map((item: any) => item.user_id);
+
+          const { data: goingMetaData, error } = await supabase
+            .from('users')
+            .select('*')
+            .in('id', goingIds);
+          if (error) {
+            console.error('Error fetching user data:', error);
+          }
+
+          // Convert the dates to Date objects for comparison
+          const currentDate = new Date();
+          const eventStartDate = new Date(hangout.starts);
+          const eventEndDate = new Date(hangout.ends);
+
+          // Include only events whose start date has not passed and end time has not passed
+          if (eventStartDate > currentDate && eventEndDate > currentDate) {
+            return {
+              ...hangout,
+              going: goingMetaData ?? [],
+            };
+          } else {
+            return null; // Exclude events that have already ended or have end time passed
+          }
+        }),
+      );
+
+      // Remove any null values (excluded events) and sort the events by start time
+      const filteredAndSortedData = newData.filter(Boolean).sort((a, b) => {
+        const startTimeA = new Date(a.starts).getTime();
+        const startTimeB = new Date(b.starts).getTime();
+        return startTimeA - startTimeB;
+      });
+
+      setMergedData(filteredAndSortedData);
+    };
+
+    if (hangouts && isGoing) {
+      mergeDataFunction();
+    }
+  }, [hangouts, isGoing]);
 
   useEffect(() => {
     if (sessionId) {
@@ -367,7 +490,11 @@ const PublicProfile = ({
   }, [navigation, sessionId, username]);
 
   return (
-    <View className="flex-1">
+    <ScrollView
+      className="w-full flex-1 flex-col"
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }>
       <View className="flex flex-col">
         {avatarUrl !== '' ? (
           <>
@@ -563,15 +690,41 @@ const PublicProfile = ({
           </View>
         </View>
       </View>
-      <View className="mt-12 flex flex-col items-center justify-center space-y-4">
-        <View>
-          <TabBarGoingIcon name="going" color="gray" />
+
+      {mergedData && mergedData.length > 0 && (
+        <View className="mt-2 flex rounded-2xl bg-white">
+          <View style={{ margin: 16 }} className="flex flex-col">
+            <Text style={{ fontSize: 20, fontWeight: '500' }}>Hangouts</Text>
+
+            <View className="flex flex-col">
+              {mergedData.map((item: any, idx: any) => {
+                return (
+                  <Event
+                    {...item}
+                    key={idx}
+                    sessionId={userId}
+                    navigation={navigation}
+                  />
+                );
+              })}
+            </View>
+          </View>
         </View>
-        <View>
-          <Text className="text-gray-500">Joined hangout on {joinedDate}</Text>
+      )}
+
+      {isFriend && (
+        <View className="my-12 flex flex-col items-center justify-center space-y-4">
+          <View>
+            <TabBarGoingIcon name="going" color="gray" />
+          </View>
+          <View>
+            <Text className="text-gray-500">
+              Joined hangout on {joinedDate}
+            </Text>
+          </View>
         </View>
-      </View>
-    </View>
+      )}
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({

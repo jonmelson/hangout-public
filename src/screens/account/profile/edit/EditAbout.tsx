@@ -89,6 +89,7 @@ const EditAbout = ({
       <View className="flex flex-col">
         <TextInput
           value={about}
+          multiline={true}
           autoFocus={true}
           placeholder={'Add about...'}
           onChangeText={input => {

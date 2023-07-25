@@ -7,8 +7,11 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Linking,
 } from 'react-native';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import RoquefortText from '../../../components/RoquefortText';
 import BottomCreateIndicator from '../../../components/BottomCreateIndicator';
@@ -50,10 +53,61 @@ const Home = ({
 
   const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+
+  useEffect(() => {
+    const checkFeedbackPopup = async () => {
+      try {
+        // Check if the Feedback popup has been shown before by reading the value from AsyncStorage
+        const hasShownFeedbackPopup = await AsyncStorage.getItem(
+          'hasShownFeedbackPopup',
+        );
+
+        // console.log('hasShownFeedbackPopup:', hasShownFeedbackPopup);
+
+        if (!hasShownFeedbackPopup) {
+          // If it hasn't been shown before, set the flag in AsyncStorage and display the popup
+          await AsyncStorage.setItem('hasShownFeedbackPopup', 'true');
+          setShowFeedbackPopup(true);
+        }
+      } catch (error) {
+        // Handle any errors that occur during AsyncStorage operations
+        console.error('Error reading or setting AsyncStorage:', error);
+      }
+    };
+
+    checkFeedbackPopup();
+  }, []);
+
+  useEffect(() => {
+    if (showFeedbackPopup) {
+      navigation.navigate('FeedbackPopup');
+    }
+  }, [showFeedbackPopup]);
+
   const sendEmail = async () => {
     const isAvailable = await MailComposer.isAvailableAsync();
     if (!isAvailable) {
-      Alert.alert('Error', 'Email is not available on this device.');
+      Alert.alert(
+        'Restore "Mail"?',
+        'To continue, download "Mail" from the App Store.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Show in App Store',
+            onPress: () => {
+              // Open the app store link for the user to download an email app
+              Linking.openURL(
+                // 'https://play.google.com/store/apps/category/COMMUNICATION',
+                'https://apps.apple.com/us/app/mail/id1108187098',
+              );
+            },
+          },
+        ],
+      );
       return;
     }
 
@@ -435,9 +489,9 @@ const Home = ({
           className="flex flex-1 flex-col items-center">
           <View className="flex w-full flex-row items-center justify-between bg-white px-4 py-2">
             <HangoutBlackLogo />
-            {/* <TouchableOpacity onPress={() => sendEmail()}>
+            <TouchableOpacity onPress={() => sendEmail()}>
               <MessageFeedbackIcon />
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
           <View
             style={{ backgroundColor: '#F3F3F3', flex: 1 }}
@@ -568,9 +622,9 @@ const Home = ({
               className="flex w-full flex-1 flex-col items-center justify-center">
               <View className="flex w-full flex-row items-center justify-between bg-white px-4 py-2">
                 <HangoutBlackLogo />
-                {/* <TouchableOpacity onPress={() => sendEmail()}>
+                <TouchableOpacity onPress={() => sendEmail()}>
                   <MessageFeedbackIcon />
-                </TouchableOpacity> */}
+                </TouchableOpacity>
               </View>
               <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -621,12 +675,14 @@ const Home = ({
               style={{ paddingTop: insets.top }}
               className="flex flex-1 flex-col items-center justify-center">
               <View
-                className="absolute left-0 top-0 flex w-full flex-row items-center justify-between bg-white px-4 py-2"
+                className="absolute left-0 top-0 z-50 flex  w-full bg-white px-4"
                 style={{ paddingTop: insets.top }}>
-                <HangoutBlackLogo />
-                {/* <TouchableOpacity>
-                  <MessageFeedbackIcon />
-                </TouchableOpacity> */}
+                <View className="flex-1 flex-row items-center justify-between pb-2 pt-2">
+                  <HangoutBlackLogo />
+                  <TouchableOpacity onPress={() => sendEmail()}>
+                    <MessageFeedbackIcon />
+                  </TouchableOpacity>
+                </View>
               </View>
               <View className="flex-1 justify-center shadow-lg">
                 <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white px-4">
@@ -688,9 +744,14 @@ const Home = ({
               style={{ paddingTop: insets.top }}
               className="flex flex-1 flex-col items-center justify-center">
               <View
-                className="absolute left-0 top-0 w-full bg-white px-4 py-2"
+                className="absolute left-0 top-0 z-50 flex  w-full bg-white px-4"
                 style={{ paddingTop: insets.top }}>
-                <HangoutBlackLogo />
+                <View className="flex-1 flex-row items-center justify-between pb-2 pt-2">
+                  <HangoutBlackLogo />
+                  <TouchableOpacity onPress={() => sendEmail()}>
+                    <MessageFeedbackIcon />
+                  </TouchableOpacity>
+                </View>
               </View>
               <View className="flex-1 justify-center shadow-lg">
                 <View className="mx-[7%] flex h-[551px] flex-col items-center rounded-xl bg-white px-4">

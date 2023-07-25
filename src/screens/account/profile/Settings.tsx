@@ -1,6 +1,13 @@
 import React, { useEffect } from 'react';
 
-import { View, Text, Share, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Share,
+  TouchableOpacity,
+  Alert,
+  Linking,
+} from 'react-native';
 import {
   ChevronRightIcon,
   ExportSquareIcon,
@@ -9,6 +16,9 @@ import {
   MessageQuestionIcon,
   ChevronBackIcon,
 } from '../../../components/Icons';
+import * as MailComposer from 'expo-mail-composer';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { hangoutUrl, profileInviteMessage } from '../../../utils/constants';
 
@@ -21,6 +31,17 @@ import { NavigationProps } from '../../../utils/navigation';
 const Settings = (props: NavigationProps) => {
   const { navigation, sessionId } = props;
 
+  const handleLogout = async () => {
+    try {
+      // Clear the hasShownFeedbackPopup value from AsyncStorage
+      await AsyncStorage.removeItem('hasShownFeedbackPopup');
+      supabase.auth.signOut();
+      // Perform any other logout actions you may have
+      // ...
+    } catch (error) {
+      console.error('Error clearing AsyncStorage:', error);
+    }
+  };
   const handleEditProfilePress = () => {
     navigation.navigate('EditProfile');
   };
@@ -32,8 +53,31 @@ const Settings = (props: NavigationProps) => {
     });
   };
 
-  const handleHelpPress = () => {
-    handleContactUsPress();
+  const handleHelpPress = async () => {
+    const isAvailable = await MailComposer.isAvailableAsync();
+    if (!isAvailable) {
+      Alert.alert(
+        'Restore "Mail"?',
+        'To continue, download "Mail" from the App Store.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Show in App Store',
+            onPress: () => {
+              // Open the app store link for the user to download an email app
+              Linking.openURL(
+                // 'https://play.google.com/store/apps/category/COMMUNICATION',
+                'https://apps.apple.com/us/app/mail/id1108187098',
+              );
+            },
+          },
+        ],
+      );
+      return;
+    }
   };
 
   const handleAboutPress = () => {
@@ -123,9 +167,7 @@ const Settings = (props: NavigationProps) => {
 
         <View className="rounded-xl bg-white p-4">
           {/* Logout */}
-          <TouchableOpacity
-            className=""
-            onPress={() => supabase.auth.signOut()}>
+          <TouchableOpacity className="" onPress={handleLogout}>
             <Text className="text-center text-red-500 ">Logout</Text>
           </TouchableOpacity>
         </View>

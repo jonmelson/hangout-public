@@ -11,7 +11,7 @@ type CardEditDetailsButtonProps = {
 const CardEditDetailsButton = (props: CardEditDetailsButtonProps) => {
   const { onPress } = props;
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} className="w-1/2 pr-1">
       <LinearGradient
         colors={['#7000FF', '#B174FF']}
         start={{ x: 0, y: 1 }}

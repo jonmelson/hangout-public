@@ -43,6 +43,7 @@ import TabBarProfileIcon from '../components/icons/TabBarProfileIcon';
 import SettingsIcon from '../components/icons/SettingsIcon';
 import SearchBarIcon from '../components/icons/SearchBarIcon';
 import MessageFeedbackIcon from '../components/icons/MessageFeedbackIcon';
+import CloseIconGray from '../components/icons/CloseIconGray';
 
 // Default Library Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -107,4 +108,5 @@ export {
   SettingsIcon,
   SearchBarIcon,
   MessageFeedbackIcon,
+  CloseIconGray,
 };
