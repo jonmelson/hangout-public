@@ -140,7 +140,13 @@ const Friends = ({
     } else {
       // Filter out the user with username 'test_name'
       const filteredUsers = allUsersData.filter(
-        user => user.username !== 'test_account' && user.id !== sessionId,
+        user =>
+          user.username !== 'test_account' &&
+          user.id !== sessionId &&
+          !friends.some(
+            // Exclude already added friends
+            (friend: any) => friend.id === user.id,
+          ),
       );
 
       // Sort the filtered users by first_name
