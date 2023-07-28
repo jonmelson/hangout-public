@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   Linking,
+  SectionList,
 } from 'react-native';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 
@@ -118,13 +119,13 @@ const Home = ({
     const body = "What's not working? \n\nWhat features should we add?";
 
     try {
-     await MailComposer.composeAsync({
-       recipients,
-       subject,
-       body,
-       bccRecipients,
-       ccRecipients,
-     });
+      await MailComposer.composeAsync({
+        recipients,
+        subject,
+        body,
+        bccRecipients,
+        ccRecipients,
+      });
     } catch (error) {
       Alert.alert(
         'Error',
@@ -480,6 +481,14 @@ const Home = ({
 
   // console.log(sections.length, friends.length);
 
+  const renderItem = ({ item }: { item: any }) => {
+    return (
+      <View className="py-[6px]">
+        <Card {...item} sessionId={sessionId} navigation={navigation} />
+      </View>
+    );
+  };
+
   return (
     <>
       {loading ? (
@@ -626,47 +635,18 @@ const Home = ({
                   <MessageFeedbackIcon />
                 </TouchableOpacity>
               </View>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
+              <SectionList
+                sections={sections}
+                renderItem={renderItem}
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
                     onRefresh={handleRefresh}
                   />
                 }
-                className="w-full flex-1 "
-                style={{ backgroundColor: '#F3F3F3' }}>
-                <View className="flex-1">
-                  {loading ? null : (
-                    <>
-                      {sections[0].data.map((item, idx) => {
-                        return (
-                          <View className="py-[6px]" key={idx}>
-                            <Card
-                              {...item}
-                              key={idx}
-                              sessionId={sessionId}
-                              navigation={navigation}
-                            />
-                          </View>
-                        );
-                      })}
-                      {sections[1].data.map((item, idx) => {
-                        return (
-                          <View className="py-[6px]" key={idx}>
-                            <Card
-                              {...item}
-                              key={idx}
-                              sessionId={sessionId}
-                              navigation={navigation}
-                            />
-                          </View>
-                        );
-                      })}
-                    </>
-                  )}
-                </View>
-              </ScrollView>
+                className="w-full flex-1"
+                style={{ backgroundColor: '#F3F3F3' }}
+              />
             </View>
           ) : friends.length === 0 &&
             sections[0]?.data?.length === 0 &&

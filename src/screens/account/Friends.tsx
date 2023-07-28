@@ -433,7 +433,6 @@ const Friends = ({
     if (sessionId) {
       getProfile();
       getFriends();
-      getAllUsers();
       getReceivedFriendRequests();
       getSentFriendRequests();
       // Subscribe to changes in the users, friends and friend_requests table
@@ -492,6 +491,10 @@ const Friends = ({
         .subscribe();
     }
   }, [sessionId, username]);
+
+  useEffect(() => {
+    getAllUsers();
+  }, [friends, allUsers]);
 
   useEffect(() => {
     if (searchText.length > 0) {
@@ -633,6 +636,7 @@ const Friends = ({
                 </View>
               )}
 
+              
               <View className="mt-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
                 <FlatList
                   data={allUsers}
