@@ -3,12 +3,21 @@
     "name": "hngt",
     "slug": "hangout",
     "scheme": "hangout",
-    "version": "0.1.20",
+    "version": "0.1.21",
     "plugins": [
+      "@react-native-firebase/app",
       [
         "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
         }
       ]
     ],
@@ -23,13 +32,10 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "associatedDomains": [
-        "applinks:hangout.social"
-      ],
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "associatedDomains": ["applinks:hangout.social"],
       "supportsTablet": true,
       "infoPlist": {
         "NSAppTransportSecurity": {
