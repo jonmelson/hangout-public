@@ -13,15 +13,11 @@ import MainStack from './src/navigators/main/MainStack';
 
 import { Session } from '@supabase/supabase-js';
 import { supabase } from './src/lib/supabase';
+import messaging from '@react-native-firebase/messaging';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
-
-const SplashScreen = () => (
-  // Render a temporary loading screen here
-  <View></View>
-);
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -40,6 +36,21 @@ export default function App() {
     }
     setLoading(false);
   };
+
+  // const requestPermission = async () => {
+  //   const authStatus = await messaging().requestPermission();
+  //   const enabled =
+  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  //   if (enabled) {
+  //     console.log('Authorization status:', authStatus);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   requestPermission();
+  // }, []);
 
   useEffect(() => {
     getSession();

@@ -168,7 +168,7 @@ const ShareModal = ({
       style={{
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center', 
+        justifyContent: 'center',
       }}>
       <View className="h-62 flex w-5/6 flex-col space-y-3 rounded-2xl  bg-white p-4">
         <View className="flex flex-row justify-end">
@@ -209,14 +209,17 @@ const ShareModal = ({
             <TouchableOpacity
               className="w-2/5"
               onPress={() =>
-                navigation.navigate('EditHangout', {
-                  id: hangoutId,
-                  user_id: userId,
-                  title: title,
-                  details: details,
-                  location: location,
-                  starts: starts,
-                  ends: ends,
+                navigation.navigate('EditHangoutStack', {
+                  screen: 'EditHangout',
+                  params: {
+                    id: hangoutId,
+                    user_id: userId,
+                    title: title,
+                    details: details,
+                    location: location,
+                    starts: starts,
+                    ends: ends,
+                  },
                 })
               }>
               <LinearGradient

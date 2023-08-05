@@ -25,18 +25,6 @@ import { shareSchema } from '../../utils/schemas';
 
 import { useChatContext } from '../../context/ChatContext';
 
-interface LocationMetaData {
-  address?: string;
-  geometry?: {
-    location?: Location;
-  };
-}
-
-interface Location {
-  latitude?: number;
-  longitude?: number;
-}
-
 const EditHangout = ({
   navigation,
   route,
@@ -292,7 +280,7 @@ const EditHangout = ({
         <TouchableOpacity
           className="flex flex-col rounded-xl bg-white p-4"
           onPress={() =>
-            navigation.navigate('EditChooseLocation', {
+            navigation.push('EditChooseLocation', {
               id: id,
               user_id: user_id,
               title: title,

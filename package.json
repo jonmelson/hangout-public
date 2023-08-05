@@ -76,7 +76,8 @@
     "stream-chat-expo": "^5.14.0",
     "stream-chat-react-native-core": "^5.15.1",
     "uuid": "^9.0.0",
-    "yup": "^1.1.1"
+    "yup": "^1.1.1",
+    "expo-dev-client": "~2.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

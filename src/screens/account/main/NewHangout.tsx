@@ -121,7 +121,8 @@ const NewHangout = ({
   }, [locationMetaData]);
 
   useEffect(() => {
-    const handleSharePress = async () => {
+    const handleSharePress = async () =>
+    { 
       const { data, error } = await supabase
         .from('hangouts')
         .insert([
@@ -129,7 +130,7 @@ const NewHangout = ({
             user_id: sessionId,
             title: title,
             details: details,
-            location: location,
+            location: locationMetaData,
             starts: startDate,
             ends: endDate,
           },

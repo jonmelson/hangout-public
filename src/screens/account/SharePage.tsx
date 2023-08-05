@@ -221,14 +221,17 @@ const SharePage = ({
             <TouchableOpacity
               className="w-2/5"
               onPress={() =>
-                navigation.navigate('EditHangout', {
-                  id: hangoutId,
-                  user_id: userId,
-                  title: title,
-                  details: details,
-                  location: location,
-                  starts: starts,
-                  ends: ends,
+                navigation.navigate('EditHangoutStack', {
+                  screen: 'EditHangout',
+                  params: {
+                    id: hangoutId,
+                    user_id: userId,
+                    title: title,
+                    details: details,
+                    location: location,
+                    starts: starts,
+                    ends: ends,
+                  },
                 })
               }>
               <LinearGradient

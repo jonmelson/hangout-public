@@ -1,5 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-
+import React, {
+  useRef,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StreamChat, Channel } from 'stream-chat';
 import { OverlayProvider, Chat, ThemeProvider } from 'stream-chat-expo';
 
@@ -8,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { theme } from '../theme';
 
 import { STREAM_API_KEY } from '@env';
+import messaging from '@react-native-firebase/messaging';
 
 type ChatContextType = {
   chatClient?: StreamChat;
@@ -18,11 +25,10 @@ type ChatContextType = {
     hangoutId: any,
     userId: any,
     hangoutName: any,
-    // hangoutImage?: any,
   ) => Promise<void>;
   navigateToGroupChatRoom: (hangoutId: any) => Promise<void>;
   joinGroupChatRoom: (hangoutId: any, userId: any) => Promise<void>;
-  // joinGroupChatRoom: (hangoutId: any, userId: any, name: any) => Promise<void>;
+  //  joinGroupChatRoom: (hangoutId: any, userId: any, name: any) => Promise<void>;
   updateGroupChatRoomName: (hangoutId: any, newName: any) => Promise<void>;
   updateUserImage: (userId: any, image: any) => Promise<void>;
   updateUserName: (userId: any, name: any) => Promise<void>;
@@ -42,11 +48,10 @@ export const ChatContext = createContext<ChatContextType>({
     hangoutId: any,
     userId: any,
     hangoutName: any,
-    // hangoutImage: any,
   ) => {},
   navigateToGroupChatRoom: async (hangoutId: any) => {},
-  joinGroupChatRoom: async (hangoutId: any, userId: any) => {},
   // joinGroupChatRoom: async (hangoutId: any, userId: any, name: any) => {},
+  joinGroupChatRoom: async (hangoutId: any, userId: any) => {},
   updateGroupChatRoomName: async (hangoutId: any, newName: any) => {},
   updateUserImage: async (userId: any, image: any) => {},
   updateUserName: async (userId: any, name: any) => {},
@@ -65,6 +70,8 @@ export function ChatContextProvider({
   const navigation = useNavigation();
   const [chatClient, setChatClient] = useState<StreamChat>();
   const [currentChannel, setCurrentChannel] = useState<Channel>();
+  const [isReady, setIsReady] = useState(false);
+  const unsubscribeTokenRefreshListenerRef = useRef<() => void>();
 
   const getSession = async () => {
     try {
@@ -98,12 +105,29 @@ export function ChatContextProvider({
   };
 
   useEffect(() => {
+    // const registerDevice = async (client: any) => {
+    //   const push_provider = 'firebase';
+    //   const push_provider_name = 'MyRNAppFirebasePush';
+    //   const token = await messaging().getToken();
+    //   if (client) {
+    //     await client.addDevice({
+    //       token,
+    //       push_provider,
+    //       // push_provider_name is meant for optional multiple providers support, see: https://getstream.io/chat/docs/react/push_providers_and_multi_bundle
+    //       push_provider_name,
+    //     });
+    //   }
+    // };
+
     const init = async () => {
       const user = await getSession();
 
       const client = StreamChat.getInstance(STREAM_API_KEY);
 
       if (user) {
+        // register device should be called only if user is authenticated
+        // registerDevice(client);
+
         await client.connectUser(
           {
             id: user.id,
@@ -186,7 +210,7 @@ export function ChatContextProvider({
 
   // const joinGroupChatRoom = async ( hangoutId: any, userId: any, name: any ) =>
   // {
-  const joinGroupChatRoom = async (hangoutId: any, userId: any, name: any) => {
+  const joinGroupChatRoom = async (hangoutId: any, userId: any) => {
     if (!chatClient) {
       return;
     }
@@ -194,7 +218,7 @@ export function ChatContextProvider({
     const channelId = `room-${hangoutId}`;
     // console.log(channelId, hangoutId, userId);
     const eventChannel = chatClient.channel('livestream', channelId);
-    await eventChannel.addMembers([userId], { text: `${name} is Going.` });
+    // await eventChannel.addMembers([userId], { text: `${name} is Going.` });
     // await eventChannel.watch({ watchers: { limit: 100 } });
     // setCurrentChannel(eventChannel);
 

@@ -329,14 +329,17 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
               <TouchableOpacity
                 className="w-1/2"
                 onPress={() =>
-                  navigation.navigate('EditHangout', {
-                    id: id,
-                    user_id: user_id,
-                    title: title,
-                    details: details,
-                    location: location,
-                    starts: starts,
-                    ends: ends,
+                  navigation.navigate('EditHangoutStack', {
+                    screen: 'EditHangout',
+                    params: {
+                      id: id,
+                      user_id: user_id,
+                      title: title,
+                      details: details,
+                      location: location,
+                      starts: starts,
+                      ends: ends,
+                    },
                   })
                 }>
                 <LinearGradient

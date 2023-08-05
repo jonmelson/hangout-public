@@ -4,10 +4,12 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 
 import SearchBar from '../../components/SearchBar';
-import { Location24Icon } from '../../components/Icons';
+import { Location24Icon, ChevronBackIcon } from '../../components/Icons';
 
 import { GOOGLE_MAPS_API_KEY } from '@env';
 import GoogleIcon from '../../components/icons/google/GoogleIcon';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as Location from 'expo-location';
 
@@ -91,23 +93,55 @@ const EditChooseLocation = ({
     )
       .then(response => response.json())
       .then(async data => {
+        try {
+          // Retrieve the existing past searches from AsyncStorage
+          const storedSearches = await AsyncStorage.getItem('pastSearches');
+          let pastSearches: Prediction[] = [];
+
+          if (storedSearches) {
+            pastSearches = JSON.parse(storedSearches);
+          }
+
+          // Check if the prediction already exists in pastSearches
+          const index = pastSearches.findIndex(
+            search =>
+              search.title === data.results[0].title &&
+              search.address === data.results[0].address &&
+              search.coordinates === data.results[0].coordinates,
+          );
+
+          // If the prediction exists, remove it from the array
+          if (index !== -1) {
+            pastSearches.splice(index, 1);
+          }
+
+          // Add the selected prediction to the beginning of the array
+          pastSearches.unshift(data.results[0]);
+
+          // Limit the array to the most recent three searches
+          pastSearches = pastSearches.slice(0, 3);
+
+          // Store the modified pastSearches array in AsyncStorage
+          await AsyncStorage.setItem(
+            'pastSearches',
+            JSON.stringify(pastSearches),
+          );
+        } catch (error) {
+          console.log('Error saving prediction to AsyncStorage:', error);
+        }
         setSearchText(data.results[0].formatted_address);
         setPredictions([]);
 
         const placeId = data.results[0].place_id;
-        const geometry = await getPlaceDetails(placeId);
+        const { title, address, coordinates } = await getPlaceDetails(placeId);
 
+        
         navigation.navigate('EditHangout', {
           id: id,
           user_id: user_id,
           title: title,
           details: details,
-          location: [
-            {
-              address: data.results[0].formatted_address,
-              geometry: geometry,
-            },
-          ],
+          location: [{ title: title, geometry: coordinates, address: address }],
           starts: starts,
           ends: ends,
         });
@@ -119,6 +153,40 @@ const EditChooseLocation = ({
     const title = prediction.title;
     const address = prediction.address;
     const geometry = prediction.coordinates;
+
+    try {
+      // Retrieve the existing past searches from AsyncStorage
+      const storedSearches = await AsyncStorage.getItem('pastSearches');
+      let pastSearches: Prediction[] = [];
+
+      if (storedSearches) {
+        pastSearches = JSON.parse(storedSearches);
+      }
+
+      // Check if the prediction already exists in pastSearches
+      const index = pastSearches.findIndex(
+        search =>
+          search.title === prediction.title &&
+          search.address === prediction.address &&
+          search.coordinates === prediction.coordinates,
+      );
+
+      // If the prediction exists, remove it from the array
+      if (index !== -1) {
+        pastSearches.splice(index, 1);
+      }
+
+      // Add the selected prediction to the beginning of the array
+      pastSearches.unshift(prediction);
+
+      // Limit the array to the most recent three searches
+      pastSearches = pastSearches.slice(0, 3);
+
+      // Store the modified pastSearches array in AsyncStorage
+      await AsyncStorage.setItem('pastSearches', JSON.stringify(pastSearches));
+    } catch (error) {
+      console.log('Error saving prediction to AsyncStorage:', error);
+    }
 
     setSearchText(address);
     setPredictions([]);
@@ -167,8 +235,8 @@ const EditChooseLocation = ({
 
   useEffect(() => {
     navigation.setOptions({
-      presentation: 'modal',
       headerShadowVisible: false,
+      gestureDirection: 'horizontal',
       headerTitle: () => (
         <View className="mt-4">
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#333333' }}>
@@ -177,13 +245,11 @@ const EditChooseLocation = ({
         </View>
       ),
       headerLeft: () => (
-        <View className="mt-4">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ fontSize: 16, fontWeight: '500', color: '#333333' }}>
-              Cancel
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={() => navigation.pop()}
+          className="mt-3 py-2 pr-4">
+          <ChevronBackIcon />
+        </TouchableOpacity>
       ),
     });
   }, [navigation]);

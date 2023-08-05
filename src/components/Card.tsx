@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { View, Text, TouchableOpacity, Alert, Share } from 'react-native';
 
@@ -42,6 +42,26 @@ const Card = (props: EventProps) => {
 
   const address = location && location[0] ? location[0].address : '';
   const locationTitle = location && location[0] ? location[0].title : '';
+
+  const mapRef = useRef<MapView>( null );
+  
+
+  useEffect(() => {
+    setNewLocation(location);
+  }, [location]);
+
+  useEffect(() => {
+    mapRef.current?.animateToRegion({
+      latitude: newLocation[0].geometry.lat,
+      longitude: newLocation[0].geometry.lng,
+      latitudeDelta: 0.002,
+      longitudeDelta: 0.002,
+    });
+  }, [newLocation]);
+
+  useEffect(() => {
+    setNewLocation(location);
+  }, [location]);
 
   const handleShareHangout = () => {
     let message =
@@ -224,6 +244,7 @@ const Card = (props: EventProps) => {
           {/* Map */}
           <View className="flex h-[100px] items-center justify-center ">
             <MapView
+              ref={mapRef}
               style={{ borderRadius: 20 }}
               className="h-full w-full rounded-xl"
               initialRegion={{
@@ -253,18 +274,23 @@ const Card = (props: EventProps) => {
             <View className="mt-2 flex flex-row">
               <CardEditDetailsButton
                 onPress={() =>
-                  navigation.navigate('EditHangout', {
-                    id: id,
-                    user_id: user_id,
-                    title: title,
-                    details: details,
-                    location: location,
-                    starts: starts,
-                    ends: ends,
+                  navigation.navigate('EditHangoutStack', {
+                    screen: 'EditHangout',
+                    params: {
+                      id: id,
+                      user_id: user_id,
+                      title: title,
+                      details: details,
+                      location: location,
+                      starts: starts,
+                      ends: ends,
+                    },
                   })
                 }
               />
-              <TouchableOpacity className="w-1/2 pl-1" onPress={handleShareHangout}>
+              <TouchableOpacity
+                className="w-1/2 pl-1"
+                onPress={handleShareHangout}>
                 <LinearGradient
                   colors={['#7000FF', '#B174FF']}
                   start={{ x: 0, y: 0 }}

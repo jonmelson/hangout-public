@@ -44,6 +44,7 @@ const ChooseLocation = ({
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [recentSearches, setRecentSearches] = useState<Prediction[]>([]);
 
+  
   const getPlaceDetails = async (placeId: string) => {
     const response = await fetch(
       `https://maps.googleapis.com/maps/api/place/details/json?key=${GOOGLE_MAPS_API_KEY}&place_id=${placeId}`,
@@ -155,6 +156,19 @@ const ChooseLocation = ({
         pastSearches = JSON.parse(storedSearches);
       }
 
+      // Check if the prediction already exists in pastSearches
+      const index = pastSearches.findIndex(
+        search =>
+          search.title === prediction.title &&
+          search.address === prediction.address &&
+          search.coordinates === prediction.coordinates,
+      );
+
+      // If the prediction exists, remove it from the array
+      if (index !== -1) {
+        pastSearches.splice(index, 1);
+      }
+
       // Add the selected prediction to the beginning of the array
       pastSearches.unshift(prediction);
 
@@ -193,7 +207,7 @@ const ChooseLocation = ({
       return (
         <TouchableOpacity
           onPress={() => handlePredictionPress(item)}
-          className="border-b border-gray-300 mx-1 py-2">
+          className="mx-1 border-b border-gray-300 py-2">
           <Text
             style={{ fontSize: 16, color: '#333333', fontWeight: '500' }}
             className="mb-1">
@@ -271,17 +285,15 @@ const ChooseLocation = ({
           </TouchableOpacity>
         )}
 
-        {recentSearches.length > 0 && searchText === '' && (
+        {/* {recentSearches.length > 0 && searchText === '' && (
           <View className="flex flex-col">
-            <View className="border-b border-gray-300 mx-1 py-2">
-              <Text style={{ fontSize: 16, fontWeight: '500',  }}>
-                Recent
-              </Text>
+            <View className="mx-1 border-b border-gray-300 py-2">
+              <Text style={{ fontSize: 16, fontWeight: '500' }}>Recent</Text>
             </View>
 
             <FlatList data={recentSearches} renderItem={renderItem} />
           </View>
-        )}
+        )} */}
 
         <FlatList data={predictions} renderItem={renderItem} />
       </View>

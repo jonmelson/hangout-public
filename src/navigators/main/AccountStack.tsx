@@ -5,8 +5,7 @@ import Friends from '../../screens/account/Friends';
 import PublicProfile from '../../screens/account/profile/PublicProfile';
 import ProfileStack from './ProfileStack';
 import Details from '../../screens/account/Details';
-import EditHangout from '../../screens/account/EditHangout';
-import EditChooseLocation from '../../screens/account/EditChooseLocation';
+import EditHangoutStack from './EditHangoutStack';
 import NewMessages from '../../screens/account/messaging/NewMessages';
 import ChatRoom from '../../screens/account/messaging/ChatRoom';
 import SharePage from '../../screens/account/SharePage';
@@ -63,6 +62,13 @@ const AccountStack = ({
         />
 
         <Stack.Screen
+          name="EditHangoutStack"
+          component={EditHangoutStack}
+          initialParams={{ sessionId: sessionId }}
+          options={{ presentation: 'modal' }}
+        />
+
+        <Stack.Screen
           name="Details"
           component={Details}
           initialParams={{ sessionId: sessionId }}
@@ -72,18 +78,6 @@ const AccountStack = ({
             presentation: 'modal',
             headerShown: false,
           }}
-        />
-
-        <Stack.Screen
-          name="EditHangout"
-          component={EditHangout}
-          options={{ presentation: 'modal', headerShown: true }}
-        />
-
-        <Stack.Screen
-          name="EditChooseLocation"
-          component={EditChooseLocation}
-          options={{ presentation: 'modal', headerShown: true }}
         />
 
         <Stack.Screen
