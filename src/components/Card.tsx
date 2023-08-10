@@ -17,6 +17,7 @@ import { supabase } from '../lib/supabase';
 
 import { EventProps } from '../utils/other';
 import { useChatContext } from '../context/ChatContext';
+import useIsGoing from '../hooks/useIsGoing';
 
 const Card = (props: EventProps) => {
   const {
@@ -35,7 +36,13 @@ const Card = (props: EventProps) => {
 
   const { joinGroupChatRoom } = useChatContext();
 
-  const [isGoing, setIsGoing] = useState(false);
+  if (!id || !sessionId) {
+    // If id or sessionId is undefined, you might want to handle it here
+    return null; // or return some placeholder content
+  }
+
+  const { isGoing, setIsGoing } = useIsGoing(id, sessionId); // Use the useIsGoing hook
+
   const [newDate, setNewDate] = useState('');
   const [newTime, setNewTime] = useState('');
   const [newLocation, setNewLocation] = useState(location);
@@ -43,8 +50,7 @@ const Card = (props: EventProps) => {
   const address = location && location[0] ? location[0].address : '';
   const locationTitle = location && location[0] ? location[0].title : '';
 
-  const mapRef = useRef<MapView>( null );
-  
+  const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
     setNewLocation(location);

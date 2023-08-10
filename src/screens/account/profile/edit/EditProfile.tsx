@@ -182,7 +182,7 @@ const EditProfile = ({
   }, [navigation, sessionId]);
 
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View>
         <View className="flex flex-col space-y-2">
           <View className="flex h-40 flex-col items-center space-y-2 rounded-b-xl bg-white p-4">

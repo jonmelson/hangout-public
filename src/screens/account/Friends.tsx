@@ -554,6 +554,7 @@ const Friends = ({
         </View>
 
         <ScrollView
+          showsVerticalScrollIndicator={false}
           className="w-full flex-1 flex-col pt-2"
           style={{ backgroundColor: searchText === '' ? '#F3F3F3' : 'white' }}
           refreshControl={
@@ -565,6 +566,7 @@ const Friends = ({
               {receivedFriendRequests.length !== 0 && (
                 <View className="mb-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
                   <FlatList
+                    showsVerticalScrollIndicator={false}
                     data={receivedFriendRequests}
                     keyExtractor={item => item.id.toString()}
                     renderItem={renderFriendRequestItem}
@@ -602,6 +604,7 @@ const Friends = ({
                 <View className="mt-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
                   <FlatList
                     data={friends}
+                    showsVerticalScrollIndicator={false}
                     keyExtractor={item => item.id.toString()}
                     renderItem={renderFriendItem}
                     scrollEnabled={false}
@@ -636,10 +639,10 @@ const Friends = ({
                 </View>
               )}
 
-              
               <View className="mt-2 w-full rounded-2xl bg-white px-4 pb-6 pt-4">
                 <FlatList
                   data={allUsers}
+                  showsVerticalScrollIndicator={false}
                   keyExtractor={item => item.id.toString()}
                   renderItem={renderFriendItem}
                   scrollEnabled={false}
@@ -680,6 +683,7 @@ const Friends = ({
                     friends.some((friend: any) => friend.id === item.id),
                   ) && (
                     <FlatList
+                      showsVerticalScrollIndicator={false}
                       data={results.filter((item: any) =>
                         friends.some((friend: any) => friend.id === item.id),
                       )}
@@ -701,6 +705,7 @@ const Friends = ({
                       !friends.some((friend: any) => friend.id === item.id),
                   ) && (
                     <FlatList
+                      showsVerticalScrollIndicator={false}
                       data={results.filter(
                         (item: any) =>
                           !friends.some((friend: any) => friend.id === item.id),

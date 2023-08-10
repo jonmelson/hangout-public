@@ -2,15 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 
-import GoingButton from './GoingButton';
-import Avatar from './Avatar';
 import AvatarIconGroup from './AvatarGroup';
 import { ClockIcon, CalendarIcon } from './Icons';
 
-import { supabase } from '../lib/supabase';
-
 import { EventProps } from '../utils/other';
-import { useChatContext } from '../context/ChatContext';
 
 const Event = (props: EventProps) => {
   const {
@@ -27,56 +22,8 @@ const Event = (props: EventProps) => {
     sessionId,
   } = props;
 
-  const { joinGroupChatRoom } = useChatContext();
-
-  const [isGoing, setIsGoing] = useState(false);
   const [newDate, setNewDate] = useState('');
   const [newTime, setNewTime] = useState('');
-
-  const handlePress = async () => {
-    if (isGoing === false) {
-      const { data, error } = await supabase
-        .from('is_going')
-        .insert([{ hangout_id: id, user_id: sessionId }]);
-      joinGroupChatRoom(id, sessionId);
-      setIsGoing(true);
-    } else if (isGoing === true) {
-      showAlert();
-    }
-  };
-
-  const notGoing = async () => {
-    const { data, error } = await supabase
-      .from('is_going')
-      .delete()
-      .eq('hangout_id', id)
-      .eq('user_id', sessionId);
-
-    setIsGoing(false);
-  };
-
-  const showAlert = () => {
-    Alert.alert(
-      'Not going?',
-      'Are you sure you want to remove this hangout from your going',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Canceled'),
-          style: 'cancel',
-        },
-        {
-          text: 'Confirm',
-          onPress: () => notGoing(),
-        },
-      ],
-      { cancelable: false },
-    );
-  };
-
-  useEffect(() => {
-    setIsGoing(going.some(item => item.id === sessionId));
-  }, [going, sessionId]);
 
   useEffect(() => {
     const isSameDay = () => {

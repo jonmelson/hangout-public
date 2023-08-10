@@ -495,6 +495,7 @@ const Profile = ({
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }

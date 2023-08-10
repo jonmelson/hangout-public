@@ -1,6 +1,6 @@
 {
   "name": "hangout",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",

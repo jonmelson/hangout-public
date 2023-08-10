@@ -30,6 +30,7 @@ import { supabase } from '../../lib/supabase';
 
 import { hangoutUrl, hangoutInviteMessage } from '../../utils/constants';
 
+import useIsGoing from '../../hooks/useIsGoing';
 import { useChatContext } from '../../context/ChatContext';
 
 import MapView, { Marker } from 'react-native-maps';
@@ -53,19 +54,25 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
 
   const { navigateToGroupChatRoom, joinGroupChatRoom } = useChatContext();
 
+  if (!id || !sessionId) {
+    // If id or sessionId is undefined, you might want to handle it here
+    return null; // or return some placeholder content
+  }
+
+  const { isGoing, setIsGoing } = useIsGoing(id, sessionId); // Use the useIsGoing hook
+
   const [newDate, setNewDate] = useState<any>([]);
   const [newTime, setNewTime] = useState<any>([]);
-  const [isGoing, setIsGoing] = useState(false);
 
+ 
   const handleGoingPress = async () => {
     if (isGoing === false) {
       const { data, error } = await supabase
         .from('is_going')
         .insert([{ hangout_id: id, user_id: sessionId }]);
-
       joinGroupChatRoom(id, sessionId);
       setIsGoing(true);
-    } else if (isGoing === true) {
+    } else {
       showAlert();
     }
   };
@@ -165,13 +172,9 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
     });
   };
 
-  useEffect(() => {
-    going.forEach((item: any) => {
-      if (item.id === sessionId) {
-        setIsGoing(true);
-      }
-    });
-  }, [going, isGoing]);
+  // useEffect(() => {
+  //   setIsGoing(going.some((item: any) => item.id === sessionId));
+  // }, [going, sessionId, isGoing]);
 
   useEffect(() => {
     const date1 = new Date(starts);

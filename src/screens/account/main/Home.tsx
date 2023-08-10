@@ -636,7 +636,8 @@ const Home = ({
                 </TouchableOpacity>
               </View>
               <SectionList
-                sections={sections}
+                    sections={sections}
+                    showsVerticalScrollIndicator={false}
                 renderItem={renderItem}
                 refreshControl={
                   <RefreshControl

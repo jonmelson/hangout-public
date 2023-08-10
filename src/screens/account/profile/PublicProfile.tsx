@@ -691,7 +691,7 @@ const PublicProfile = ({
         </View>
       </View>
 
-      {mergedData && mergedData.length > 0 && (
+      {isFriend && mergedData && mergedData.length > 0 && (
         <View className="mt-2 flex rounded-2xl bg-white">
           <View style={{ margin: 16 }} className="flex flex-col">
             <Text style={{ fontSize: 20, fontWeight: '500' }}>Hangouts</Text>
@@ -702,7 +702,7 @@ const PublicProfile = ({
                   <Event
                     {...item}
                     key={idx}
-                    sessionId={userId}
+                    sessionId={sessionId}
                     navigation={navigation}
                   />
                 );
