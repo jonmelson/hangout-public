@@ -58,7 +58,7 @@ const ChatRoom = ({
   const MyEmptyComponent = () => null;
   const handleDeleteChannel = async () => {
     await currentChannel?.hide();
-    navigation.navigate('Messages');
+    navigation.navigate('Messaging');
   };
 
   const showAlert = () => {

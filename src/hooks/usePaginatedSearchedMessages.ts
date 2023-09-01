@@ -17,7 +17,7 @@ export function usePaginatedSearchedMessages(
   const { chatClient } = useChatContext();
 
   const filters = {
-    members: { $in: [chatClient?.user?.id || null] },
+    members: { $in: [chatClient?.user?.id || null] }, 
   };
 
   const otherMessageFilters = {

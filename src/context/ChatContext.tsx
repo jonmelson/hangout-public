@@ -28,6 +28,7 @@ type ChatContextType = {
   ) => Promise<void>;
   navigateToGroupChatRoom: (hangoutId: any) => Promise<void>;
   joinGroupChatRoom: (hangoutId: any, userId: any) => Promise<void>;
+  removeUserFromGroupChatRoom: (hangoutId: any, userId: any) => Promise<void>;
   //  joinGroupChatRoom: (hangoutId: any, userId: any, name: any) => Promise<void>;
   updateGroupChatRoomName: (hangoutId: any, newName: any) => Promise<void>;
   updateUserImage: (userId: any, image: any) => Promise<void>;
@@ -52,6 +53,7 @@ export const ChatContext = createContext<ChatContextType>({
   navigateToGroupChatRoom: async (hangoutId: any) => {},
   // joinGroupChatRoom: async (hangoutId: any, userId: any, name: any) => {},
   joinGroupChatRoom: async (hangoutId: any, userId: any) => {},
+  removeUserFromGroupChatRoom: async (hangoutId: any, userId: any) => {},
   updateGroupChatRoomName: async (hangoutId: any, newName: any) => {},
   updateUserImage: async (userId: any, image: any) => {},
   updateUserName: async (userId: any, name: any) => {},
@@ -226,6 +228,17 @@ export function ChatContextProvider({
     // navigation.replace('MessagesStack', { screen: 'ChatRoom' });
   };
 
+  const removeUserFromGroupChatRoom = async (hangoutId: any, userId: any) => {
+    if (!chatClient) {
+      return;
+    }
+
+    const channelId = `room-${hangoutId}`;
+    // console.log(channelId, hangoutId, userId);
+    const eventChannel = chatClient.channel('livestream', channelId);
+    await eventChannel.removeMembers([userId]);
+  };
+
   const updateGroupChatRoomName = async (hangoutId: any, newName: any) => {
     if (!chatClient) {
       return;
@@ -302,6 +315,7 @@ export function ChatContextProvider({
     startGroupChatRoom,
     navigateToGroupChatRoom,
     joinGroupChatRoom,
+    removeUserFromGroupChatRoom,
     updateGroupChatRoomName,
     setChannelWithId,
     updateUserImage,

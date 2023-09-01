@@ -3,7 +3,7 @@
     "name": "hngt",
     "slug": "hangout",
     "scheme": "hangout",
-    "version": "0.1.22",
+    "version": "0.1.23",
     "plugins": [
       "@react-native-firebase/app",
       [

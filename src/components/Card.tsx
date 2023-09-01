@@ -34,7 +34,7 @@ const Card = (props: EventProps) => {
     sessionId,
   } = props;
 
-  const { joinGroupChatRoom } = useChatContext();
+  const { joinGroupChatRoom, removeUserFromGroupChatRoom } = useChatContext();
 
   if (!id || !sessionId) {
     // If id or sessionId is undefined, you might want to handle it here
@@ -106,6 +106,7 @@ const Card = (props: EventProps) => {
       .eq('user_id', sessionId);
 
     setIsGoing(false);
+    removeUserFromGroupChatRoom(id, sessionId);
   };
 
   const showAlert = () => {

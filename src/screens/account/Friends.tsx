@@ -142,6 +142,7 @@ const Friends = ({
       const filteredUsers = allUsersData.filter(
         user =>
           user.username !== 'test_account' &&
+          user.first_name !== null && // Exclude users with null username
           user.id !== sessionId &&
           !friends.some(
             // Exclude already added friends
@@ -150,9 +151,11 @@ const Friends = ({
       );
 
       // Sort the filtered users by first_name
-      const sortedUsers = filteredUsers.sort((a, b) =>
-        a.first_name.localeCompare(b.first_name),
-      );
+      const sortedUsers = filteredUsers.sort((a, b) => {
+        const nameA = a?.first_name || ''; // Use optional chaining
+        const nameB = b?.first_name || ''; // Use optional chaining
+        return nameA.localeCompare(nameB);
+      });
 
       setAllUsers(sortedUsers);
     }

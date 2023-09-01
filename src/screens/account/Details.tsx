@@ -52,7 +52,12 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   const address = location[0].address;
   const locationTitle = location[0].title;
 
-  const { navigateToGroupChatRoom, joinGroupChatRoom } = useChatContext();
+  const {
+    currentChannel,
+    navigateToGroupChatRoom,
+    joinGroupChatRoom,
+    removeUserFromGroupChatRoom,
+  } = useChatContext();
 
   if (!id || !sessionId) {
     // If id or sessionId is undefined, you might want to handle it here
@@ -64,7 +69,6 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
   const [newDate, setNewDate] = useState<any>([]);
   const [newTime, setNewTime] = useState<any>([]);
 
- 
   const handleGoingPress = async () => {
     if (isGoing === false) {
       const { data, error } = await supabase
@@ -85,6 +89,7 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
       .eq('user_id', sessionId);
 
     setIsGoing(false);
+    removeUserFromGroupChatRoom(id, sessionId);
     navigation.goBack();
   };
 
@@ -125,7 +130,8 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
     }
   };
 
-  const handleMessagesPress = () => {
+  const handleMessagesPress = async () => {
+    await currentChannel?.show();
     navigateToGroupChatRoom(id);
   };
 
@@ -474,27 +480,25 @@ const Details = ({ navigation, route }: { navigation: any; route: any }) => {
           </TouchableOpacity>
         </View>
 
-        {isGoing && (
-          <TouchableOpacity
-            className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white  px-4"
-            onPress={handleMessagesPress}>
-            <View className="flex flex-row items-center space-x-2">
-              <LinearGradient
-                colors={['#7000FF', '#B174FF']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                className="rounded-full p-2">
-                <MessagesIcon color="#FFF" />
-              </LinearGradient>
+        <TouchableOpacity
+          className="flex h-16 flex-row items-center justify-between rounded-2xl bg-white  px-4"
+          onPress={handleMessagesPress}>
+          <View className="flex flex-row items-center space-x-2">
+            <LinearGradient
+              colors={['#7000FF', '#B174FF']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              className="rounded-full p-2">
+              <MessagesIcon color="#FFF" />
+            </LinearGradient>
 
-              <Text className="font-medium">Messages</Text>
-            </View>
+            <Text className="font-medium">Messages</Text>
+          </View>
 
-            <View>
-              <ChevronRightIcon />
-            </View>
-          </TouchableOpacity>
-        )}
+          <View>
+            <ChevronRightIcon />
+          </View>
+        </TouchableOpacity>
 
         {going && (
           <View className="rounded-2xl bg-white px-4 pb-6 pt-2">
